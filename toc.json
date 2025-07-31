@@ -1,0 +1,1128 @@
+{
+  "collapseTableOfContents": true,
+  "items": [
+    {
+      "type": "divider",
+      "title": "Welcome"
+    },
+    {
+      "type": "item",
+      "title": "Getting Started",
+      "uri": "docs/WELCOME/getting-started.md",
+      "slug": "welcome/getting-started"
+    },
+    {
+      "type": "item",
+      "title": "New to Cash App Afterpay?",
+      "uri": "docs/WELCOME/caa-new-to-cash-app-afterpay.md",
+      "slug": "welcome/new-to-cash-app-afterpay"
+    },
+    {
+      "type": "item",
+      "title": "Familiar with Afterpay?",
+      "uri": "docs/WELCOME/caa-familiar-with-afterpay.md",
+      "slug": "welcome/familiar-with-afterpay"
+    },
+    {
+      "type": "item",
+      "title": "What is Cash App and Cash App Afterpay?",
+      "uri": "docs/WELCOME/caa-what-is-cap-etc.md",
+      "slug": "welcome/what-is-cash-app-and-cash-app-afterpay"
+    },
+    {
+      "type": "item",
+      "title": "Cross Border Trade",
+      "uri": "docs/WELCOME/caa-cross-border-trade.md",
+      "slug": "welcome/cross-border-trade"
+    },
+    {
+      "type": "divider",
+      "title": "Migrate from Afterpay to Cash App Afterpay"
+    },
+    {
+      "type": "item",
+      "title": "Migration Information",
+      "uri": "docs/MIGRATION/migration-main-page.md",
+      "slug": "migration/migration-information"
+    },
+    {
+      "type": "group",
+      "title": "Platforms",
+      "items": [
+        {
+          "type": "item",
+          "title": "Adobe Commerce (Magento) Migration",
+          "uri": "docs/MIGRATION/adobe-commerce-migration.md",
+          "slug": "migration/adobe-commerce"
+        },
+        {
+          "type": "item",
+          "title": "Adyen Migration",
+          "uri": "docs/MIGRATION/adyen-migration.md",
+          "slug": "migration/adyen"
+        },
+        {
+          "type": "item",
+          "title": "BigCommerce Migration",
+          "uri": "docs/MIGRATION/big-commerce-migration.md",
+          "slug": "migration/big-commerce"
+        },
+        {
+          "type": "item",
+          "title": "Ecwid Migration",
+          "uri": "docs/MIGRATION/ecwid-migration.md",
+          "slug": "migration/ecwid"
+        },
+        {
+          "type": "item",
+          "title": "PrestaShop Migration",
+          "uri": "docs/MIGRATION/prestashop-migration.md",
+          "slug": "migration/prestashop"
+        },
+        {
+          "type": "item",
+          "title": "Salesforce Commerce Cloud Migration",
+          "uri": "docs/MIGRATION/salesforce-cc-migration.md",
+          "slug": "migration/salesforce-commerce-cloud"
+        },
+        {
+          "type": "item",
+          "title": "Shopify Migration",
+          "uri": "docs/MIGRATION/shopify-migration.md",
+          "slug": "migration/shopify"
+        },
+        {
+          "type": "item",
+          "title": "Stripe Migration",
+          "uri": "docs/MIGRATION/stripe-migration.md",
+          "slug": "migration/stripe"
+        },
+        {
+          "type": "item",
+          "title": "Wix Migration",
+          "uri": "docs/MIGRATION/wix-migration.md",
+          "slug": "migration/wix"
+        },
+        {
+          "type": "item",
+          "title": "WooCommerce Migration",
+          "uri": "docs/MIGRATION/woocommerce-migration.md",
+          "slug": "migration/woocommerce"
+        }
+      ]
+    },
+    {
+      "type": "item",
+      "title": "SDK Migration Guide",
+      "uri": "docs/MOBILE-DEVELOPMENT/SDK-Migration.md",
+      "slug": "migration/sdk"
+    },
+    {
+      "type": "item",
+      "title": "Migration FAQs",
+      "uri": "docs/MIGRATION/faq-migration.md",
+      "slug": "migration/faq"
+    },
+    {
+      "type": "item",
+      "title": "Brand Assets",
+      "uri": "docs/MARKETING/Brand-Assets.md",
+      "slug": "marketing/brand-assets"
+    },
+    {
+      "type": "item",
+      "title": "Onsite Messaging",
+      "uri": "docs/MIGRATION/Onsite-Messaging-Migration.md",
+      "slug": "migration/onsite-messaging"
+    },
+    {
+      "type": "item",
+      "title": "Support",
+      "uri": "docs/FAQS-AND-SUPPORT/caa-support.md",
+      "slug": "faqs-and-support/support"
+    },
+    {
+      "type": "divider",
+      "title": "Platforms"
+    },
+    {
+      "type": "item",
+      "title": "Platforms Quickstart",
+      "uri": "docs/PLATFORMS/Platforms-Quickstart.md",
+      "slug": "platforms/platforms-quickstart"
+    },
+    {
+      "type": "group",
+      "title": "Adobe Commerce (Magento)",
+      "uri": "docs/PLATFORMS/Adobe-Commerce-Magento/AC-Getting-Started.md",
+      "slug": "platforms/adobe-commerce/getting-started",
+      "items": [
+        {
+          "type": "item",
+          "title": "Install Extension",
+          "uri": "docs/PLATFORMS/Adobe-Commerce-Magento/AC-Install-Extension.md",
+          "slug": "platforms/adobe-commerce/install-extension"
+        },
+        {
+          "type": "item",
+          "title": "Configure Extension",
+          "uri": "docs/PLATFORMS/Adobe-Commerce-Magento/AC-Configure-Extension.md",
+          "slug": "platforms/adobe-commerce/configure-extension"
+        },
+        {
+          "type": "item",
+          "title": "Update Extension",
+          "uri": "docs/PLATFORMS/Adobe-Commerce-Magento/AC-Update-Extension.md",
+          "slug": "platforms/adobe-commerce/update-extension"
+        }
+      ]
+    },
+    {
+      "type": "item",
+      "title": "Adyen",
+      "uri": "docs/PLATFORMS/Adyen.md",
+      "slug": "platforms/adyen"
+    },
+    {
+      "type": "group",
+      "title": "BigCommerce",
+      "uri": "docs/PLATFORMS/BigCommerce/BC-Getting-Started.md",
+      "slug": "platforms/bigcommerce/getting-started",
+      "items": [
+        {
+          "type": "item",
+          "title": "Add Payment Option",
+          "uri": "docs/PLATFORMS/BigCommerce/BC-Add-Payment-Option.md",
+          "slug": "platforms/bigcommerce/add-payment-option"
+        },
+        {
+          "type": "item",
+          "title": "Cash App Afterpay Site Messaging",
+          "uri": "docs/PLATFORMS/BigCommerce/BC-Afterpay-Site-Messaging.md",
+          "slug": "platforms/bigcommerce/afterpay-site-messaging"
+        }
+      ]
+    },
+    {
+      "type": "item",
+      "title": "Ecwid",
+      "uri": "docs/PLATFORMS/Ecwid.md",
+      "slug": "platforms/ecwid"
+    },
+    {
+      "type": "group",
+      "title": "PrestaShop",
+      "uri": "docs/PLATFORMS/PrestaShop/PrestaShop.md",
+      "slug": "platforms/presta-shop",
+      "items": [
+        {
+          "type": "item",
+          "title": "PrestaShop",
+          "uri": "docs/PLATFORMS/PrestaShop/PrestaShop.md",
+          "slug": "platforms/presta-shop/prestashop"
+        },
+        {
+          "type": "item",
+          "title": "Updating the Cash App Afterpay module",
+          "uri": "docs/PLATFORMS/PrestaShop/ps-migration.md",
+          "slug": "platforms/presta-shop/migrating-to-the-new-afterpay-module"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "title": "Salesforce Commerce Cloud",
+      "uri": "docs/PLATFORMS/Salesforce-Commerce-Cloud/SFCC-Getting-Started.md",
+      "slug": "platforms/salesforce-commerce-cloud/getting-started",
+      "items": [
+        {
+          "type": "item",
+          "title": "Install Cartridge and Import Metadata",
+          "uri": "docs/PLATFORMS/Salesforce-Commerce-Cloud/SFCC-Install-Cartridge.md",
+          "slug": "platforms/salesforce-commerce-cloud/install-cartridge"
+        },
+        {
+          "type": "item",
+          "title": "Configure Cartridge",
+          "uri": "docs/PLATFORMS/Salesforce-Commerce-Cloud/SFCC-Configure-Cartridge.md",
+          "slug": "platforms/salesforce-commerce-cloud/configure-cartridge"
+        },
+        {
+          "type": "item",
+          "title": "SiteGenesis Code Changes",
+          "uri": "docs/PLATFORMS/Salesforce-Commerce-Cloud/SFCC-SiteGenesis.md",
+          "slug": "platforms/salesforce-commerce-cloud/sitegenesis"
+        },
+        {
+          "type": "item",
+          "title": "SFRA Files Change Review",
+          "uri": "docs/PLATFORMS/Salesforce-Commerce-Cloud/SFCC-SFRA.md",
+          "slug": "platforms/salesforce-commerce-cloud/sfra"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "title": "Shopify",
+      "uri": "docs/PLATFORMS/Shopify/Shopify-Getting-Started.md",
+      "slug": "platforms/shopify/getting-started",
+      "items": [
+        {
+          "type": "item",
+          "title": "Add Cash App Afterpay at Checkout",
+          "uri": "docs/PLATFORMS/Shopify/Shopify-Add-Payment-Option.md",
+          "slug": "platforms/shopify/add-afterpay-payment"
+        },
+        {
+          "type": "item",
+          "title": "Add Cash App Pay at Checkout",
+          "uri": "docs/PLATFORMS/Shopify/Shopify-Cash-App-Pay-Integration.md",
+          "slug": "platforms/shopify/add-cash-app-pay-payment"
+        },
+        {
+          "type": "item",
+          "title": "Cash App Afterpay On-Site Messaging App",
+          "uri": "docs/PLATFORMS/Shopify/Shopify-Afterpay-On-Site-Messaging-App.md",
+          "slug": "platforms/shopify/afterpay-on-site-messaging-app"
+        },
+        {
+          "type": "item",
+          "title": "Manually Add Cash App Afterpay Site Messaging to Theme",
+          "uri": "docs/PLATFORMS/Shopify/Shopify-Afterpay-Site-Messaging.md",
+          "slug": "platforms/shopify/afterpay-site-messaging"
+        },
+        {
+          "type": "item",
+          "title": "Shopify Manual Capture",
+          "uri": "docs/PLATFORMS/Shopify/Shopify-Manual-Capture.md",
+          "slug": "platforms/shopify/shopify-manual-capture"
+        },
+        {
+          "type": "item",
+          "title": "Shopify Order Reconciliation",
+          "uri": "docs/PLATFORMS/Shopify/Shopify-Order-Reconciliation.md",
+          "slug": "platforms/shopify/shopify-order-reconciliation"
+        },
+        {
+          "type": "item",
+          "title": "Shopify Test Mode",
+          "uri": "docs/PLATFORMS/Shopify/Shopify-Test-Mode.md",
+          "slug": "platforms/shopify/shopify-test-mode"
+        },
+        {
+          "type": "item",
+          "title": "Add a Cash App Afterpay Banner to Shopify",
+          "uri": "docs/PLATFORMS/Shopify/Shopify-Add-an-Afterpay-Banner-to-Shopify.md",
+          "slug": "platforms/shopify/shopify-add-an-afterpay-banner-to-shopify"
+        },
+        {
+          "type": "item",
+          "title": "FAQ",
+          "uri": "docs/PLATFORMS/Shopify/Shopify-FAQ.md",
+          "slug": "platforms/shopify/faq"
+        }
+      ]
+    },
+    {
+      "type": "item",
+      "title": "Stripe",
+      "uri": "docs/PLATFORMS/Stripe.md",
+      "slug": "platforms/stripe"
+    },
+    {
+      "type": "item",
+      "title": "Wix",
+      "uri": "docs/PLATFORMS/WIX.md",
+      "slug": "platforms/wix"
+    },
+    {
+      "type": "group",
+      "title": "WooCommerce",
+      "uri": "docs/PLATFORMS/WooCommerce/WC-Getting-Started.md",
+      "slug": "platforms/woocommerce/getting-started",
+      "items": [
+        {
+          "type": "item",
+          "title": "Install Plugin",
+          "uri": "docs/PLATFORMS/WooCommerce/WC-Install-Plugin.md",
+          "slug": "platforms/woocommerce/install-plugin"
+        },
+        {
+          "type": "item",
+          "title": "Configure Plugin",
+          "uri": "docs/PLATFORMS/WooCommerce/WC-Configure-Plugin.md",
+          "slug": "platforms/woocommerce/configure-plugin"
+        },
+        {
+          "type": "item",
+          "title": "Update Plugin",
+          "uri": "docs/PLATFORMS/WooCommerce/WC-Update-Plugin.md",
+          "slug": "platforms/woocommerce/update-plugin"
+        },
+        {
+          "type": "item",
+          "title": "Advanced Configuration",
+          "uri": "docs/PLATFORMS/WooCommerce/WC-Advanced-Configuration.md",
+          "slug": "platforms/woocommerce/advanced-configuration"
+        },
+        {
+          "type": "item",
+          "title": "Currency Conversion",
+          "uri": "docs/PLATFORMS/WooCommerce/WC-Currency-Conversion.md",
+          "slug": "platforms/woocommerce/currency-conversion"
+        },
+        {
+          "type": "item",
+          "title": "FAQ",
+          "uri": "docs/PLATFORMS/WooCommerce/WC-FAQ.md",
+          "slug": "platforms/woocommerce/faq"
+        }
+      ]
+    },
+    {
+      "type": "divider",
+      "title": "Afterpay Messaging"
+    },
+    {
+      "type": "item",
+      "title": "Getting Started",
+      "uri": "docs/AFTERPAY-MESSAGING/Getting-Started-with-Afterpay-On-Site-Messaging.md",
+      "slug": "afterpay-messaging/getting-started-with-afterpay-on-site-messaging"
+    },
+    {
+      "type": "item",
+      "title": "Placement",
+      "uri": "docs/AFTERPAY-MESSAGING/On-Site-Placement.md",
+      "slug": "afterpay-messaging/on-site-placement"
+    },
+    {
+      "type": "item",
+      "title": "Implementation",
+      "uri": "docs/AFTERPAY-MESSAGING/Implementation.md",
+      "slug": "afterpay-messaging/implementation"
+    },
+    {
+      "type": "item",
+      "title": "Migration",
+      "uri": "docs/AFTERPAY-MESSAGING/Migration.md",
+      "slug": "afterpay-messaging/migration"
+    },
+    {
+      "type": "item",
+      "title": "Older Messaging Information and Links",
+      "uri": "docs/AFTERPAY-MESSAGING/Older-Afterpay-Messaging-Information.md",
+      "slug": "afterpay-messaging/older-afterpay-messaging-information"
+    },
+    {
+      "type": "item",
+      "title": "Launch Afterpay Info Modal Anywhere",
+      "uri": "docs/AFTERPAY-MESSAGING/Launch-Afterpay-Info-Modal-Anywhere.md",
+      "slug": "afterpay-messaging/launch-afterpay-info-modal-anywhere"
+    },
+    {
+      "type": "item",
+      "title": "FAQ for Your Customers",
+      "uri": "docs/AFTERPAY-MESSAGING/faq-for-your-customers.md",
+      "slug": "afterpay-messaging/faq-for-your-customers"
+    },
+    {
+      "type": "divider",
+      "title": "API Development"
+    },
+    {
+      "type": "item",
+      "title": "API Quickstart",
+      "uri": "docs/API-DEVELOPMENT/API-Quickstart.md",
+      "slug": "api-development/api-quickstart"
+    },
+    {
+      "type": "group",
+      "title": "API Calls & Payment Flows",
+      "items": [
+        {
+          "type": "item",
+          "title": "Introduction",
+          "uri": "docs/API-DEVELOPMENT/API-Calls-and-Payment-Flows.md",
+          "slug": "api-development/api-calls-payment-flows"
+        },
+        {
+          "type": "item",
+          "title": "Create a Checkout",
+          "uri": "docs/API-DEVELOPMENT/1.-Create-a-Checkout.md",
+          "slug": "api-development/api-calls-payment-flows/create-a-checkout"
+        },
+        {
+          "type": "item",
+          "title": "Direct Capture",
+          "uri": "docs/API-DEVELOPMENT/2a.-Direct-Capture.md",
+          "slug": "api-development/api-calls-payment-flows/direct-capture"
+        },
+        {
+          "type": "item",
+          "title": "Auth & Capture",
+          "uri": "docs/API-DEVELOPMENT/2b.-Auth-and-Capture.md",
+          "slug": "api-development/api-calls-payment-flows/auth-capture"
+        },
+        {
+          "type": "item",
+          "title": "Refunds",
+          "uri": "docs/API-DEVELOPMENT/3.-Refunds.md",
+          "slug": "api-development/api-calls-payment-flows/refunds"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "title": "Test Environment (Sandbox)",
+      "items": [
+        {
+          "type": "item",
+          "title": "Introduction",
+          "uri": "docs/API-DEVELOPMENT/Test-Environment-Sandbox.md",
+          "slug": "api-development/test-environment"
+        },
+        {
+          "type": "item",
+          "title": "Customer Accounts",
+          "uri": "docs/API-DEVELOPMENT/Customer-Accounts.md",
+          "slug": "api-development/test-environment/customer-accounts"
+        },
+        {
+          "type": "item",
+          "title": "Business Hub",
+          "uri": "docs/API-DEVELOPMENT/API-Merchant-Portal.md",
+          "slug": "api-development/test-environment/merchant-portal"
+        },
+        {
+          "type": "item",
+          "title": "Postman Collection",
+          "uri": "docs/API-DEVELOPMENT/Postman-Collection.md",
+          "slug": "api-development/test-environment/postman-collection"
+        }
+      ]
+    },
+    {
+      "type": "item",
+      "title": "Certification",
+      "uri": "docs/API-DEVELOPMENT/Certification.md",
+      "slug": "api-development/certification"
+    },
+    {
+      "type": "item",
+      "title": "Webhook Signature Generation",
+      "uri": "docs/API-DEVELOPMENT/Webhook-Signature-Generation.md",
+      "slug": "api-development/webhook-signature"
+    },
+    {
+      "type": "group",
+      "title": "Express Checkout",
+      "uri": "docs/EXPRESS-CHECKOUT/What-is-Express-Checkout.md",
+      "slug": "api-development/express-checkout",
+      "items": [
+        {
+          "type": "item",
+          "title": "Integrated shipping",
+          "uri": "docs/EXPRESS-CHECKOUT/Express-checkout-integrated.md",
+          "slug": "api-development/express-checkout-integrated-shipping"
+        },
+        {
+          "type": "item",
+          "title": "Deferred shipping",
+          "uri": "docs/EXPRESS-CHECKOUT/Express-checkout-deferred.md",
+          "slug": "api-development/express-checkout-deferred-shipping"
+        },
+        {
+          "type": "item",
+          "title": "Checkout widget",
+          "uri": "docs/EXPRESS-CHECKOUT/Checkout-Widget.md",
+          "slug": "api-development/express-checkout/checkout-widget"
+        },
+        {
+          "type": "item",
+          "title": "Reference information",
+          "uri": "docs/EXPRESS-CHECKOUT/reference-information-ec.md",
+          "slug": "api-development/reference-information-ec"
+        }
+      ]
+    },
+    {
+      "type": "divider",
+      "title": "Merchant Operations"
+    },
+    {
+      "type": "item",
+      "title": "Getting Started",
+      "uri": "docs/MERCHANT-OPERATIONS/MO-Getting-started.md",
+      "slug": "merchant-operations/getting-started"
+    },
+    {
+      "type": "item",
+      "title": "Getting Paid",
+      "uri": "docs/MERCHANT-OPERATIONS/Getting-Paid.md",
+      "slug": "merchant-operations/getting-paid"
+    },
+    {
+      "type": "group",
+      "title": "Business Hub",
+      "items": [
+        {
+          "type": "item",
+          "title": "Introduction",
+          "uri": "docs/MERCHANT-OPERATIONS/MO-Merchant-Portal.md",
+          "slug": "merchant-operations/merchant-portal"
+        },
+        {
+          "type": "item",
+          "title": "Business Hub Access",
+          "uri": "docs/MERCHANT-OPERATIONS/Merchant-Portal-Access.md",
+          "slug": "merchant-operations/merchant-portal/merchant-portal-access"
+        },
+        {
+          "type": "item",
+          "title": "Business Hub Credentials",
+          "uri": "docs/MERCHANT-OPERATIONS/BH-Credentials.md",
+          "slug": "merchant-operations/merchant-portal/business-hub-credentials"
+        },
+        {
+          "type": "item",
+          "title": "Searching Orders",
+          "uri": "docs/MERCHANT-OPERATIONS/Searching-Orders.md",
+          "slug": "merchant-operations/merchant-portal/searching-orders"
+        },
+        {
+          "type": "item",
+          "title": "Settlement Reports",
+          "uri": "docs/MERCHANT-OPERATIONS/Settlement-Reports.md",
+          "slug": "merchant-operations/merchant-portal/settlement-reports"
+        },
+        {
+          "type": "item",
+          "title": "Tax Invoices",
+          "uri": "docs/MERCHANT-OPERATIONS/Tax-Invoices.md",
+          "slug": "merchant-operations/merchant-portal/tax-invoices"
+        },
+        {
+          "type": "item",
+          "title": "Manual Refunds",
+          "uri": "docs/MERCHANT-OPERATIONS/Manual-Refunds.md",
+          "slug": "merchant-operations/merchant-portal/manual-refunds"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "title": "Customer Service",
+      "items": [
+        {
+          "type": "item",
+          "title": "Refunds & Exchanges",
+          "uri": "docs/MERCHANT-OPERATIONS/Refunds-and-Exchanges.md",
+          "slug": "merchant-operations/customer-service/refunds-exchanges"
+        },
+        {
+          "type": "item",
+          "title": "Unsuccessful Orders",
+          "uri": "docs/MERCHANT-OPERATIONS/Unsuccessful-Orders.md",
+          "slug": "merchant-operations/customer-service/unsuccessful-orders"
+        },
+        {
+          "type": "item",
+          "title": "Payment Schedule",
+          "uri": "docs/MERCHANT-OPERATIONS/Payment-Schedule.md",
+          "slug": "merchant-operations/customer-service/payment-schedule"
+        }
+      ]
+    },
+    {
+      "type": "divider",
+      "title": "Online API"
+    },
+    {
+      "type": "group",
+      "title": "Adding Cash App Afterpay to Your Site",
+      "items": [
+        {
+          "type": "item",
+          "title": "Introduction",
+          "uri": "docs/ONLINE-API/Adding-Afterpay-to-Your-Site.md",
+          "slug": "online-api/adding-afterpay-to-your-site/introduction"
+        },
+        {
+          "type": "item",
+          "title": "Afterpay Messaging",
+          "uri": "docs/ONLINE-API/Afterpay-Messaging.md",
+          "slug": "online-api/adding-afterpay-to-your-site/afterpay-messaging"
+        },
+        {
+          "type": "item",
+          "title": "Standard Checkout",
+          "uri": "docs/ONLINE-API/Standard-Checkout.md",
+          "slug": "online-api/adding-afterpay-to-your-site/standard-checkout"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "title": "Adding Cash App Pay to Your Site",
+      "items": [
+        {
+          "type": "item",
+          "title": "Overview",
+          "uri": "docs/AFTERPAY-AS-A-PAYMENT-GATEWAY/Cash-App-Pay.md",
+          "slug": "online-api/adding-cash-app-pay-to-your-site"
+        },
+        {
+          "type": "item",
+          "title": "Cash App Pay On File",
+          "uri": "docs/AFTERPAY-AS-A-PAYMENT-GATEWAY/cash-app-pay-on-file.md",
+          "slug": "online-api/cash-app-pay-on-file"
+        },
+        {
+          "type": "item",
+          "title": "Retrieve Cash App Pay Grant",
+          "uri": "reference/Grants.v2.yaml/paths/~1v2~1grants~1retrieve/post",
+          "slug": "online-api/cash-app-pay/retrieve-grant"
+        },
+        {
+          "type": "item",
+          "title": "Revoke Cash App Pay Grant",
+          "uri": "reference/Grants.v2.yaml/paths/~1v2~1grants~1revoke/post",
+          "slug": "online-api/cash-app-pay/revoke-grant"
+        },
+        {
+          "type": "item",
+          "title": "Get Configuration Mappings",
+          "uri": "reference/Configuration.v2.yaml/paths/~1v2~1configuration~1mappings/get",
+          "slug": "online-api/cash-app-pay/get-configuration-mappings"
+        },
+        {
+          "type": "item",
+          "title": "Event: grant.status.updated",
+          "uri": "reference/Grants.v2.yaml/components/schemas/grant.status.updated",
+          "slug": "online-api/cash-app-pay/grant-status-updated"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "title": "Disputes",
+      "items": [
+        {
+          "type": "item",
+          "title": "Disputes",
+          "uri": "docs/ONLINE-API/Disputes-Introduction.md",
+          "slug": "online-api/disputes/intro"
+        },
+        {
+          "type": "item",
+          "title": "Disputes overview",
+          "uri": "docs/ONLINE-API/Disputes-Overview.md",
+          "slug": "online-api/disputes/overview"
+        },
+        {
+          "type": "item",
+          "title": "Receiving and retrieving a dispute",
+          "uri": "docs/ONLINE-API/Dispute-Open.md",
+          "slug": "online-api/disputes/receive-and-retrieve"
+        },
+        {
+          "type": "item",
+          "title": "Accepting or contesting disputes",
+          "uri": "docs/ONLINE-API/Dispute-Accept.md",
+          "slug": "online-api/disputes/accepting-or-contesting"
+        },
+        {
+          "type": "item",
+          "title": "Uploading and retrieving files",
+          "uri": "docs/ONLINE-API/Disputes-Retrieve.md",
+          "slug": "online-api/disputes/uploading-and-retrieving-files"
+        }
+      ]
+    },
+    {
+      "type": "divider",
+      "title": "SDK"
+    },
+    {
+      "type": "item",
+      "title": "SDK Migration Guide",
+      "uri": "docs/MOBILE-DEVELOPMENT/SDK-Migration.md",
+      "slug": "sdk/sdk-migration"
+    },
+    {
+      "type": "item",
+      "title": "iOS SDK",
+      "uri": "https://github.com/afterpay/sdk-ios"
+    },
+    {
+      "type": "item",
+      "title": "Android SDK",
+      "uri": "https://github.com/afterpay/sdk-android"
+    },
+    {
+      "type": "item",
+      "title": "React Native SDK",
+      "uri": "https://www.npmjs.com/package/@afterpay-global/sdk-rn/v/2.0.0-beta.0"
+    },
+    {
+      "type": "item",
+      "title": "PHP SDK",
+      "uri": "https://github.com/afterpay/sdk-php#readme"
+    },
+    {
+      "type": "divider",
+      "title": "Marketing"
+    },
+    {
+      "type": "item",
+      "title": "Shop Directory",
+      "uri": "docs/MARKETING/Shop-Directory.md",
+      "slug": "marketing/shop-directory"
+    },
+    {
+      "type": "item",
+      "title": "Brand Assets",
+      "uri": "docs/MARKETING/Brand-Assets.md",
+      "slug": "marketing/brand-assets"
+    },
+    {
+      "type": "divider",
+      "title": "Reference"
+    },
+    {
+      "type": "group",
+      "title": "Introduction",
+      "uri": "docs/ONLINE-API/API-Overview.md",
+      "slug": "reference/introduction",
+      "items": [
+        {
+          "type": "item",
+          "title": "Request Headers",
+          "uri": "docs/ONLINE-API/Request-Headers.md",
+          "slug": "reference/request-headers"
+        },
+        {
+          "type": "item",
+          "title": "Authentication",
+          "uri": "docs/ONLINE-API/Authentication.md",
+          "slug": "reference/authentication"
+        },
+        {
+          "type": "item",
+          "title": "Errors",
+          "uri": "docs/ONLINE-API/Errors.md",
+          "slug": "reference/errors"
+        },
+        {
+          "type": "item",
+          "title": "Data Requirements",
+          "uri": "docs/ONLINE-API/Required-Data.md",
+          "slug": "reference/required-data"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "title": "Checkouts",
+      "uri": "/reference/Checkouts.v2.yaml",
+      "slug": "reference/checkouts",
+      "items": [
+        {
+          "type": "item",
+          "title": "Create Checkout",
+          "uri": "/reference/Checkouts.v2.yaml/paths/~1v2~1checkouts/post",
+          "slug": "reference/checkouts/operations/create-a-v-2-checkout"
+        },
+        {
+          "type": "item",
+          "title": "Get Checkout",
+          "uri": "/reference/Checkouts.v2.yaml/paths/~1v2~1checkouts~1{token}/get",
+          "slug": "reference/checkouts/operations/get-a-v-2-checkout"
+        },
+        {
+          "type": "group",
+          "title": "Schemas",
+          "items": [
+            {
+              "type": "item",
+              "title": "Checkout-Request",
+              "uri": "/reference/Checkouts.v2.yaml/components/schemas/Checkout-Request",
+              "slug": "reference/checkouts/schemas/checkout-request"
+            },
+            {
+              "type": "item",
+              "title": "Checkout-Response",
+              "uri": "/reference/Checkouts.v2.yaml/components/schemas/Checkout-Response",
+              "slug": "reference/checkouts/schemas/checkout-response"
+            }
+          ],
+          "itemsType": "model"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "title": "Configuration",
+      "uri": "/reference/Configuration.v2.yaml",
+      "slug": "reference/configuration",
+      "items": [
+        {
+          "type": "item",
+          "title": "Get Configuration",
+          "uri": "/reference/Configuration.v2.yaml/paths/~1v2~1configuration/get",
+          "slug": "reference/configuration/operations/get-a-v-2-configuration"
+        },
+        {
+          "type": "item",
+          "title": "Get Configuration Mappings",
+          "uri": "/reference/Configuration.v2.yaml/paths/~1v2~1configuration~1mappings/get",
+          "slug": "reference/configuration/operations/list-v-2-configuration-mappings"
+        },
+        {
+          "type": "group",
+          "title": "Schemas",
+          "items": [
+            {
+              "type": "item",
+              "title": "Merchant limits",
+              "uri": "/reference/Configuration.v2.yaml/components/schemas/Merchant-limit",
+              "slug": "reference/configuration/schemas/merchant-limit"
+            },
+            {
+              "type": "item",
+              "title": "Cash App Pay Configuration Mappings",
+              "uri": "/reference/Configuration.v2.yaml/components/schemas/ConfigurationMappings",
+              "slug": "reference/configuration/schemas/configuration-mappings"
+            }
+          ],
+          "itemsType": "model"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "title": "Grants",
+      "uri": "/reference/Grants.v2.yaml",
+      "slug": "reference/grants",
+      "items": [
+        {
+          "type": "item",
+          "title": "Retrieve Grant",
+          "uri": "/reference/Grants.v2.yaml/paths/~1v2~1grants~1retrieve/post",
+          "slug": "reference/grants/operations/create-a-v-2-grant-retrieve"
+        },
+        {
+          "type": "item",
+          "title": "Revoke Grant",
+          "uri": "/reference/Grants.v2.yaml/paths/~1v2~1grants~1revoke/post",
+          "slug": "reference/grants/operations/create-a-v-2-grant-revoke"
+        },
+        {
+          "type": "group",
+          "title": "Schemas",
+          "items": [
+            {
+              "type": "item",
+              "title": "RetrieveGrantRequest",
+              "uri": "/reference/Grants.v2.yaml/components/schemas/RetrieveGrantRequest",
+              "slug": "reference/grants/schemas/retrieve-grant-request"
+            },
+            {
+              "type": "item",
+              "title": "grant",
+              "uri": "/reference/Grants.v2.yaml/components/schemas/Grant",
+              "slug": "reference/grants/schemas/grant"
+            },
+            {
+              "type": "item",
+              "title": "Event: grant.status.updated",
+              "uri": "/reference/Grants.v2.yaml/components/schemas/grant.status.updated",
+              "slug": "reference/grants/schemas/grant-status-updated"
+            }
+          ],
+          "itemsType": "model"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "title": "Payments",
+      "uri": "/reference/Payments.v2.yaml",
+      "slug": "reference/payments",
+      "items": [
+        {
+          "type": "item",
+          "title": "List Payments",
+          "uri": "/reference/Payments.v2.yaml/paths/~1v2~1payments/get",
+          "slug": "reference/payments/operations/list-v-2-payments"
+        },
+        {
+          "type": "item",
+          "title": "Auth",
+          "uri": "/reference/Payments.v2.yaml/paths/~1v2~1payments~1auth/post",
+          "slug": "reference/payments/operations/create-a-v-2-payment-auth"
+        },
+        {
+          "type": "item",
+          "title": "Capture Full Payment",
+          "uri": "/reference/Payments.v2.yaml/paths/~1v2~1payments~1capture/post",
+          "slug": "reference/payments/operations/create-a-v-2-payment-capture"
+        },
+        {
+          "type": "item",
+          "title": "Get Payment By Order ID",
+          "uri": "/reference/Payments.v2.yaml/paths/~1v2~1payments~1{orderId}/get",
+          "slug": "reference/payments/operations/get-a-v-2-payment"
+        },
+        {
+          "type": "item",
+          "title": "Update Payment by Order ID",
+          "uri": "/reference/Payments.v2.yaml/paths/~1v2~1payments~1{orderId}/put",
+          "slug": "reference/payments/operations/update-a-v-2-payment"
+        },
+        {
+          "type": "item",
+          "title": "Capture Payment",
+          "uri": "/reference/Payments.v2.yaml/paths/~1v2~1payments~1{orderId}~1capture/post",
+          "slug": "reference/payments/operations/create-a-v-2-payment-capture-1"
+        },
+        {
+          "type": "item",
+          "title": "Update Shipping Courier",
+          "uri": "/reference/Payments.v2.yaml/paths/~1v2~1payments~1{orderId}~1courier/put",
+          "slug": "reference/payments/operations/update-a-v-2-payment-courier"
+        },
+        {
+          "type": "item",
+          "title": "Create Refund",
+          "uri": "/reference/Payments.v2.yaml/paths/~1v2~1payments~1{orderId}~1refund/post",
+          "slug": "reference/payments/operations/create-a-v-2-payment-refund"
+        },
+        {
+          "type": "item",
+          "title": "Void",
+          "uri": "/reference/Payments.v2.yaml/paths/~1v2~1payments~1{orderId}~1void/post",
+          "slug": "reference/payments/operations/create-a-v-2-payment-void"
+        },
+        {
+          "type": "item",
+          "title": "Get Payment By Token",
+          "uri": "/reference/Payments.v2.yaml/paths/~1v2~1payments~1token:{token}/get",
+          "slug": "reference/payments/operations/get-a-v-2-payment-token-token"
+        },
+        {
+          "type": "item",
+          "title": "Reverse Payment By Token",
+          "uri": "/reference/Payments.v2.yaml/paths/~1v2~1payments~1token:{token}~1reversal/post",
+          "slug": "reference/payments/operations/create-a-v-2-payment-token-token-reversal"
+        },
+        {
+          "type": "item",
+          "title": "Void By Checkout Token",
+          "uri": "/reference/Payments.v2.yaml/paths/~1v2~1payments~1token:{token}~1void/post",
+          "slug": "reference/payments/operations/create-a-v-2-payment-token-token-void"
+        },
+        {
+          "type": "group",
+          "title": "Schemas",
+          "items": [
+            {
+              "type": "item",
+              "title": "AuthorizePayment",
+              "uri": "/reference/Payments.v2.yaml/components/schemas/AuthorizePayment",
+              "slug": "reference/payments/schemas/authorize-payment"
+            },
+            {
+              "type": "item",
+              "title": "CapturePayment",
+              "uri": "/reference/Payments.v2.yaml/components/schemas/CapturePayment",
+              "slug": "reference/payments/schemas/capture-payment"
+            }
+          ],
+          "itemsType": "model"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "title": "Service Status",
+      "uri": "/reference/Service-Status.v2.yaml",
+      "slug": "reference/service-status",
+      "items": [
+        {
+          "type": "item",
+          "title": "Ping",
+          "uri": "/reference/Service-Status.v2.yaml/paths/~1ping/get",
+          "slug": "reference/service-status/operations/get-a-ping"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "title": "Data Models",
+      "items": [
+        {
+          "type": "item",
+          "title": "Contact Object",
+          "uri": "docs/ONLINE-API/Contact-object.md",
+          "slug": "reference/data-models/contact-object"
+        },
+        {
+          "type": "item",
+          "title": "Consumer Object",
+          "uri": "docs/ONLINE-API/Consumer-object.md",
+          "slug": "reference/data-models/consumer-object"
+        },
+        {
+          "type": "item",
+          "title": "Discount Object",
+          "uri": "docs/ONLINE-API/Discount-object.md",
+          "slug": "reference/data-models/discount-object"
+        },
+        {
+          "type": "item",
+          "title": "Item Object",
+          "uri": "docs/ONLINE-API/Item-object.md",
+          "slug": "reference/data-models/item-object"
+        },
+        {
+          "type": "item",
+          "title": "Money Object",
+          "uri": "docs/ONLINE-API/Money-object.md",
+          "slug": "reference/data-models/money-object"
+        },
+        {
+          "type": "item",
+          "title": "Order Details Object",
+          "uri": "docs/ONLINE-API/Order-Details-object.md",
+          "slug": "reference/data-models/order-details-object"
+        },
+        {
+          "type": "item",
+          "title": "Payment Object",
+          "uri": "docs/ONLINE-API/Payment-object.md",
+          "slug": "reference/data-models/payment-object"
+        },
+        {
+          "type": "item",
+          "title": "Payment Event Object",
+          "uri": "docs/ONLINE-API/Payment-Event-object.md",
+          "slug": "reference/data-models/Payment-event-object"
+        },
+        {
+          "type": "item",
+          "title": "Refund Object",
+          "uri": "docs/ONLINE-API/Refund-object.md",
+          "slug": "reference/data-models/refund-object"
+        },
+        {
+          "type": "item",
+          "title": "Shipping Courier Object",
+          "uri": "docs/ONLINE-API/Shipping-Courier-object.md",
+          "slug": "reference/data-models/shipping-courier-object"
+        }
+      ]
+    }
+  ],
+  "version": 2
+}

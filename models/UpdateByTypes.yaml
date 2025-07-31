@@ -1,0 +1,7 @@
+title: UpdateByTypes
+x-stoplight:
+  id: cav2g1gyrri94
+enum:
+  - PortalUi
+  - EMS
+x-internal: false

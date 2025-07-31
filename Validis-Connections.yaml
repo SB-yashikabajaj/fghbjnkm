@@ -1,0 +1,2482 @@
+openapi: 3.0.1
+x-stoplight:
+  id: u6xgq26s1lyz8
+info:
+  version: '1.0'
+  title: Connections API
+  description: |-
+    Easily integrate your applications with a variety of accounting packages using the Validis API's Connections category. Discover the extensive capabilities within this category:
+
+    * **Access to Connectors:** Seamlessly connect to popular accounting packages, including Sage, Xero, QuickBooks, and more. Access their data securely to enhance your financial applications.
+    * **Uploads Management (CRUD):** Take full control of your data uploads with Create, Read, Update, and Delete (CRUD) functionalities. Effortlessly manage your connectors through intuitive APIs, streamlining your financial decision-making processes.
+
+    The Connections API category empowers you to effortlessly bridge the gap between your applications, and accounting packages. Whether you're seeking to access financial data from trusted sources or manage your uploads seamlessly, these APIs provide the tools you need to optimize your financial workflows.
+  contact:
+    name: API Support
+    url: 'https://support.validis.com/'
+    email: support@validis.com
+  license:
+    url: 'https://www.apache.org/licenses/LICENSE-2.0.html'
+    name: Apache 2.0
+  termsOfService: 'https://www.validis.com/privacy-policy/'
+servers:
+  - url: 'https://api.sandbox.validis.com'
+    description: Sandbox Server
+paths:
+  '/v1/clients/{clientId}/connectors':
+    get:
+      tags:
+        - Connectors
+      summary: Get connectors
+      description: This endpoint shows the available accounting packages for extraction and their applicable scope.
+      operationId: connectors
+      parameters:
+        - $ref: '#/components/parameters/clientId'
+      responses:
+        '200':
+          description: Successfully retrieved connectors.
+          content:
+            application/vnd.api+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Get-Connector-Response'
+              examples:
+                Example 1:
+                  $ref: '#/components/examples/Get-Connectors-Response'
+        '400':
+          $ref: '#/components/responses/400-BadRequest'
+        '401':
+          $ref: '#/components/responses/401-Unauthorized'
+        '403':
+          $ref: '#/components/responses/403-Forbidden'
+        '404':
+          $ref: '#/components/responses/404-NotFound'
+        '406':
+          $ref: '#/components/responses/406-NotAcceptableResponse'
+        '429':
+          $ref: '#/components/responses/429-TooManyRequests'
+        '500':
+          $ref: '#/components/responses/500-UnknownInternalServerError'
+      security:
+        - Authorization: []
+          ApiKey: []
+      x-stoplight:
+        id: 06tc1semnz9wk
+  '/v2/engagements/{engagementId}/connectors/{connectorName}/upload':
+    post:
+      tags:
+        - Uploads
+      summary: Perform an upload
+      description: Allows you to start an upload for a specified engagement and specified connector (as long as the specified connector is enabled for the Client). If it is an offline connector you will be directed to a URL to download the Validis Upload app. If it is an online connector you will be given the details to be able to connect to the online package.
+      operationId: upload-provisioning
+      parameters:
+        - name: redirectUrl
+          in: query
+          schema:
+            type: string
+            example: www.redirect-url/upload/validis.com
+          description: 'URL where the client would be redirected to after an online upload is completed. Optional parameter on the API, however it is mandatory if the connector to be uploaded is an online connector. The connector type is returned as part of the “Get Connectors” endpoint as “type”.    0 - Online connector, 1 - Offline connector'
+        - name: uploadType
+          in: query
+          schema:
+            enum:
+              - AUTOMATIC
+              - MANUAL
+              - REPLAYED
+              - REFRESH
+            default: MANUAL
+          description: 'One of two options will be shown: DOWNLOAD – This is for offline connectors and will show a URL that will download the vClient connector. REDIRECT – This is for online connectors that require authentication and will also provide a URL to be redirected to authenticate the accounting package.'
+        - name: uploadScope
+          in: query
+          schema:
+            type: string
+            default: Full
+          description: 'Choose whether to upload all the data or just the receivables and payables. Use ‘Full’ for all, ‘Collateral’ for receivables and payables.'
+        - name: companyUri
+          in: query
+          schema:
+            type: string
+            example: /company1
+          description: Company URL.
+        - $ref: '#/components/parameters/engagementId'
+        - $ref: '#/components/parameters/connectorName'
+      responses:
+        '200':
+          description: Successfully performed an upload.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Data-Share-Client'
+              examples:
+                Example 1:
+                  $ref: '#/components/examples/Data-Share-Client'
+        '400':
+          $ref: '#/components/responses/400-BadRequest'
+        '401':
+          $ref: '#/components/responses/401-Unauthorized'
+        '403':
+          $ref: '#/components/responses/403-Forbidden'
+        '404':
+          $ref: '#/components/responses/404-NotFound'
+        '406':
+          $ref: '#/components/responses/406-NotAcceptableResponse'
+        '429':
+          $ref: '#/components/responses/429-TooManyRequests'
+        '500':
+          $ref: '#/components/responses/500-UnknownInternalServerError'
+      security:
+        - Authorization: []
+          ApiKey: []
+      x-stoplight:
+        id: 49f93zaableyu
+  '/v2/engagements/{engagementId}/smart-uploads':
+    post:
+      tags:
+        - Uploads
+      summary: '[BETA] Perform a smart upload'
+      description: |
+        This endpoint is currently in **Beta**. It is subject to changes and improvements based on feedback.
+
+        Enables smart uploads for an engagement by accepting files exported from an accounting system. The smart upload supports the following:
+
+        - **File Formats:** CSV, XLS, XLSX only.
+
+        - **File Size:** Maximum of 100MB per file.
+
+        - **File Naming:** File names must be unique per upload; duplicates are not allowed.
+      operationId: smart-uploads
+      x-beta: true
+      parameters:
+        - $ref: '#/components/parameters/engagementId'
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              title: Smart upload request
+              required:
+                - connectorName
+                - reports
+                - uploadScopes
+              properties:
+                uploadScopes:
+                  type: array
+                  items:
+                    type: string
+                    enum:
+                      - GL_TB
+                      - AR_AP_OITEMS
+                  description: |
+                    The type of data extraction required.
+                    - **GL_TB**: Requires both files general ledger (GL) and trial balance (TB) report types.
+                    - **AR_AP_OITEMS**: Requires both files accounts receivables (AR_OITEMS) and accounts payables (AP_OITEMS) open items report types.
+                  example:
+                    - GL_TB
+                    - AR_AP_OITEMS
+                reports:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                      - reportType
+                      - file
+                    properties:
+                      reportType:
+                        type: string
+                        description: |
+                          The type of document to be uploaded.
+
+                          - If uploadScopes is **GL_TB**: you are required to upload files for both General Ledger (GL) and Trial Balance (TB) report types.
+
+                          - If uploadScopes is **GL_TB + AR_AP_OITEMS**: you are required to upload files for both General Ledger (GL), Trial Balance (TB), Accounts Receivables (AR_OITEMS) and Accounts Payables (AP_OITEMS) open items report types.
+
+                          - If uploadScopes is **AR_AP_OITEMS**: you are required to upload **only** files for both Accounts Receivables (AR_OITEMS) and Accounts Payables (AP_OITEMS) open items report types.
+                        enum:
+                          - GL
+                          - TB
+                          - AP_OITEMS
+                          - AR_OITEMS
+                      file:
+                        type: string
+                        format: binary
+                        description: 'The binary attachment of the file to be uploaded (.xls, .csv, .xlsx only). File name should not be more than 500 characters.'
+                connectorName:
+                  type: string
+                  example: quickbooks-online
+                  description: 'The name of the smart connector to be uploaded. If the connector is not found in the existing list, please provide the name of the accounting package you are using.'
+                financialYearEndDate:
+                  type: string
+                  format: date
+                  description: The financial year date for the data being uploaded. **Only applicable for "GL_TB" upload scope.** Date should be in YYYY-MM-DD format.
+                  example: '2023-12-31'
+                reportingDate:
+                  type: string
+                  format: date
+                  description: The reporting date for the data being uploaded. **This is required if upload scope is "AR_AP_OITEMS".** Date should be in YYYY-MM-DD format.
+                  example: '2023-12-25'
+                baseCurrency:
+                  type: string
+                  format: currency
+                  description: The base currency of the report. **This is required if upload scope is "AR_AP_OITEMS".**
+                  example: USD
+            encoding:
+              file:
+                contentType: 'application/vnd.ms-excel, text/csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            examples:
+              Example 1:
+                $ref: '#/components/examples/Smart-Upload-Request-Listed-Connector'
+              Example 2:
+                $ref: '#/components/examples/Smart-Upload-Request-UnListed-Connector'
+      responses:
+        '202':
+          description: Accepted.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Smart-Upload-Response'
+              examples:
+                Example 1:
+                  $ref: '#/components/examples/Smart-Upload-Response'
+        '400':
+          $ref: '#/components/responses/400-BadRequest'
+        '401':
+          $ref: '#/components/responses/401-Unauthorized'
+        '403':
+          $ref: '#/components/responses/403-Forbidden'
+        '404':
+          $ref: '#/components/responses/404-NotFound'
+        '406':
+          $ref: '#/components/responses/406-NotAcceptableResponse'
+        '413':
+          $ref: '#/components/responses/413-MaxFileExceededException'
+        '415':
+          $ref: '#/components/responses/415-UnsupportedMediaType'
+        '429':
+          $ref: '#/components/responses/429-TooManyRequests'
+        '500':
+          $ref: '#/components/responses/500-UnknownInternalServerError'
+      security:
+        - Authorization: []
+          ApiKey: []
+      x-stoplight:
+        id: ai6lrdnn0c446
+  '/v2/engagements/{engagementId}/smart-uploads/{uploadId}':
+    get:
+      tags:
+        - Uploads
+      summary: '[BETA] Get smart upload details'
+      description: |
+        This endpoint is currently in **Beta**. It is subject to changes and improvements based on feedback.
+
+        Retrieves details of a smart upload associated with a given engagement.  
+        This includes the upload status, uploaded file names, and any issues encountered during the upload process.
+      operationId: get-smart-uploads-details
+      parameters:
+        - $ref: '#/components/parameters/engagementId'
+        - $ref: '#/components/parameters/uploadId'
+      responses:
+        '200':
+          description: Successfully retrieved smart upload details.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Smart-Upload-Response'
+              examples:
+                Example 1:
+                  $ref: '#/components/examples/Smart-Upload-Details-Response'
+        '400':
+          $ref: '#/components/responses/400-BadRequest'
+        '401':
+          $ref: '#/components/responses/401-Unauthorized'
+        '403':
+          $ref: '#/components/responses/403-Forbidden'
+        '404':
+          $ref: '#/components/responses/404-NotFound'
+        '406':
+          $ref: '#/components/responses/406-NotAcceptableResponse'
+        '413':
+          $ref: '#/components/responses/413-MaxFileExceededException'
+        '429':
+          $ref: '#/components/responses/429-TooManyRequests'
+        '500':
+          $ref: '#/components/responses/500-UnknownInternalServerError'
+      security:
+        - Authorization: []
+          ApiKey: []
+      x-stoplight:
+        id: tl7foiu3ecx7n
+  '/v2/engagements/{engagementId}/smart-uploads/{uploadId}/files':
+    get:
+      tags:
+        - Uploads
+      summary: '[BETA] Get smart upload original files'
+      description: |
+        This endpoint is currently in **Beta**. It is subject to changes and improvements based on feedback.
+
+        Retrieves the original files uploaded as part of a smart upload for a given engagement. The response will be a ZIP file containing all uploaded documents.
+      operationId: get-smart-uploads-files
+      parameters:
+        - $ref: '#/components/parameters/engagementId'
+        - $ref: '#/components/parameters/uploadId'
+      responses:
+        '200':
+          description: Successfully retrieved original files as a ZIP archive.
+          content:
+            application/zip:
+              schema:
+                type: string
+                format: binary
+              examples:
+                Example1:
+                  description: Sample ZIP file containing smart upload raw files.
+                  externalValue: 'https://validis.com/46c5fa5b-6880-4fdb-8d5b-e60b40c48690.zip'
+        '400':
+          $ref: '#/components/responses/400-BadRequest'
+        '401':
+          $ref: '#/components/responses/401-Unauthorized'
+        '403':
+          $ref: '#/components/responses/403-Forbidden'
+        '404':
+          $ref: '#/components/responses/404-NotFound'
+        '406':
+          $ref: '#/components/responses/406-NotAcceptableResponse'
+        '413':
+          $ref: '#/components/responses/413-MaxFileExceededException'
+        '429':
+          $ref: '#/components/responses/429-TooManyRequests'
+        '500':
+          $ref: '#/components/responses/500-UnknownInternalServerError'
+      security:
+        - Authorization: []
+          ApiKey: []
+      x-stoplight:
+        id: zizy5mcjna0bg
+  '/v1/engagements/{engagementId}/connectors/{connectorName}/refresh':
+    post:
+      tags:
+        - Uploads
+      summary: Sync connection
+      description: Allows the user to request a new upload without the user being present if the engagement has data refresh enabled and the specified connector is enabled for the client.
+      operationId: upload-refresh
+      parameters:
+        - name: redirectUrl
+          in: query
+          schema:
+            type: string
+            example: www.redirect-url/upload/validis.com
+          description: 'When the type is REDIRECT, this will be populated with the URL that customer will need to authenticate the sharing of data with Validis.'
+        - name: mandatoryRedirectUrl
+          in: query
+          schema:
+            type: boolean
+            default: false
+          description: 'When the type is REDIRECT, this will be populated with the URL that customer will need to authenticate the sharing of data with Validis.'
+        - name: uploadScope
+          in: query
+          schema:
+            type: string
+            default: Full
+          description: 'Choose whether to upload all the data or just the receivables and payables. Use ‘Full’ for all, ‘Collateral’ for receivables and payables.'
+        - name: companyUri
+          in: query
+          schema:
+            type: string
+            example: /company1
+          description: Company URL.
+        - $ref: '#/components/parameters/engagementId'
+        - $ref: '#/components/parameters/connectorName'
+      responses:
+        '200':
+          description: Successfully refreshed the upload.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Data-Share-Client'
+              examples:
+                Example 1:
+                  $ref: '#/components/examples/Data-Share-Client'
+        '400':
+          $ref: '#/components/responses/400-BadRequest'
+        '401':
+          $ref: '#/components/responses/401-Unauthorized'
+        '403':
+          $ref: '#/components/responses/403-Forbidden'
+        '404':
+          $ref: '#/components/responses/404-NotFound'
+        '406':
+          $ref: '#/components/responses/406-NotAcceptableResponse'
+        '429':
+          $ref: '#/components/responses/429-TooManyRequests'
+        '500':
+          $ref: '#/components/responses/500-UnknownInternalServerError'
+      security:
+        - Authorization: []
+          ApiKey: []
+      x-stoplight:
+        id: 7rroaoasswpc6
+  '/v1/clients/{clientId}/engagements/{engagementId}/uploads':
+    delete:
+      tags:
+        - Uploads
+      summary: Delete upload
+      description: Delete all engagement's uploads.
+      operationId: delete-upload-by-engagement
+      parameters:
+        - $ref: '#/components/parameters/clientId'
+        - $ref: '#/components/parameters/engagementId'
+      responses:
+        '200':
+          description: Successfully deleted engagement's uploads.
+        '400':
+          $ref: '#/components/responses/400-BadRequest'
+        '401':
+          $ref: '#/components/responses/401-Unauthorized'
+        '403':
+          $ref: '#/components/responses/403-Forbidden'
+        '404':
+          $ref: '#/components/responses/404-NotFound'
+        '406':
+          $ref: '#/components/responses/406-NotAcceptableResponse'
+        '429':
+          $ref: '#/components/responses/429-TooManyRequests'
+        '500':
+          $ref: '#/components/responses/500-UnknownInternalServerError'
+      security:
+        - Authorization: []
+          ApiKey: []
+      x-stoplight:
+        id: 9aa88dy21ss0x
+  '/v1/workflows/engagements/{engagementId}/uploads/{uploadId}':
+    get:
+      tags:
+        - Uploads
+      summary: Audit uploads
+      description: To retrieve audit uploads for an engagement.
+      operationId: upload-audit
+      parameters:
+        - $ref: '#/components/parameters/engagementId'
+        - $ref: '#/components/parameters/uploadId'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Get-Workflow-Upload-Response'
+              examples:
+                Example 1:
+                  $ref: '#/components/examples/Get-Workflow-Upload-Response'
+        '400':
+          $ref: '#/components/responses/400-BadRequest'
+        '401':
+          $ref: '#/components/responses/401-Unauthorized'
+        '403':
+          $ref: '#/components/responses/403-Forbidden'
+        '404':
+          description: The upload is missing or nonexistent.
+        '406':
+          $ref: '#/components/responses/406-NotAcceptableResponse'
+        '429':
+          $ref: '#/components/responses/429-TooManyRequests'
+        '500':
+          $ref: '#/components/responses/500-UnknownInternalServerError'
+      security:
+        - Authorization: []
+          ApiKey: []
+      x-stoplight:
+        id: ub1gz0gx0cb5k
+  '/v1/clients/{clientId}/uploads':
+    get:
+      tags:
+        - Uploads
+      summary: List all client uploads
+      description: Allows you to retrieve details about a client’s uploads. Allows you to retrieve the uploadID that may be required for subsequent API requests.
+      operationId: uploads
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/size'
+        - name: orderBy
+          in: query
+          description: 'Comma separated list of fields to use to sort the response (in order, prefixed by - for descending sorting).'
+          schema:
+            type: array
+            items:
+              type: string
+            example:
+              - contactId
+              - smeId
+        - name: engagementIds
+          in: query
+          description: Comma separated list of engagement ids to filter uploads assigned to them.
+          schema:
+            type: array
+            items:
+              type: integer
+            example:
+              - 4267
+              - 5536
+        - name: smeIds
+          in: query
+          description: Deprecated - Comma separated list of sme ids to filter uploads.
+          schema:
+            type: array
+            items:
+              type: integer
+            example:
+              - 8571
+              - 8827
+        - name: fromDate
+          in: query
+          description: ISO date of creation date. Works in pair with `toDate`.
+          schema:
+            type: string
+            format: date-time
+            example: '2021-01-31T03:12:18.603'
+        - name: toDate
+          in: query
+          description: ISO date of creation date. Works in pair with `fromDate`.
+          schema:
+            type: string
+            format: date-time
+            example: '2023-01-31T03:12:18.603'
+        - $ref: '#/components/parameters/clientId'
+      responses:
+        '200':
+          description: Successfully retrieved client's uploads.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Get-Client-Uploads-Response'
+              examples:
+                Example 1:
+                  $ref: '#/components/examples/Get-Client-Uploads-Response'
+        '400':
+          $ref: '#/components/responses/400-BadRequest'
+        '401':
+          $ref: '#/components/responses/401-Unauthorized'
+        '403':
+          $ref: '#/components/responses/403-Forbidden'
+        '404':
+          $ref: '#/components/responses/404-NotFound'
+        '406':
+          $ref: '#/components/responses/406-NotAcceptableResponse'
+        '429':
+          $ref: '#/components/responses/429-TooManyRequests'
+        '500':
+          $ref: '#/components/responses/500-UnknownInternalServerError'
+      security:
+        - Authorization: []
+          ApiKey: []
+      x-stoplight:
+        id: 2v8dj2f0u9bqe
+  '/v1/uploads/{uploadId}':
+    get:
+      tags:
+        - Uploads
+      summary: Get upload details
+      description: Get details for a specific upload.
+      operationId: upload-details
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/size'
+        - name: engagementIds
+          in: query
+          description: Comma separated list of engagement ids to filter uploads.
+          schema:
+            type: array
+            items:
+              type: integer
+            example:
+              - 4267
+              - 5536
+        - $ref: '#/components/parameters/uploadId'
+      responses:
+        '200':
+          description: Successfully retrieved upload details.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Get-Upload-Response'
+              examples:
+                Example 1:
+                  $ref: '#/components/examples/Get-Upload-Response'
+        '400':
+          $ref: '#/components/responses/400-BadRequest'
+        '401':
+          $ref: '#/components/responses/401-Unauthorized'
+        '403':
+          $ref: '#/components/responses/403-Forbidden'
+        '404':
+          $ref: '#/components/responses/404-NotFound'
+        '406':
+          $ref: '#/components/responses/406-NotAcceptableResponse'
+        '429':
+          $ref: '#/components/responses/429-TooManyRequests'
+        '500':
+          $ref: '#/components/responses/500-UnknownInternalServerError'
+      security:
+        - Authorization: []
+          ApiKey: []
+      x-stoplight:
+        id: 0vqy8gomfm6b3
+  '/v1/clients/{clientId}/lastUploads':
+    get:
+      tags:
+        - Uploads
+      summary: List latest uploads
+      description: List only latest successful upload by engagement for the client.
+      operationId: latest-uploads
+      parameters:
+        - name: engagementIds
+          in: query
+          description: Comma separated list of engagement ids to filter uploads.
+          required: true
+          schema:
+            type: array
+            items:
+              type: integer
+            example:
+              - 4267
+              - 5536
+        - $ref: '#/components/parameters/clientId'
+      responses:
+        '200':
+          description: Successfully retrieved client's latest uploads.
+          content:
+            application/vnd.api+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Get-Client-Last-Upload-Response'
+              examples:
+                Example 1:
+                  $ref: '#/components/examples/Get-Client-Last-Uploads-Response'
+        '400':
+          $ref: '#/components/responses/400-BadRequest'
+        '401':
+          $ref: '#/components/responses/401-Unauthorized'
+        '403':
+          $ref: '#/components/responses/403-Forbidden'
+        '404':
+          $ref: '#/components/responses/404-NotFound'
+        '406':
+          $ref: '#/components/responses/406-NotAcceptableResponse'
+        '429':
+          $ref: '#/components/responses/429-TooManyRequests'
+        '500':
+          $ref: '#/components/responses/500-UnknownInternalServerError'
+      security:
+        - Authorization: []
+          ApiKey: []
+      x-stoplight:
+        id: tl0oaboms9yhj
+  '/v1/clients/{clientId}/engagements/{engagementId}/companies':
+    get:
+      tags:
+        - Uploads
+      summary: Get MYOB companies
+      description: Retrieve engagement's affiliated companies.
+      operationId: return-myob-companies
+      parameters:
+        - $ref: '#/components/parameters/clientId'
+        - $ref: '#/components/parameters/engagementId'
+      responses:
+        '200':
+          description: Successfully retrieved engagement's affiliated companies.
+          content:
+            application/vnd.api+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Get-Myob-Company-Response'
+              examples:
+                Example 1:
+                  $ref: '#/components/examples/Get-Myob-Companies-Response'
+        '400':
+          $ref: '#/components/responses/400-BadRequest'
+        '401':
+          $ref: '#/components/responses/401-Unauthorized'
+        '403':
+          $ref: '#/components/responses/403-Forbidden'
+        '404':
+          $ref: '#/components/responses/404-NotFound'
+        '406':
+          $ref: '#/components/responses/406-NotAcceptableResponse'
+        '429':
+          $ref: '#/components/responses/429-TooManyRequests'
+        '500':
+          $ref: '#/components/responses/500-UnknownInternalServerError'
+      security:
+        - Authorization: []
+          ApiKey: []
+      x-stoplight:
+        id: z5m16ykhswbf1
+    post:
+      tags:
+        - Uploads
+      summary: Create MYOB companies
+      description: Create an affiliated company for the engagement.
+      operationId: save-myob-companies
+      parameters:
+        - $ref: '#/components/parameters/clientId'
+        - $ref: '#/components/parameters/engagementId'
+      responses:
+        '200':
+          description: Successfully created a new company.
+          content:
+            application/vnd.api+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Create-Myob-Company-Response'
+              examples:
+                Example 1:
+                  $ref: '#/components/examples/Create-Myob-Companies-Response'
+        '400':
+          $ref: '#/components/responses/400-BadRequest'
+        '401':
+          $ref: '#/components/responses/401-Unauthorized'
+        '403':
+          $ref: '#/components/responses/403-Forbidden'
+        '404':
+          $ref: '#/components/responses/404-NotFound'
+        '406':
+          $ref: '#/components/responses/406-NotAcceptableResponse'
+        '429':
+          $ref: '#/components/responses/429-TooManyRequests'
+        '500':
+          $ref: '#/components/responses/500-UnknownInternalServerError'
+      security:
+        - Authorization: []
+          ApiKey: []
+      x-stoplight:
+        id: 6fpdoqlmuq5rv
+  '/v2/extract-guidance/{connectorName}/{scope}':
+    get:
+      tags:
+        - Connectors
+      summary: '[BETA] Get extract guidance content'
+      description: 'This endpoint returns HTML-formatted guidance content per accounting package and scope, used within the client upload journey to assist users with extracting data from their accounting software.'
+      operationId: get-extract-guidance
+      parameters:
+        - $ref: '#/components/parameters/connectorName'
+        - $ref: '#/components/parameters/scope'
+      responses:
+        '200':
+          description: Successfully retrieved extract guidance content
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Extract-Guidance-Content-Response'
+              examples:
+                Example 1:
+                  $ref: '#/components/examples/Extract-Guidance-Content-Response'
+        '400':
+          $ref: '#/components/responses/400-BadRequest'
+        '401':
+          $ref: '#/components/responses/401-Unauthorized'
+        '403':
+          $ref: '#/components/responses/403-Forbidden'
+        '404':
+          $ref: '#/components/responses/404-NotFound'
+        '406':
+          $ref: '#/components/responses/406-NotAcceptableResponse'
+        '429':
+          $ref: '#/components/responses/429-TooManyRequests'
+        '500':
+          $ref: '#/components/responses/500-UnknownInternalServerError'
+      security:
+        - Authorization: []
+          ApiKey: []
+      x-stoplight:
+        id: kt5xd460pjp7z
+tags:
+  - name: Connectors
+    description: Retrieve available accounting packages.
+  - name: Uploads
+    description: Manage and perform uploads.
+components:
+  parameters:
+    page:
+      name: page
+      in: query
+      description: 'Page index, starting at 0.'
+      required: false
+      schema:
+        type: number
+        default: 0
+    size:
+      name: size
+      in: query
+      description: 'Number of uploads by page, default is 20.'
+      required: false
+      schema:
+        type: number
+        default: 20
+    clientId:
+      name: clientId
+      in: path
+      description: 'The unique identifier(UUID) of your Validis system, as provided by the Authentication endpoint.'
+      required: true
+      schema:
+        type: string
+        format: uuid
+        example: 46c5fa5b-6880-4fdb-8d5b-e60b40c48690
+    engagementId:
+      name: engagementId
+      in: path
+      description: The unique identifier for the Engagement.
+      required: true
+      schema:
+        type: integer
+        example: 4267
+    connectorName:
+      name: connectorName
+      in: path
+      description: Name for the connector.
+      required: true
+      schema:
+        type: string
+        example: quickbooks-online
+    uploadId:
+      name: uploadId
+      in: path
+      description: Upload unique identifier.
+      required: true
+      schema:
+        type: string
+        format: uuid
+        example: 46c5fa5b-6880-4fdb-8d5b-e60b40c48690
+    scope:
+      name: scope
+      in: path
+      description: Upload scope identifier
+      required: true
+      schema:
+        type: string
+        enum:
+          - GL_TB
+          - AR_AP_DETAILED
+          - AR_AP_OITEMS
+        example: GL_TB
+  securitySchemes:
+    ApiKey:
+      type: apiKey
+      description: |
+        API Key fetched from Validis Admin. Example:- 0bcbf42ef97c41234515921fec79ab9
+      name: Ocp-Apim-Subscription-Key
+      in: header
+    Authorization:
+      type: http
+      description: |
+        OAuth2 JWT access token to authorise requests. Example:- 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNT'
+      scheme: bearer
+      bearerFormat: JWT
+  responses:
+    400-BadRequest:
+      description: Bad or malformed request.
+      content:
+        application/vnd.api+json:
+          schema:
+            type: object
+            properties:
+              timestamp:
+                type: string
+                format: date-time
+                description: The timestamp when the request was processed.
+              status:
+                type: integer
+                description: The HTTP status code.
+              exception:
+                type: string
+                description: Detailed exception that had been thrown.
+              path:
+                type: string
+                description: URI to which the request was sent.
+              message:
+                type: string
+                description: Detailed error message.
+          examples:
+            Example 1:
+              value:
+                timestamp: '2023-06-06T13:13:13.009+0000'
+                status: 400
+                exception: ''
+                path: /v1/path
+                message: Invalid file extension provided.
+            Example 2:
+              value:
+                timestamp: '2023-06-06T13:13:13.009+0000'
+                status: 400
+                exception: ''
+                path: /v1/path
+                message: Bad Request.
+        text/plain:
+          schema:
+            type: string
+          examples:
+            Example 1:
+              value: Failed to convert value of type 'java.lang.String' to required type 'java.util.UUID'
+            Example 2:
+              value: Invalid file extension provided
+    401-Unauthorized:
+      description: Error code for a missing or invalid authentication token.
+      content:
+        text/plain:
+          schema:
+            type: string
+            example: Unauthorized. Access token is missing or invalid.
+          examples:
+            Example 1:
+              value: Unauthorized. Access token is missing or invalid.
+    403-Forbidden:
+      description: Forbidden or insufficient permissions to access the resource.
+      content:
+        application/vnd.api+json:
+          schema:
+            type: object
+            properties:
+              timestamp:
+                type: string
+                description: The timestamp when the request was processed.
+              status:
+                type: integer
+                description: The HTTP status code.
+              exception:
+                type: string
+                description: Detailed exception that had been thrown.
+              path:
+                type: string
+                description: URI to which the request was sent.
+              message:
+                type: string
+                description: Detailed error message.
+          examples:
+            Example 1:
+              value:
+                timestamp: '2023-09-26T08:18:31.963+0000'
+                status: 403
+                exception: AccessDeniedException
+                path: /v1/clients/7ea8d6e3-9a77-410b-b30b-4ecbd4f591a8/connectors
+                message: Access is denied
+    404-NotFound:
+      description: The targeted resource is missing or nonexistent.
+      content:
+        application/vnd.api+json:
+          schema:
+            type: object
+            properties:
+              timestamp:
+                type: integer
+                description: The timestamp when the request was processes.
+              status:
+                type: integer
+                description: The HTTP status code.
+              exception:
+                type: string
+                description: Detailed exception that had been thrown.
+              path:
+                type: string
+                description: URI to which the request was sent.
+              message:
+                type: string
+                description: Detailed error message.
+          examples:
+            Example 1:
+              value:
+                timestamp: 1691582960984
+                status: 404
+                exception: NotFoundException
+                path: /v1/path
+                message: No Client Id found abc2ac50-4b72-463e-8b91-085308934f76
+            Example 2:
+              value:
+                timestamp: 1691582960984
+                status: 404
+                exception: NotFoundException
+                path: /v1/path
+                message: Wrong connector id provided
+    406-NotAcceptableResponse:
+      description: Error code provided when an HTTP Accept header can’t be satisfied.
+    413-MaxFileExceededException:
+      description: Content Too Large
+      content:
+        application/vnd.api+json:
+          schema:
+            type: object
+            properties:
+              timestamp:
+                type: integer
+                description: The timestamp when the request was processed.
+              status:
+                type: integer
+                description: HTTP status code.
+              exception:
+                type: string
+                description: Detailed exception that had been thrown.
+              path:
+                type: string
+                description: URI to which the request was sent.
+              message:
+                type: string
+                description: Detailed error message.
+          examples:
+            Example 1:
+              value:
+                timestamp: 1691582960984
+                status: 413
+                exception: Request Entity Too Large
+                path: /v1/path
+                message: Uploaded file cannot exceed 100 MB in size
+    415-UnsupportedMediaType:
+      description: Unsupported Media Type
+      content:
+        application/vnd.api+json:
+          schema:
+            type: object
+            properties:
+              timestamp:
+                type: integer
+                description: The timestamp when the request was processed.
+              status:
+                type: integer
+                description: HTTP status code.
+              exception:
+                type: string
+                description: Detailed exception that had been thrown.
+              path:
+                type: string
+                description: URI to which the request was sent.
+              message:
+                type: string
+                description: Detailed error message.
+          examples:
+            Example 1:
+              value:
+                timestamp: 1691582960984
+                status: 415
+                exception: Unsupported Media Type
+                path: /v1/path
+                message: 'The content type is not supported. Please use one of the following content types - ''application/vnd.ms-excel, text/csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'''
+    429-TooManyRequests:
+      description: Too many request were made.
+      content:
+        application/vnd.api+json:
+          schema:
+            type: object
+            properties:
+              statusCode:
+                type: integer
+                description: The status code of the response.
+              message:
+                type: string
+                description: The detailed message of the error. Must contain the remaining waiting period.
+          examples:
+            Example 1:
+              value:
+                statusCode: 429
+                message: Rate limit is exceeded. Try again in 46 seconds.
+      headers:
+        Retry-After:
+          $ref: '#/components/headers/Retry-After'
+        X-RateLimit-Reset:
+          $ref: '#/components/headers/X-RateLimit-Reset'
+        X-RateLimit-Limit:
+          $ref: '#/components/headers/X-RateLimit-Limit'
+        X-RateLimit-Remaining:
+          $ref: '#/components/headers/X-RateLimit-Remaining'
+    500-UnknownInternalServerError:
+      description: Unknown internal server error has occurred.
+      content:
+        application/vnd.api+json:
+          schema:
+            type: object
+            properties:
+              exception:
+                type: string
+                description: Detailed exception that had been thrown.
+              message:
+                type: string
+                description: Detailed error message.
+              path:
+                type: string
+                description: URI to which the request was sent.
+              status:
+                type: integer
+                description: The status code of the response.
+              timestamp:
+                type: string
+                description: The timestamp when the request was processes.
+                format: date-time
+          examples:
+            Example 1:
+              value:
+                timestamp: '2023-06-06T13:13:13.009+0000'
+                status: 500
+                exception: UndeclaredThrowableException
+                path: /v1/path
+                message: A unexpected error occurred while processing the request
+  headers:
+    X-RateLimit-Limit:
+      schema:
+        type: integer
+        minimum: 60
+        maximum: 5000
+        default: 60
+      description: The maximum number of requests that are permitted before exhausting the rate limit.
+    X-RateLimit-Remaining:
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 5000
+      description: Remaining number of requests until reset.
+      required: false
+    Retry-After:
+      schema:
+        type: integer
+        minimum: 60
+        maximum: 86400
+        default: 60
+      description: Indicates how long the user agent should wait (in seconds) before making further requests.
+      required: false
+    X-RateLimit-Reset:
+      schema:
+        type: integer
+        minimum: 0
+        maximum: 86400
+      description: 'Indicates when the rate limit will be reset, in UNIX timestamp format.'
+      required: false
+  examples:
+    Get-Connectors-Response:
+      value:
+        - id: 1
+          name: sage50
+          description: Sage50 connector
+          type: 1
+          title: Sage 50 UK & Ireland
+          backupFileTypes: ''
+          isRefreshable: false
+          scopes:
+            - scopeId: 2
+              scopeName: Full
+              scopeString: vshare.engagements.full_audit_data_push
+            - scopeId: 1
+              scopeName: Collateral
+              scopeString: vshare.engagements.selective_data_push
+          uploadTypes:
+            - type: STANDARD
+            - type: SDF
+        - id: 2
+          name: quickbooks
+          description: quickbooks connector
+          type: 1
+          title: QuickBooks Desktop
+          backupFileTypes: ''
+          isRefreshable: false
+          scopes:
+            - scopeId: 2
+              scopeName: Full
+              scopeString: vshare.engagements.full_audit_data_push
+            - scopeId: 1
+              scopeName: Collateral
+              scopeString: vshare.engagements.selective_data_push
+          uploadTypes:
+            - type: STANDARD
+    Smart-Upload-Response:
+      value:
+        uploadId: 46c5fa5b-6880-4fdb-8d5b-e60b40c48690
+        uploadStatus: LOADING
+        connectorName: quickbooks-online
+        reportsSummary:
+          - reportType: GL
+            fileName: 201239712391273.csv
+          - reportType: TB
+            fileName: TrialBalance.xls
+    Smart-Upload-Details-Response:
+      value:
+        uploadId: 46c5fa5b-6880-4fdb-8d5b-e60b40c48690
+        uploadStatus: COMPLETED
+        connectorName: quickbooks-online
+        reportsSummary:
+          - reportType: GL
+            fileName: 201239712391273.csv
+          - reportType: TB
+            fileName: TrialBalance.xls
+    Smart-Upload-Request-Listed-Connector:
+      value:
+        reports:
+          - reportType: GL
+            file: BINARY FILE
+          - reportType: TB
+            file: BINARY FILE
+        connectorName: quickbooks-online
+        financialYearEndDate: '2023-12-31'
+        uploadScopes:
+          - GL_TB
+    Smart-Upload-Request-UnListed-Connector:
+      value:
+        reports:
+          - reportType: GL
+            file: BINARY FILE
+          - reportType: TB
+            file: BINARY FILE
+        connectorName: unknown-connector
+        financialYearEndDate: '2023-12-31'
+        uploadScopes:
+          - GL_TB
+    Data-Share-Client:
+      value:
+        action: DOWNLOAD
+        url: 'https://validis.com/client'
+    Get-Client-Uploads-Response:
+      value:
+        content:
+          - uploadId: e7c4267b-2c2c-4733-9deb-9d2f3f7ea885
+            status: COMPLETED
+            resellerId: 7cc0c2f5-8908-47e5-8a23-e27575d484c6
+            clientId: ef49cb3b-7716-4ede-97e3-420d67a98da4
+            smeId: 6455
+            smeName: TestManualReport
+            engagementId: 6453
+            contactId: 3103
+            creationDate: '2023-09-20T10:38:21.937+0000'
+            completionDate: '2023-09-20T10:49:08.400+0000'
+            deletionDate: null
+            connectorName: sage50
+            connectorVersion: 27.2.664.0
+            externalEngagementId: extId123456
+            active: true
+            uploadType: AUTOMATIC
+            withMemo: false
+            enableEmailNotification: true
+            dataStatus: STORED
+            uploadScope: Full
+            extractionStrategy: V2
+            yearsToExtract: -1
+            externalSmeId: smeExtId123456
+          - uploadId: 5dfcc9b5-dec3-4785-9742-be558959b1fe
+            status: COMPLETED
+            resellerId: 7cc0c2f5-8908-47e5-8a23-e27575d484c6
+            clientId: ef49cb3b-7716-4ede-97e3-420d67a98da4
+            smeId: 6436
+            smeName: AutomatedCovenants
+            engagementId: 6434
+            contactId: 3103
+            creationDate: '2023-09-12T14:23:38.100+0000'
+            completionDate: '2023-09-12T14:36:09.490+0000'
+            deletionDate: null
+            connectorName: sage50
+            connectorVersion: 27.2.664.0
+            externalEngagementId: extId123456
+            active: true
+            uploadType: AUTOMATIC
+            withMemo: false
+            enableEmailNotification: true
+            dataStatus: STORED
+            uploadScope: Full
+            extractionStrategy: V2
+            yearsToExtract: 0
+            externalSmeId: smeExtId123456
+        totalPages: 41
+        last: false
+        totalElements: 81
+        numberOfElements: 2
+        sort:
+          - direction: DESC
+            property: completionDate
+            ignoreCase: false
+            nullHandling: NATIVE
+            ascending: false
+            descending: true
+        first: true
+        size: 2
+        number: 0
+    Get-Upload-Response:
+      value:
+        active: false
+        clientId: 1502f8e4-cf6d-497c-8086-67e74e01b956
+        completionDate: '2023-09-15T11:30:57.867+0000'
+        connectorName: uc2
+        connectorVersion: '1.0'
+        contactId: 12347
+        creationDate: '2023-09-15T11:30:02.490+0000'
+        dataStatus: STORED
+        deletionDate: null
+        enableEmailNotification: true
+        engagementId: 108467
+        externalEngagementId: extId123456
+        extractionStrategy: V1
+        files:
+          - location:
+              account: validis
+              url: 'https://validis.com/UPLOAD_META_DATA.json'
+            name: UPLOAD_META_DATA.json
+          - location:
+              account: validis
+              url: 'https://validis.com/arItems.xlsx'
+            name: arItems.xlsx
+          - location:
+              account: validis
+              url: 'https://validis.com/apItems.xlsx'
+            name: apItems.xlsx
+        resellerId: 5185570c-c9a1-405a-aa0a-188ea1230c1e
+        smeId: 108432
+        smeName: TestManualReport
+        status: COMPLETED
+        uploadId: 83bf7159-93cd-453b-91fc-455ee754b0ce
+        uploadScope: null
+        uploadType: MANUAL
+        withMemo: false
+        yearsToExtract: 0
+    Get-Client-Last-Uploads-Response:
+      value:
+        - active: false
+          clientId: 1502f8e4-cf6d-497c-8086-67e74e01b956
+          completionDate: '2023-09-15T11:30:57.867+0000'
+          connectorName: uc2
+          connectorVersion: '1.0'
+          contactId: 12347
+          creationDate: '2023-09-15T11:30:02.490+0000'
+          dataStatus: STORED
+          deletionDate: null
+          enableEmailNotification: true
+          engagementId: 108467
+          externalEngagementId: extId123456
+          extractionStrategy: V1
+          resellerId: 5185570c-c9a1-405a-aa0a-188ea1230c1e
+          smeId: 108432
+          smeName: TestManualReport
+          status: COMPLETED
+          uploadId: 83bf7159-93cd-453b-91fc-455ee754b0ce
+          uploadScope: null
+          uploadType: MANUAL
+          withMemo: false
+          yearsToExtract: 0
+    Get-Myob-Companies-Response:
+      value:
+        - id: 34
+          clientId: ad09a864-b4a0-408e-950c-342fab360bc8
+          engagementId: 5548
+          name: John Doe
+          uri: 'https://api.myob.com/accountright/0304bbd4-e6d4-4bf4-af7f-c8e121d7b3c9'
+          country: AU
+          productLine: MYOB Essentials (New)
+          enabled: true
+          isLastUsed: true
+    Create-Myob-Companies-Response:
+      value:
+        - id: 34
+          clientId: ad57a864-b4a0-408e-950c-342fab360bc8
+          engagementId: 5548
+          name: John Doe
+          uri: 'https://api.myob.com/accountright/0304bbd4-e6d4-4bf4-af7f-c8e121d7b3c9'
+          country: AU
+          productLine: MYOB Essentials (New)
+          enabled: true
+          isLastUsed: true
+    Get-Workflow-Upload-Response:
+      value:
+        uploadId: 61122222-3014-446c-ad59-62dec211233b
+        created: '2023-10-11T10:47:04.887'
+        started: '2023-10-11T10:47:04.887'
+        clientId: 7e222233-9a77-410b-b30b-4ecbd4f591a8
+        engagementId: 110903
+        connector: dynamics-gp
+        smeId: 110868
+        userId: 1266
+        status: SUCCEED
+        lastUpdate: '2023-10-11T10:50:24.78'
+        usePassthrough: false
+        useSidecar: false
+        steps:
+          - stepId: 83449
+            created: '2023-10-11T10:47:04.887'
+            started: '2023-10-11T10:50:07'
+            status: SUCCEED
+            lastUpdate: '2023-10-11T10:50:18'
+            name: Data Classification
+            sorting: 0
+          - stepId: 83450
+            created: '2023-10-11T10:47:04.887'
+            started: '2023-10-11T10:50:19'
+            status: SUCCEED
+            lastUpdate: '2023-10-11T10:50:21'
+            name: Report Preprocessor
+            sorting: 1
+          - stepId: 83451
+            created: '2023-10-11T10:47:04.887'
+            started: '2023-10-11T10:50:21.587'
+            status: SUCCEED
+            lastUpdate: '2023-10-11T10:50:22.547'
+            name: Account Tagging
+            sorting: 2
+          - stepId: 83452
+            created: '2023-10-11T10:47:04.887'
+            started: '2023-10-11T10:50:22.55'
+            status: SUCCEED
+            lastUpdate: '2023-10-11T10:50:24.407'
+            name: Datashare
+            sorting: 3
+          - stepId: 83453
+            created: '2023-10-11T10:47:04.887'
+            started: '2023-10-11T10:50:24.41'
+            status: SUCCEED
+            lastUpdate: '2023-10-11T10:50:24.78'
+            name: Reconciliation Upload
+            sorting: 4
+        extractionStrategy: V1
+        extractionStrategyAsString: V1
+    Extract-Guidance-Content-Response:
+      value:
+        connector: quickbooks
+        scope: GL_TB
+        source: manual
+        updatedDate: '2023-04-28T14:30:00Z'
+        values:
+          en-GB: <html>
+          fr-FR: <html>
+  schemas:
+    Get-Connector-Response:
+      title: Client's connector
+      description: The schema of a connector instance available for the client.
+      type: object
+      example:
+        id: 1
+        name: sage50
+        description: Sage50 connector
+        type: 1
+        title: Sage 50 UK & Ireland
+        backupFileTypes: ''
+        isRefreshable: false
+        scopes:
+          - scopeId: 2
+            scopeName: Full
+            scopeString: vshare.engagements.full_audit_data_push
+          - scopeId: 1
+            scopeName: Collateral
+            scopeString: vshare.engagements.selective_data_push
+        uploadTypes:
+          - type: STANDARD
+          - type: SDF
+      properties:
+        id:
+          type: integer
+          description: The Id of the connector
+          example: 1
+        name:
+          type: string
+          description: Code for the connector
+          example: sage50
+        description:
+          type: string
+          description: Description of the connector version
+        type:
+          enum:
+            - 0
+            - 1
+          description: '0 Online connector, 1 Offline connector'
+        title:
+          type: string
+          description: Name of the connector
+          example: Sage 50
+        isRefreshable:
+          type: boolean
+          description: Whether the connector can be used with the data refresh product
+        scopes:
+          type: array
+          description: The type of data extraction available
+          items:
+            type: object
+            properties:
+              scopeId:
+                type: integer
+                description: Unique Id of the scope
+                example: 1
+              scopeName:
+                enum:
+                  - Full
+                  - Collateral
+                description: Use ‘Full’ for all and ‘Collateral’ for receivables and payables
+                example: Full
+              scopeString:
+                type: string
+                description: Scope permissions.
+                example: vshare.engagements.full_audit_data_push
+        uploadTypes:
+          type: array
+          description: The upload extraction mode provided by the connector. This can either be SDF (Selective Data Filter) or STANDARD
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+                description: 'SDF is an option that allows clients to restrict the number of complete financial years extracted from the accounting package, providing more control over the data they retrieve. With STANDARD, clients are unable to limit the number of financial years extracted, resulting in a full extraction of all available data'
+                example: SDF
+      x-stoplight:
+        id: ajxvvads6i5cm
+    Smart-Upload-Response:
+      type: object
+      title: Smart upload response
+      required:
+        - uploadId
+        - uploadStatus
+        - reportsSummary
+        - connectorName
+      properties:
+        uploadId:
+          type: string
+          format: uuid
+          description: Unique identifier for the upload.
+        uploadStatus:
+          type: string
+          description: |
+            The status of the upload.
+            - **LOADING:** Upload was successful and extraction is ongoing.
+            - **ABORTED:** Extraction was unsuccessful.
+            - **PROCESSING:** Extraction was successful, mapping is in-progress.
+            - **FAILED:** Mapping was incomplete, and data processing failed.
+            - **COMPLETED:** Mapping is finalized, and the data is ready.
+          enum:
+            - LOADING
+            - ABORTED
+            - PROCESSING
+            - FAILED
+            - COMPLETED
+        connectorName:
+          type: string
+          description: The name of the smart connector used for the upload.
+          example: quickbooks-online
+        reportsSummary:
+          type: array
+          description: A summary of the uploaded reports.
+          items:
+            type: object
+            required:
+              - reportType
+              - fileName
+            properties:
+              reportType:
+                type: string
+                description: The type of report uploaded.
+                enum:
+                  - GL
+                  - TB
+                  - AP_OITEMS
+                  - AR_OITEMS
+                nullable: false
+              fileName:
+                type: string
+                description: The name of the file uploaded in the request.
+                example: general_ledger.xlsx
+      example:
+        uploadId: 46c5fa5b-6880-4fdb-8d5b-e60b40c48690
+        uploadStatus: LOADING
+        connectorName: quickbooks-online
+        reportsSummary:
+          - reportType: GL
+            fileName: 201239712391273.csv
+          - reportType: TB
+            fileName: TrialBalance.xls
+      x-stoplight:
+        id: 8cddtrqo2nhb4
+    Data-Share-Client:
+      type: object
+      title: Upload response
+      properties:
+        action:
+          enum:
+            - DOWNLOAD
+            - REDIRECT
+            - NO_ACTION_REQUIRED
+            - UPLOAD
+          description: “No Action Required” where the request is successful.
+        url:
+          type: string
+          description: “null” where the request is successful.
+      example:
+        action: DOWNLOAD
+        url: 'https://download-link.net/client'
+      x-stoplight:
+        id: 7joiyfckpuuh9
+    Get-Client-Uploads-Response:
+      type: object
+      title: Client's uploads
+      description: A pagionated view of the client's uploads.
+      properties:
+        content:
+          type: array
+          items:
+            type: object
+            properties:
+              uploadId:
+                type: string
+                description: A unique  identifier associated with the extraction of accounting data from the ERP system
+              status:
+                enum:
+                  - LOADING
+                  - PROCESSING
+                  - COMPLETED
+                  - FAILED
+                  - ABORTED
+                  - ARCHIVED
+                  - CANCELED
+                  - DELETED
+                description: Indicates the current status or state of the extracted data.
+              resellerId:
+                type: string
+                description: The identifier of the Validis reseller ID used by Validis resellers.
+              clientId:
+                type: string
+                description: Identifies the Validis client
+              smeId:
+                type: integer
+                description: The unique identifier for the company conducting the data extraction.
+              smeName:
+                type: string
+                description: The name of the company conducting the data extraction.
+              engagementId:
+                type: integer
+                description: An identifier associated with an engagement or project linked to the uploaded data.
+              contactId:
+                type: integer
+                description: The main unique identifier for the company conducting the data extraction.
+              creationDate:
+                type: string
+                description: The date and time when the data extraction was initiated.
+              completionDate:
+                type: string
+                description: 'The date and time when the upload or operation was successfully completed, if applicable.'
+              deletionDate:
+                type: string
+                nullable: true
+              connectorName:
+                type: string
+                description: The name of the connector or integration used for this operation.
+              connectorVersion:
+                type: string
+                description: The version of the connector or integration software being used.
+              externalEngagementId:
+                type: string
+                nullable: true
+                description: 'An external identifier for the engagement, which may be used for integration with other systems.'
+              active:
+                type: boolean
+                description: A boolean value indicating whether the item is currently active or not.
+              uploadType:
+                enum:
+                  - AUTOMATIC
+                  - MANUAL
+                  - REPLAYED
+                  - REFRESH
+              withMemo:
+                type: boolean
+                description: A boolean flag indicating whether a memo or additional notes are included with the upload.
+              memo:
+                type: object
+                nullable: true
+                description: 'Additional notes or comments associated with the upload, if provided.'
+                properties:
+                  id:
+                    type: string
+                  questionOneFollowupValue:
+                    type: string
+                  questionOneValue:
+                    type: string
+                  questionTwoValue:
+                    type: string
+                  memoForm:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      questionOneFollowupOneLabel:
+                        type: string
+                      questionOneLabel:
+                        type: string
+                      questionOneNegativeAnswerLabel:
+                        type: string
+                      questionOneNegativeAnswerValue:
+                        type: string
+                      questionOnePositiveAnswerLabel:
+                        type: string
+                      questionOnePositiveAnswerValue:
+                        type: string
+                      questionTwoLabel:
+                        type: string
+              content:
+                type: object
+                nullable: true
+                description: The actual content or data that has been uploaded.
+                properties:
+                  ap:
+                    type: object
+                    properties:
+                      openItems:
+                        type: object
+                        properties:
+                          at:
+                            type: string
+                          fromDate:
+                            type: string
+                            format: date-time
+                          fromPeriodId:
+                            type: integer
+                          level:
+                            enum:
+                              - NOT_PROCESSED
+                              - WARM
+                              - HOT
+                          toPeriodId:
+                            type: integer
+                  ar:
+                    type: object
+                    properties:
+                      openItems:
+                        type: object
+                        properties:
+                          at:
+                            type: string
+                          fromDate:
+                            type: string
+                            format: date-time
+                          fromPeriodId:
+                            type: integer
+                          level:
+                            enum:
+                              - NOT_PROCESSED
+                              - WARM
+                              - HOT
+                          toPeriodId:
+                            type: integer
+              failureReason:
+                type: string
+                nullable: true
+                description: 'If the operation failed, this field may provide information on the reason for the failure.'
+              enableEmailNotification:
+                type: boolean
+                description: A boolean value indicating whether email notifications are enabled for this operation.
+              dataStatus:
+                enum:
+                  - STORED
+                  - WAITING_TO_BE_ERASED
+                  - ERASED
+              uploadScope:
+                type: string
+                description: 'Choose whether to upload all the data or just the receivables and payables. Use ‘Full’ for all, ‘Collateral’ for receiveables and payables.'
+              clonedFrom:
+                type: string
+                nullable: true
+                description: 'If the upload is a clone or copy of another operation, this field may reference the original operation.'
+              extractionStrategy:
+                description: 'Details the strategy or method used for data extraction, if applicable.'
+                enum:
+                  - V1
+                  - V2
+              yearsToExtract:
+                type: integer
+                description: 'Specifies the number of years of data to be extracted, if relevant.'
+              externalSmeId:
+                type: string
+                nullable: true
+        totalPages:
+          type: integer
+          description: The total number of pages or documents included in the upload.
+        last:
+          type: boolean
+          description: A boolean indicator that marks the last item in a paginated list.
+        totalElements:
+          type: integer
+          description: 'The total count of elements in the response, which can be useful for pagination.'
+        numberOfElements:
+          type: integer
+        sort:
+          type: array
+          items:
+            type: object
+            properties:
+              direction:
+                type: string
+                description: 'Specifies the sorting direction (e.g., ascending or descending) for the response.'
+              property:
+                type: string
+                description: The property by which the response data is sorted.
+              ignoreCase:
+                type: boolean
+                description: Indicates whether the sorting is case-sensitive.
+              nullHandling:
+                type: string
+                description: Defines how null values are handled during sorting.
+              ascending:
+                type: boolean
+                description: A boolean indicator for ascending sorting order.
+              descending:
+                type: boolean
+                description: A boolean indicator for descending sorting order.
+        first:
+          type: boolean
+          description: A boolean indicator that marks the first item in a paginated list.
+        size:
+          type: integer
+          description: Specifies the size or number of elements per page in a paginated response.
+        number:
+          type: integer
+          description: Indicates the page number or position in a paginated response.
+      example:
+        content:
+          - uploadId: e7c4267b-2c2c-4733-9deb-9d2f3f7ea885
+            status: COMPLETED
+            resellerId: 7cc0c2f5-8908-47e5-8a23-e27575d484c6
+            clientId: ef49cb3b-7716-4ede-97e3-420d67a98da4
+            smeId: 6455
+            smeName: TestManualReport
+            engagementId: 6453
+            contactId: 3103
+            creationDate: '2023-09-20T10:38:21.937+0000'
+            completionDate: '2023-09-20T10:49:08.400+0000'
+            deletionDate: null
+            connectorName: sage50
+            connectorVersion: 27.2.664.0
+            externalEngagementId: extId123456
+            active: true
+            uploadType: AUTOMATIC
+            withMemo: false
+            enableEmailNotification: true
+            dataStatus: STORED
+            uploadScope: Full
+            clonedFrom: null
+            extractionStrategy: V2
+            yearsToExtract: -1
+            externalSmeId: smeExtId123456
+          - uploadId: 5dfcc9b5-dec3-4785-9742-be558959b1fe
+            status: COMPLETED
+            resellerId: 7cc0c2f5-8908-47e5-8a23-e27575d484c6
+            clientId: ef49cb3b-7716-4ede-97e3-420d67a98da4
+            smeId: 6436
+            smeName: TestBreachedAutomatedCovenants
+            engagementId: 6434
+            contactId: 3103
+            creationDate: '2023-09-12T14:23:38.100+0000'
+            completionDate: '2023-09-12T14:36:09.490+0000'
+            deletionDate: null
+            connectorName: sage50
+            connectorVersion: 27.2.664.0
+            externalEngagementId: extId123456
+            active: true
+            uploadType: AUTOMATIC
+            withMemo: false
+            enableEmailNotification: true
+            dataStatus: STORED
+            uploadScope: Full
+            extractionStrategy: V2
+            yearsToExtract: 0
+            externalSmeId: smeExtId123456
+        totalPages: 41
+        last: false
+        totalElements: 81
+        numberOfElements: 2
+        sort:
+          - direction: DESC
+            property: completionDate
+            ignoreCase: false
+            nullHandling: NATIVE
+            ascending: false
+            descending: true
+        first: true
+        size: 2
+        number: 0
+      x-stoplight:
+        id: lc0hy2zqb2wvh
+    Get-Upload-Response:
+      type: object
+      title: Client's upload details
+      example:
+        active: false
+        clientId: 1502f8e4-cf6d-497c-8086-67e74e01b956
+        completionDate: '2023-09-15T11:30:57.867+0000'
+        connectorName: uc2
+        connectorVersion: '1.0'
+        contactId: 12347
+        creationDate: '2023-09-15T11:30:02.490+0000'
+        dataStatus: STORED
+        deletionDate: null
+        enableEmailNotification: true
+        engagementId: 108467
+        externalEngagementId: extId123456
+        extractionStrategy: V1
+        files:
+          - location:
+              account: validemo1strg
+              url: 'https://validis.com/UPLOAD_META_DATA.json'
+            name: UPLOAD_META_DATA.json
+          - location:
+              account: validemo1strg
+              url: 'https://validis.com/arItems.xlsx'
+            name: arItems.xlsx
+          - location:
+              account: validemo1strg
+              url: 'https://validis.com/apItems.xlsx'
+            name: apItems.xlsx
+        resellerId: 5185570c-c9a1-405a-aa0a-188ea1230c1e
+        smeId: 108432
+        smeName: TestManualReport
+        status: COMPLETED
+        uploadId: 83bf7159-93cd-453b-91fc-455ee754b0ce
+        uploadScope: Full
+        uploadType: MANUAL
+        withMemo: false
+        yearsToExtract: 0
+      properties:
+        uploadId:
+          type: string
+          description: Upload unique identifier.
+        status:
+          type: string
+          description: 'The upload status. Could be one of the following: LOADING, ABORTED, PROCESSING, FAILED, or COMPLETED.'
+        resellerId:
+          type: string
+          description: The unique identifier of your reseller within the Validis system.
+        clientId:
+          type: string
+          description: The unique identifier of your organisation within the Validis system.
+        smeId:
+          type: integer
+          description: The unique identifier of your SME within the Validis system.
+        smeName:
+          type: string
+          description: The name of the SME that has completed the upload.
+          nullable: true
+        engagementId:
+          type: integer
+          description: The unique identifier of the Engagement.
+        contactId:
+          type: integer
+          description: The unique identifier of the contact that represent the Engagement who performed the upload.
+        creationDate:
+          type: string
+          description: The time the upload was started.
+        completionDate:
+          type: string
+          description: The time the upload was completed.
+        deletionDate:
+          type: string
+          format: date-time
+          nullable: true
+        connectorName:
+          type: string
+          description: The accounting package identifier.
+        connectorVersion:
+          type: string
+          description: The version of the accounting package the upload was extracted from.
+        externalEngagementId:
+          type: string
+          description: The external system engagement unique Identifier.
+          nullable: true
+        active:
+          type: boolean
+          description: True if the upload is active. False if the upload is inactive.
+        uploadType:
+          type: string
+          description: The type of the upload.
+        withMemo:
+          type: boolean
+        memo:
+          type: object
+          nullable: true
+          properties:
+            id:
+              type: string
+            questionOneFollowupValue:
+              type: string
+            questionOneValue:
+              type: string
+            questionTwoValue:
+              type: string
+            memoForm:
+              type: object
+              properties:
+                id:
+                  type: string
+                questionOneFollowupOneLabel:
+                  type: string
+                questionOneLabel:
+                  type: string
+                questionOneNegativeAnswerLabel:
+                  type: string
+                questionOneNegativeAnswerValue:
+                  type: string
+                questionOnePositiveAnswerLabel:
+                  type: string
+                questionOnePositiveAnswerValue:
+                  type: string
+                questionTwoLabel:
+                  type: string
+        content:
+          type: object
+          nullable: true
+          properties:
+            ap:
+              type: object
+              properties:
+                openItems:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      at:
+                        type: string
+                      fromDate:
+                        type: string
+                        format: date-time
+                        nullable: true
+                      fromPeriodId:
+                        type: integer
+                      level:
+                        enum:
+                          - NOT_PROCESSED
+                          - WARM
+                          - HOT
+                      toPeriodId:
+                        type: integer
+            ar:
+              type: object
+              properties:
+                openItems:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      at:
+                        type: string
+                      fromDate:
+                        type: string
+                        format: date-time
+                        nullable: true
+                      fromPeriodId:
+                        type: integer
+                      level:
+                        enum:
+                          - NOT_PROCESSED
+                          - WARM
+                          - HOT
+                      toPeriodId:
+                        type: integer
+        failureReason:
+          type: string
+          nullable: true
+        enableEmailNotification:
+          type: boolean
+        dataStatus:
+          type: string
+        uploadScope:
+          type: string
+          nullable: true
+        clonedFrom:
+          type: string
+          nullable: true
+        extractionStrategy:
+          type: string
+        yearsToExtract:
+          type: integer
+        files:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              location:
+                type: object
+                properties:
+                  account:
+                    type: string
+                  url:
+                    type: string
+      x-stoplight:
+        id: yvnqjzh7zcu5y
+    Get-Client-Last-Upload-Response:
+      title: Client's latest upload
+      type: object
+      example:
+        active: false
+        clientId: 1502f8e4-cf6d-497c-8086-67e74e01b956
+        completionDate: '2023-09-15T11:30:57.867+0000'
+        connectorName: uc2
+        connectorVersion: '1.0'
+        contactId: 12347
+        creationDate: '2023-09-15T11:30:02.490+0000'
+        dataStatus: STORED
+        deletionDate: null
+        enableEmailNotification: true
+        engagementId: 108467
+        externalEngagementId: extId123456
+        extractionStrategy: V1
+        files:
+          - location:
+              account: validis
+              url: 'https://validis.com/UPLOAD_META_DATA.json'
+            name: UPLOAD_META_DATA.json
+          - location:
+              account: validis
+              url: 'https://validis.com/arItems.xlsx'
+            name: arItems.xlsx
+          - location:
+              account: validis
+              url: 'https://validis.com/apItems.xlsx'
+            name: apItems.xlsx
+        resellerId: 5185570c-c9a1-405a-aa0a-188ea1230c1e
+        smeId: 108432
+        smeName: TestManualReport
+        status: COMPLETED
+        uploadId: 83bf7159-93cd-453b-91fc-455ee754b0ce
+        uploadScope: Full
+        uploadType: MANUAL
+        withMemo: false
+        yearsToExtract: 0
+      properties:
+        uploadId:
+          type: string
+          description: The unique identifier for the upload.
+        status:
+          type: string
+          description: 'The upload status. Could be one of the following: LOADING, ABORTED, PROCESSING, FAILED, or COMPLETED.'
+        resellerId:
+          type: string
+          description: The unique identifier of your reseller within the Validis system.
+        clientId:
+          type: string
+          description: The unique identifier of your organisation within the Validis system.
+        smeId:
+          type: integer
+          description: The unique identifier of your SME within the Validis system.
+        smeName:
+          type: string
+          description: The name of the SME that has completed the upload.
+          nullable: true
+        engagementId:
+          type: integer
+          description: The unique identifier of the engagement.
+        contactId:
+          type: integer
+          description: The unique identifier of the contact that represent the Engagement who performed the upload.
+        creationDate:
+          type: string
+          description: The time the upload was started.
+        completionDate:
+          type: string
+          description: The time the upload was completed.
+        deletionDate:
+          type: string
+          format: date-time
+          nullable: true
+        connectorName:
+          type: string
+          description: The accounting package identifier.
+        connectorVersion:
+          type: string
+          description: The version of the accounting package the upload was extracted from.
+        externalEngagementId:
+          type: string
+          description: The external system engagement unique Identifier
+          nullable: true
+        active:
+          type: boolean
+          description: True if the upload is active. False if the upload is inactive.
+        uploadType:
+          type: string
+          description: The type of the upload.
+        withMemo:
+          type: boolean
+        memo:
+          type: object
+          nullable: true
+          properties:
+            id:
+              type: string
+            questionOneFollowupValue:
+              type: string
+            questionOneValue:
+              type: string
+            questionTwoValue:
+              type: string
+            memoForm:
+              type: object
+              properties:
+                id:
+                  type: string
+                questionOneFollowupOneLabel:
+                  type: string
+                questionOneLabel:
+                  type: string
+                questionOneNegativeAnswerLabel:
+                  type: string
+                questionOneNegativeAnswerValue:
+                  type: string
+                questionOnePositiveAnswerLabel:
+                  type: string
+                questionOnePositiveAnswerValue:
+                  type: string
+                questionTwoLabel:
+                  type: string
+        content:
+          type: object
+          nullable: true
+          properties:
+            ap:
+              type: object
+              properties:
+                openItems:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      at:
+                        type: string
+                      fromDate:
+                        type: string
+                        format: date-time
+                        nullable: true
+                      fromPeriodId:
+                        type: integer
+                      level:
+                        enum:
+                          - NOT_PROCESSED
+                          - WARM
+                          - HOT
+                      toPeriodId:
+                        type: integer
+            ar:
+              type: object
+              properties:
+                openItems:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      at:
+                        type: string
+                      fromDate:
+                        type: string
+                        format: date-time
+                        nullable: true
+                      fromPeriodId:
+                        type: integer
+                      level:
+                        enum:
+                          - NOT_PROCESSED
+                          - WARM
+                          - HOT
+                      toPeriodId:
+                        type: integer
+        failureReason:
+          type: string
+          nullable: true
+        enableEmailNotification:
+          type: boolean
+        dataStatus:
+          type: string
+        uploadScope:
+          type: string
+          nullable: true
+        clonedFrom:
+          type: string
+          nullable: true
+        extractionStrategy:
+          type: string
+        yearsToExtract:
+          type: integer
+      x-stoplight:
+        id: hjb2mwthqt276
+    Get-Myob-Company-Response:
+      title: Get MYOB company response
+      type: object
+      properties:
+        id:
+          type: integer
+        clientId:
+          type: string
+          description: 'The unique identifier of your Validis system, as provided by the Authentication endpoint.'
+        engagementId:
+          type: integer
+          description: The unique identifier for the engagement.
+        name:
+          type: string
+          description: Company Name as exported from the accounting package.
+        uri:
+          type: string
+        country:
+          type: string
+        productLine:
+          type: string
+        enabled:
+          type: boolean
+        lastUsed:
+          type: boolean
+      x-stoplight:
+        id: mi5gmavkyhcdc
+    Create-Myob-Company-Response:
+      title: Create MYOB company response
+      type: object
+      properties:
+        id:
+          type: integer
+        clientId:
+          type: string
+          description: 'The unique identifier of your Validis system, as provided by the Authentication endpoint.'
+        engagementId:
+          type: integer
+          description: The unique identifier for the engagement.
+        name:
+          type: string
+          description: Company Name as exported from the accounting package.
+        uri:
+          type: string
+        country:
+          type: string
+        productLine:
+          type: string
+        enabled:
+          type: boolean
+        lastUsed:
+          type: boolean
+      x-stoplight:
+        id: n6apq2xniqcy7
+    Get-Workflow-Upload-Response:
+      type: object
+      example:
+        uploadId: 61122222-3014-446c-ad59-62dec211233b
+        created: '2023-10-11T10:47:04.887'
+        started: '2023-10-11T10:47:04.887'
+        clientId: 7e222233-9a77-410b-b30b-4ecbd4f591a8
+        engagementId: 110903
+        connector: dynamics-gp
+        smeId: 110868
+        userId: 1266
+        status: SUCCEED
+        lastUpdate: '2023-10-11T10:50:24.78'
+        usePassthrough: false
+        useSidecar: false
+        steps:
+          - stepId: 83449
+            created: '2023-10-11T10:47:04.887'
+            started: '2023-10-11T10:50:07'
+            status: SUCCEED
+            lastUpdate: '2023-10-11T10:50:18'
+            name: Data Classification
+            sorting: 0
+          - stepId: 83450
+            created: '2023-10-11T10:47:04.887'
+            started: '2023-10-11T10:50:19'
+            status: SUCCEED
+            lastUpdate: '2023-10-11T10:50:21'
+            name: Report Preprocessor
+            sorting: 1
+          - stepId: 83451
+            created: '2023-10-11T10:47:04.887'
+            started: '2023-10-11T10:50:21.587'
+            status: SUCCEED
+            lastUpdate: '2023-10-11T10:50:22.547'
+            name: Account Tagging
+            sorting: 2
+          - stepId: 83452
+            created: '2023-10-11T10:47:04.887'
+            started: '2023-10-11T10:50:22.55'
+            status: SUCCEED
+            lastUpdate: '2023-10-11T10:50:24.407'
+            name: Datashare
+            sorting: 3
+          - stepId: 83453
+            created: '2023-10-11T10:47:04.887'
+            started: '2023-10-11T10:50:24.41'
+            status: SUCCEED
+            lastUpdate: '2023-10-11T10:50:24.78'
+            name: Reconciliation Upload
+            sorting: 4
+        extractionStrategy: V1
+        extractionStrategyAsString: V1
+      properties:
+        uploadId:
+          type: string
+          format: uuid
+        created:
+          type: string
+          format: date-time
+        started:
+          type: string
+          format: date-time
+        clientId:
+          type: string
+          format: uuid
+        engagementId:
+          type: integer
+        connector:
+          type: string
+        smeId:
+          type: integer
+        userId:
+          type: integer
+        status:
+          type: string
+        lastUpdate:
+          type: string
+          format: date-time
+        usePassthrough:
+          type: boolean
+        useSidecar:
+          type: boolean
+        steps:
+          type: array
+          items:
+            type: object
+            properties:
+              stepId:
+                type: integer
+              created:
+                type: string
+                format: date-time
+              started:
+                type: string
+                format: date-time
+              status:
+                type: string
+              lastUpdate:
+                type: string
+                format: date-time
+              name:
+                type: string
+              sorting:
+                type: integer
+        extractionStrategy:
+          type: string
+        extractionStrategyAsString:
+          type: string
+      description: ''
+      title: Workflow steps
+      x-stoplight:
+        id: z40krbld2nh2y
+    Extract-Guidance-Content-Response:
+      type: object
+      example:
+        connector: quickbooks
+        scope: GL_TB
+        source: manual
+        updatedDate: '2023-04-28T14:30:00Z'
+        values:
+          en-GB: <html>
+          fr-FR: <html>
+      properties:
+        connector:
+          type: string
+        scope:
+          type: string
+        source:
+          type: string
+        updatedDate:
+          type: string
+          format: date-time
+        values:
+          type: object
+          additionalProperties:
+            type: string
+      x-stoplight:
+        id: 5mtkhzi43voui

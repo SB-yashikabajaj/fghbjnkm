@@ -1,0 +1,17 @@
+title: Platform
+x-stoplight:
+  id: bz8ewou3peqso
+enum:
+  - AIRUI
+  - NOW
+  - NOWOTT
+  - SKYQ_APP
+  - SOIP
+  - VIRGIN_APP
+  - SKYSPORT_OTT_APP_IOS
+  - SKYSPORT_OTT_APP_ANDROID
+  - TV_APP_LEGACY
+  - SKY_WHOLESALE
+  - BFBS_WHOLESALE
+  - SKYSPORTS_APP
+x-internal: false

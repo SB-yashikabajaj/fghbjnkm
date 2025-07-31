@@ -1,0 +1,779 @@
+openapi: 3.0.1
+x-stoplight:
+  id: flktplvu8fssp
+info:
+  version: '1.0'
+  title: Platform API
+  description: |
+    Empower your financial platform with our Platforms API category. 
+    The Platforms API category provides you with essential tools for efficient user management and engagement. 
+    Whether you need to invite users, oversee all users, or automate upload reminders, 
+    these APIs are designed to enhance the functionality of your financial platform.
+  contact:
+    name: API Support
+    url: 'https://support.validis.com/'
+    email: support@validis.com
+  license:
+    url: 'https://www.apache.org/licenses/LICENSE-2.0.html'
+    name: Apache 2.0
+  termsOfService: 'https://www.validis.com/privacy-policy/'
+servers:
+  - url: 'https://api.sandbox.validis.com'
+    description: Sandbox Server
+paths:
+  /v1/invitations:
+    post:
+      tags:
+        - Invite User
+      summary: Send user invitation
+      description: Create an user invitation request and sends it to the user mailbox.
+      operationId: invite-user
+      requestBody:
+        description: Invitation details.
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/Invitation-Request'
+            examples:
+              Example 1:
+                $ref: '#/components/examples/Invitation-Request'
+      responses:
+        '201':
+          description: Successfully created a user invitation.
+        '400':
+          $ref: '#/components/responses/400-BadRequest'
+        '401':
+          $ref: '#/components/responses/401-Unauthorized'
+        '403':
+          $ref: '#/components/responses/403-Forbidden'
+        '404':
+          $ref: '#/components/responses/404-NotFound'
+        '406':
+          $ref: '#/components/responses/406-NotAcceptableResponse'
+        '409':
+          $ref: '#/components/responses/409-Conflict'
+        '415':
+          $ref: '#/components/responses/415-UnsupportedMediaType'
+        '429':
+          $ref: '#/components/responses/429-TooManyRequests'
+        '500':
+          $ref: '#/components/responses/500-UnknownInternalServerError'
+      security:
+        - Authorization: []
+          ApiKey: []
+      x-stoplight:
+        id: pcid0a4xm94fs
+  '/v1/clients/{clientId}/users':
+    get:
+      tags:
+        - Users
+      summary: List all users
+      description: Allow retrieval of all the client's users.
+      operationId: list-client-users
+      parameters:
+        - $ref: '#/components/parameters/clientId'
+      responses:
+        '200':
+          description: Successfully retrieved the users.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Client-Users-Response'
+              examples:
+                Example 1:
+                  $ref: '#/components/examples/Client-Users-Response'
+        '400':
+          $ref: '#/components/responses/400-BadRequest'
+        '401':
+          $ref: '#/components/responses/401-Unauthorized'
+        '403':
+          $ref: '#/components/responses/403-Forbidden'
+        '404':
+          $ref: '#/components/responses/404-NotFound'
+        '406':
+          $ref: '#/components/responses/406-NotAcceptableResponse'
+        '429':
+          $ref: '#/components/responses/429-TooManyRequests'
+        '500':
+          $ref: '#/components/responses/500-UnknownInternalServerError'
+      security:
+        - Authorization: []
+          ApiKey: []
+      x-stoplight:
+        id: zuwdjn2wsmjiq
+  '/v1/invitations/clients/{clientId}/engagements/{engagementId}':
+    get:
+      tags:
+        - Resend Data Upload Request
+      summary: Send upload reminder
+      description: Allow resending of the data upload request to users for an engagement.
+      operationId: resend-data-upload-request
+      parameters:
+        - $ref: '#/components/parameters/clientId'
+        - $ref: '#/components/parameters/engagementId'
+      responses:
+        '200':
+          description: Upload reminder had been resent.
+        '400':
+          $ref: '#/components/responses/400-BadRequest'
+        '401':
+          $ref: '#/components/responses/401-Unauthorized'
+        '403':
+          $ref: '#/components/responses/403-Forbidden'
+        '404':
+          $ref: '#/components/responses/404-NotFound'
+        '406':
+          $ref: '#/components/responses/406-NotAcceptableResponse'
+        '429':
+          $ref: '#/components/responses/429-TooManyRequests'
+        '500':
+          $ref: '#/components/responses/500-UnknownInternalServerError'
+      security:
+        - Authorization: []
+          ApiKey: []
+      x-stoplight:
+        id: 2frdhwam4eio6
+tags:
+  - name: Invite User
+    description: Create an user invitation request and sends it to the user mailbox.
+  - name: Resend Data Upload Request
+    description: Allow resending of the data upload request to users for an engagement.
+  - name: Users
+    description: Allow retrieval of all the client's users.
+components:
+  parameters:
+    clientId:
+      name: clientId
+      in: path
+      description: 'The unique identifier(UUID) of your Validis system, as provided by the Authentication endpoint.'
+      required: true
+      schema:
+        type: string
+        format: uuid
+        example: 46c5fa5b-6880-4fdb-8d5b-e60b40c48690
+    engagementId:
+      name: engagementId
+      in: path
+      description: The unique identifier for the engagement.
+      required: true
+      schema:
+        type: integer
+        example: 10141
+  securitySchemes:
+    ApiKey:
+      type: apiKey
+      description: |
+        API Key fetched from Validis Admin. Example:- 0bcbf42ef97c41234515921fec79ab9
+      name: Ocp-Apim-Subscription-Key
+      in: header
+    Authorization:
+      type: http
+      description: |
+        OAuth2 JWT access token to authorise requests. Example:- 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNT'
+      scheme: bearer
+      bearerFormat: JWT
+  responses:
+    400-BadRequest:
+      description: Bad or malformed request.
+      content:
+        application/vnd.api+json:
+          schema:
+            type: object
+            properties:
+              timestamp:
+                oneOf:
+                  - type: integer
+                  - type: string
+                    format: date-time
+                description: The timestamp when the request was processed.
+              status:
+                type: integer
+                description: The HTTP status code.
+              exception:
+                type: string
+                description: Detailed exception that had been thrown.
+              path:
+                type: string
+                description: URI to which the request was sent.
+              message:
+                type: string
+                description: Detailed error message.
+          examples:
+            Example 1:
+              value:
+                timestamp: 1692167331027
+                status: 400
+                exception: ''
+                path: /v1/path
+                message: Bad Request.
+            Example 2:
+              value:
+                timestamp: '2023-12-28T15:32:58.582+0000'
+                status: 400
+                exception: ValidationException
+                path: /v1/invitations
+                message: profiles may not be empty
+    401-Unauthorized:
+      description: Error code for a missing or invalid authentication token.
+      content:
+        text/plain:
+          schema:
+            type: string
+            example: Unauthorized. Access token is missing or invalid.
+          examples:
+            Example 1:
+              value: Unauthorized. Access token is missing or invalid.
+    403-Forbidden:
+      description: Forbidden or insufficient permissions to access the resource.
+      content:
+        application/vnd.api+json:
+          schema:
+            type: object
+            properties:
+              timestamp:
+                type: string
+                description: The timestamp when the request was processed.
+              status:
+                type: integer
+                description: The HTTP status code.
+              exception:
+                type: string
+                description: Detailed exception that had been thrown.
+              path:
+                type: string
+                description: URI to which the request was sent.
+              message:
+                type: string
+                description: Detailed error message.
+          examples:
+            Example 1:
+              value:
+                timestamp: '2023-09-26T08:18:31.963+0000'
+                status: 403
+                exception: InsufficientPermissionException
+                path: /v1/invitations
+                message: Client doesn't have permission to invite users for another client
+    404-NotFound:
+      description: The targeted resource is missing or nonexistent.
+      content:
+        application/vnd.api+json:
+          schema:
+            type: object
+            properties:
+              timestamp:
+                type: integer
+                description: The timestamp when the request was processes.
+              status:
+                type: integer
+                description: The HTTP status code.
+              exception:
+                type: string
+                description: Detailed exception that had been thrown.
+              path:
+                type: string
+                description: URI to which the request was sent.
+              message:
+                type: string
+                description: Detailed error message.
+          examples:
+            Example 1:
+              value:
+                timestamp: 1691582960984
+                status: 404
+                exception: NotFoundException
+                path: /v1/path
+                message: 'No Client Id found 4,374,242'
+    406-NotAcceptableResponse:
+      description: Error code provided when an HTTP Accept header can’t be satisfied.
+    415-UnsupportedMediaType:
+      description: Unsupported media type response.
+      content:
+        application/vnd.api+json:
+          schema:
+            type: object
+            properties:
+              timestamp:
+                type: integer
+                description: The timestamp when the request was processes.
+              status:
+                type: integer
+                description: The HTTP status code.
+              exception:
+                type: string
+                description: Detailed exception that had been thrown.
+              path:
+                type: string
+                description: URI to witch the request was sent.
+              message:
+                type: string
+                description: Detailed error message.
+          examples:
+            Example 1:
+              value:
+                timestamp: 1692361385684
+                status: 415
+                exception: HttpMediaTypeNotSupportedException
+                path: /v1/clients/18f64483-a971-472b-be5e-3339de288db1/engagements
+                message: Content type 'application/javascript;charset=UTF-8' not supported
+    429-TooManyRequests:
+      description: Too many request were made.
+      content:
+        application/vnd.api+json:
+          schema:
+            type: object
+            properties:
+              statusCode:
+                type: integer
+                description: The status code of the response.
+              message:
+                type: string
+                description: The detailed message of the error. Must contain the remaining waiting period.
+          examples:
+            Example 1:
+              value:
+                statusCode: 429
+                message: Rate limit is exceeded. Try again in 46 seconds.
+      headers:
+        Retry-After:
+          $ref: '#/components/headers/Retry-After'
+        X-RateLimit-Reset:
+          $ref: '#/components/headers/X-RateLimit-Reset'
+        X-RateLimit-Limit:
+          $ref: '#/components/headers/X-RateLimit-Limit'
+        X-RateLimit-Remaining:
+          $ref: '#/components/headers/X-RateLimit-Remaining'
+    500-UnknownInternalServerError:
+      description: Unknown internal server error has occurred.
+      content:
+        application/vnd.api+json:
+          schema:
+            type: object
+            properties:
+              timestamp:
+                type: string
+                description: The timestamp when the request was processes.
+                format: date-time
+              status:
+                type: integer
+                description: The status code of the response.
+              exception:
+                type: string
+                description: Detailed exception that had been thrown.
+              path:
+                type: string
+                description: URI to which the request was sent.
+              message:
+                type: string
+                description: Detailed error message.
+          examples:
+            Example 1:
+              value:
+                timestamp: '2023-06-06T13:13:13.009+0000'
+                status: 500
+                exception: UndeclaredThrowableException
+                path: /v1/path
+                message: A unexpected error occurred while processing the request
+    409-Conflict:
+      description: Conflict occur when trying to creat a resource for an already allocated unique identifier.
+      content:
+        application/vnd.api+json:
+          schema:
+            type: object
+            properties:
+              timestamp:
+                type: string
+                description: The timestamp when the request was processes.
+                format: date-time
+              status:
+                type: integer
+                description: The HTTP status code.
+              exception:
+                type: string
+                description: Detailed exception that had been thrown.
+              path:
+                type: string
+                description: URI to witch the request was sent.
+              message:
+                type: string
+                description: Detailed error message.
+          examples:
+            Example 1:
+              value:
+                timestamp: '2023-09-21T12:28:54.988+0000'
+                status: 409
+                exception: UniquenessViolationException
+                path: /v1/path
+                message: User already exists
+  headers:
+    X-RateLimit-Limit:
+      schema:
+        type: integer
+        minimum: 60
+        maximum: 5000
+        default: 60
+      description: The maximum number of requests that are permitted before exhausting the rate limit.
+    X-RateLimit-Remaining:
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 5000
+      description: Remaining number of requests until reset.
+      required: false
+    Retry-After:
+      schema:
+        type: integer
+        minimum: 60
+        maximum: 86400
+        default: 60
+      description: Indicates how long the user agent should wait (in seconds) before making further requests.
+      required: false
+    X-RateLimit-Reset:
+      schema:
+        type: integer
+        minimum: 0
+        maximum: 86400
+      description: 'Indicates when the rate limit will be reset, in UNIX timestamp format.'
+      required: false
+  schemas:
+    Invitation-Request:
+      type: object
+      title: Invitation
+      description: Invitation request body.
+      example:
+        email: john.doe@validistesting.com
+        title: Mr.
+        firstName: John
+        lastName: Doe
+        phone: '08943987989972'
+        scheduledDate: '2023-10-01T00:00:00'
+        userType: CLIENT
+        clientId: 61b2a09d-beb2-4608-8c29-d817630ce002
+        partnerId: f4f58390-6371-11ee-8c99-0242ac120002
+        profiles:
+          - A3B8CE
+      properties:
+        email:
+          type: string
+          description: The email of the user.
+          format: email
+          example: adam.smith@demo.com
+        title:
+          type: string
+          description: The title of the user.
+          example: Mr.
+        firstName:
+          type: string
+          description: The first name of the user.
+          example: Adam
+        lastName:
+          type: string
+          description: The last name of the user.
+          example: Smith
+        phone:
+          type: string
+          description: The phone number of the user.
+        scheduledDate:
+          type: string
+          description: The user's targeted join date.
+          format: date-time
+          nullable: true
+        userType:
+          enum:
+            - CLIENT
+            - SME
+            - RESELLER
+            - SYSTEM
+          description: The type of the user.
+          example: CLIENT
+        clientId:
+          type: string
+          description: 'The unique identifier(UUID) of your Validis system, as provided by the Authentication endpoint.'
+          format: uuid
+        partnerId:
+          type: string
+          description: The unique identifier of the partner.
+          format: uuid
+          nullable: true
+        profiles:
+          type: array
+          description: Profile name(s).
+          items:
+            x-stoplight:
+              id: j9jvauzj4omoh
+            type: string
+      x-stoplight:
+        id: jzeqidzwoavuz
+    Client-Users-Response:
+      type: object
+      title: Client's users
+      description: A paginated view of the client's users.
+      properties:
+        content:
+          type: array
+          items:
+            type: object
+            properties:
+              firstName:
+                type: string
+                description: First name of the user.
+              lastName:
+                type: string
+                description: Last name of the user.
+              email:
+                type: string
+                description: Email of the user.
+              phone:
+                type: string
+                description: Phone of the user.
+              title:
+                type: string
+                description: Title of the user.
+              resellerId:
+                type: string
+                description: The unique identifier of the reseller.
+              profiles:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      description: The Id of the role.
+                    name:
+                      type: string
+                      description: The name of the role.
+                    description:
+                      type: string
+                      description: The description of the role.
+                    key:
+                      type: string
+                      description: The key of the role.
+              ssoId:
+                type: string
+                description: ID used for SSO.
+              id:
+                type: integer
+                description: The unique id for.
+              status:
+                type: integer
+                description: 'Status of user, 0 or 1 or 2.'
+              createdAt:
+                type: integer
+                description: The time the user was created.
+              lastLoginDate:
+                type: integer
+                description: The last login date.
+              statusCode:
+                enum:
+                  - ACTIVE
+                  - INVITING
+                  - DISABLED
+                description: Status of user.
+              clientId:
+                type: string
+                description: The unique identifier of your Validis system.
+              partnerId:
+                type: string
+                description: Unique identifier for the partner tied to user.
+              createdBy:
+                type: integer
+                description: The user/username who created this user.
+              resellerUuid:
+                type: string
+                description: The unique identifier of the reseller.
+              clientUuid:
+                type: string
+                description: The unique identifier of your Validis system.
+              userType:
+                type: string
+                description: Type of user SME or Client(Staff).
+        totalElements:
+          type: integer
+          description: The amount of total number of elements.
+        totalPages:
+          type: integer
+          description: The amount of total numbers pages
+        last:
+          type: boolean
+          description: Whether the current page is the last page.
+        numberOfElements:
+          type: integer
+          description: The number of elements on the current page.
+        sort:
+          type: object
+          nullable: true
+          description: The object that contains the sorting parameters
+          properties:
+            direction:
+              type: string
+              description: The sorting order. Might be ASC or DESC
+              example: 'ASC,DESC'
+            property:
+              type: string
+              description: 'The sorting property '
+            ignoreCase:
+              type: boolean
+              description: 'Whether to allow the property to match if written in upper or lower case '
+              default: false
+            ascending:
+              type: boolean
+              description: Whether the result is sorted ascending
+              default: true
+            descending:
+              type: boolean
+              description: Whether the result is sorted descending
+              default: false
+        first:
+          type: boolean
+          description: Whether the current page is the first page.
+        size:
+          type: integer
+          description: The number of elements on the current page
+        number:
+          type: integer
+          description: The index of the current page.
+      example:
+        content:
+          - firstName: John
+            lastName: Doe
+            email: john.doe@validistesting.com
+            phone: '079205420'
+            title: Mr.
+            resellerId: 7cc0c2f5-8908-47e5-8a23-e27575d484c6
+            profiles:
+              - id: 30
+                name: Client Admin
+                description: 'The "Master" administrator account for a Client. This is typically the first user invited to join vAdmin for a Client. They are able to access all brand/text/cloud-connector customisation, generate API keys, customise Products, manage Client Users, manage Engagements and view overall usage statistics.'
+                key: DF17F0
+            ssoId: a.Doe@validistesting.com
+            id: 3072
+            status: 0
+            createdAt: 1676898696335
+            lastLoginDate: 1694524849866
+            statusCode: ACTIVE
+            clientId: ef49cb3b-7716-4ede-97e3-420d67a98da4
+            partnerId: partner-id
+            createdBy: 1
+            resellerUuid: 7cc0c2f5-8908-47e5-8a23-e27575d484c6
+            clientUuid: ef49cb3b-7716-4ede-97e3-420d67a98da4
+            userType: CLIENT
+          - firstName: Client
+            lastName: Manager
+            email: cabuga@validistesting.com
+            phone: '079111213'
+            title: Ms.
+            resellerId: 7cc0c2f5-8908-47e5-8a23-e27575d484c6
+            profiles:
+              - id: 31
+                name: Client Manager
+                description: 'This Profile allows full management of Engagements, as well as the ability to create new Client Users.'
+                key: 383BF5
+            ssoId: cabuga@validistesting.com
+            id: 3080
+            status: 0
+            createdAt: 1676981475964
+            lastLoginDate: 1694076362120
+            statusCode: ACTIVE
+            clientId: ef49cb3b-7716-4ede-97e3-420d67a98da4
+            partnerId: partner-id
+            createdBy: 3072
+            resellerUuid: 7cc0c2f5-8908-47e5-8a23-e27575d484c6
+            clientUuid: ef49cb3b-7716-4ede-97e3-420d67a98da4
+            userType: CLIENT
+        totalElements: 115
+        totalPages: 58
+        last: false
+        numberOfElements: 2
+        sort:
+          direction: DESC
+          property: completionDate
+          ignoreCase: false
+          nullHandling: NATIVE
+          ascending: false
+          descending: true
+        first: true
+        size: 2
+        number: 0
+      x-stoplight:
+        id: pcpua72yldfcf
+  examples:
+    Client-Users-Response:
+      value:
+        content:
+          - firstName: John
+            lastName: Doe
+            email: john.doe@validistesting.com
+            phone: '5079205420'
+            title: Mr.
+            resellerId: 7cc0c2f5-8908-47e5-8a23-e27575d484c6
+            profiles:
+              - id: 30
+                name: Client Admin
+                description: |
+                  The "Master" administrator account for a Client.
+                  This is typically the first user invited to join vAdmin for a Client. 
+                  They are able to access all brand/text/cloud-connector customisation, generate API keys,
+                  customise Products, manage Client Users, manage Engagements and view overall usage statistics.
+                key: DF17F0
+            ssoId: a.Doe@validistesting.com
+            id: 3072
+            status: 0
+            createdAt: 1676898696335
+            lastLoginDate: 1694524849866
+            statusCode: ACTIVE
+            clientId: ef49cb3b-7716-4ede-97e3-420d67a98da4
+            partnerId: partner-id
+            createdBy: 1
+            resellerUuid: 7cc0c2f5-8908-47e5-8a23-e27575d484c6
+            clientUuid: ef49cb3b-7716-4ede-97e3-420d67a98da4
+            userType: CLIENT
+          - firstName: Client
+            lastName: Manager
+            email: cabuga@validistesting.com
+            phone: '079111523213'
+            title: Ms.
+            resellerId: 7cc0c2f5-8908-47e5-8a23-e27575d484c6
+            profiles:
+              - id: 31
+                name: Client Manager
+                description: 'This Profile allows full management of Engagements, as well as the ability to create new Client Users.'
+                key: 383BF5
+            ssoId: cabuga@validistesting.com
+            id: 3080
+            status: 0
+            createdAt: 1676981475964
+            lastLoginDate: 1694076362120
+            statusCode: ACTIVE
+            clientId: ef49cb3b-7716-4ede-97e3-420d67a98da4
+            partnerId: partner-id
+            createdBy: 3072
+            resellerUuid: 7cc0c2f5-8908-47e5-8a23-e27575d484c6
+            clientUuid: ef49cb3b-7716-4ede-97e3-420d67a98da4
+            userType: CLIENT
+        totalElements: 115
+        totalPages: 58
+        last: false
+        numberOfElements: 2
+        sort:
+          direction: DESC
+          property: completionDate
+          ignoreCase: false
+          nullHandling: NATIVE
+          ascending: false
+          descending: true
+        first: true
+        size: 2
+        number: 0
+    Invitation-Request:
+      value:
+        email: john.doe@validistesting.com
+        title: Mr.
+        firstName: John
+        lastName: Doe
+        phone: '08943987989972'
+        scheduledDate: '2023-10-01T00:00:00'
+        userType: CLIENT
+        clientId: 61b2a09d-beb2-4608-8c29-d817630ce002
+        partnerId: f4f58390-6371-11ee-8c99-0242ac120002
+        profiles:
+          - A3B8CE

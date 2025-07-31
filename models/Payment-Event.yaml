@@ -1,0 +1,44 @@
+title: Payment Event
+x-stoplight:
+  id: vryme638r6t8l
+type: object
+description: 'Each payment event has a unique ID, creation timestamp, and type (e.g., "AUTH_APPROVED", "AUTH_DECLINED"). For "AUTH_APPROVED" events, an expiration timestamp is provided. The "payment event merchant reference" field, which can be used for payment capture events'
+x-tags:
+  - response-object
+properties:
+  id:
+    type: string
+    x-stoplight:
+      id: 4l8es0gnpcesk
+    example: 1OUR16OTqL3DgJ3ELlwKowU9v6K
+    readOnly: true
+  created:
+    type: string
+    x-stoplight:
+      id: nvpeinlc1olwo
+    example: '2023-09-01T00:00:00.000Z'
+    readOnly: true
+  expires:
+    type: string
+    x-stoplight:
+      id: cex2olyo4kw9m
+    example: '2023-09-01T01:00:00.000Z'
+  type:
+    x-stoplight:
+      id: xk11w37i2gpbj
+    enum:
+      - AUTH_APPROVED
+      - AUTH_DECLINED
+      - CAPTURED
+      - CAPTURE_DECLINED
+      - VOIDED
+      - EXPIRED
+    readOnly: true
+  amount:
+    $ref: ./Money.yaml
+    x-stoplight:
+      id: cmxaass9kgh2f
+  paymentEventMerchantReference:
+    x-stoplight:
+      id: jlw62xv6ht0ta
+    type: string

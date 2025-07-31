@@ -1,0 +1,9 @@
+title: EventTier
+x-stoplight:
+  id: 3nt4fczih3mma
+type: object
+enum:
+  - Bronze
+  - Gold
+  - Platinum
+x-internal: false

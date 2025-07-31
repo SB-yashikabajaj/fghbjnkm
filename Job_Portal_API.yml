@@ -1,0 +1,1458 @@
+openapi: 3.0.0
+x-stoplight:
+  id: xxok91dryafgt
+info:
+  version: '0.1'
+  title: Dice Employer API
+  description: DHI Public API
+  contact:
+    name: API ATS Integrations
+    email: api@dhigroupinc.com
+tags:
+  - name: Applications
+  - name: Health
+  - name: Jobs
+servers:
+  - url: 'https://employer-api.dice.com'
+    description: Production
+paths:
+  /v0.1/health:
+    get:
+      tags:
+        - Health
+      summary: GET Gateway Health
+      description: Returns health status of the gateway
+      operationId: Health_Check
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+      x-amazon-apigateway-integration:
+        httpMethod: post
+        type: aws_proxy
+        uri:
+          'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${Environment}-${Brand}-${Application}-health-check-v1/invocations'
+      x-stoplight:
+        id: ilpp377be81yc
+  '/v0.1/applications/{id}':
+    get:
+      tags:
+        - Applications
+      summary: GET Application Details
+      description: Returns application details for the given application id
+      operationId: GET_Application_Details_v0.1
+      security:
+        - LegacyAuthorizer: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: The application id
+        - in: query
+          name: resumeContent
+          required: false
+          schema:
+            type: string
+          description: 'The output format for the resume. Valid values are "contentText" or "contentBase64". If no value provided, defaulted to "contentBase64".'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationDetailv01'
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedResponse'
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+      x-amazon-apigateway-integration:
+        httpMethod: post
+        type: aws_proxy
+        uri:
+          'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${Environment}-${Brand}-${Application}-get-application-by-id-v01/invocations'
+      x-stoplight:
+        id: ee2zewfbuw81i
+  /v0.1/applications:
+    get:
+      tags:
+        - Applications
+      summary: GET Application List
+      description: Returns a list of applications for the specified search criteria
+      operationId: GET_Application_List_v0.1
+      security:
+        - LegacyAuthorizer: []
+      parameters:
+        - name: dateCreated_gt
+          description: 'The Date Created greater than parameter.  Valid formats are "YYYY-MM-DD", "YYYY-MM-DDTHH:mm:ss", "YYYY-MM-DDTHH:mm:ssZ"'
+          in: query
+          schema:
+            type: string
+          required: false
+        - name: dateCreated_lt
+          description: 'The Date Created less than parameter.  Valid formats are "YYYY-MM-DD", "YYYY-MM-DDTHH:mm:ss", "YYYY-MM-DDTHH:mm:ssZ"'
+          in: query
+          schema:
+            type: string
+          required: false
+        - name: pageSize
+          description: The number of results to return in the given page. Ranges from 1 to 100. Defaults to 25 if not given
+          in: query
+          schema:
+            type: string
+          required: false
+        - name: nextPage
+          description: The page number concatenated with the nextPage token to get more applications if the count more than the pageSize (please do not alter this value)
+          in: query
+          schema:
+            type: string
+          required: false
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationListDetail'
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedResponse'
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+      x-amazon-apigateway-integration:
+        httpMethod: post
+        type: aws_proxy
+        uri:
+          'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${Environment}-${Brand}-${Application}-search-applications-v01/invocations'
+      x-stoplight:
+        id: mafb6952xi3jd
+  /v0.1/jobs:
+    get:
+      tags:
+        - Jobs
+      summary: GET Job List
+      description: Returns a list of jobs for the specified search criteria
+      operationId: GET_Job_List_v0.1
+      security:
+        - LegacyAuthorizer: []
+      parameters:
+        - name: dateLastModified_gt
+          description: 'Filters out jobs that have been modified at a later time than the dateTime specified. Uses ISO 8601 date-time format "YYYY-MM-DDThh:mm:ssZ"'
+          in: query
+          schema:
+            type: string
+            format: date-time
+            example: '2022-10-21T13:30:21Z'
+          required: false
+        - name: dateLastModified_lt
+          description: 'Filters out jobs that have been modified more recently than the dateTime specified.  Uses ISO 8601 date-time format "YYYY-MM-DDThh:mm:ssZ"'
+          in: query
+          schema:
+            type: string
+            format: date-time
+            example: '2022-10-21T13:30:21Z'
+          required: false
+        - name: externalId
+          description: The unique job identifier that is used to connect the dice job to a job in an external system
+          in: query
+          schema:
+            type: string
+            example: ACM-2232
+          required: false
+        - name: status
+          description: 'Describes the current status of the job. Valid values are "active", "inactive" or "deleted". Only active jobs are shown to technologists. Inactive jobs are hidden from technologist view. Deleted jobs are removed as a post from Dice.'
+          in: query
+          schema:
+            type: string
+            enum:
+              - active
+              - inactive
+              - deleted
+          required: false
+        - name: pageSize
+          description: The number of results to return in the given page. Ranges from 1 to 100. Defaults to 25 if not given
+          in: query
+          schema:
+            type: string
+            example: '25'
+          required: false
+        - name: nextPage
+          description: The nextPage number to get more jobs
+          in: query
+          schema:
+            type: string
+            example: '2'
+          required: false
+        - name: sortBy
+          description: Allows you to sort by a specified field in the jobOrder. Defaults to "dateLastModified"
+          in: query
+          schema:
+            type: string
+            enum:
+              - dateLastModified
+          required: false
+        - name: sortDirection
+          description: Controls the sorting direction of sortBy field in asc or desc order. Defaults to desc order
+          in: query
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+          required: false
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListJobsResponse'
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedResponse'
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+      x-amazon-apigateway-integration:
+        httpMethod: post
+        type: aws_proxy
+        uri:
+          'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${Environment}-${Brand}-${Application}-get-job-list-v01/invocations'
+      x-stoplight:
+        id: pr51hp601c4qw
+    post:
+      tags:
+        - Jobs
+      summary: POST Job
+      description: Creates a job post in Dice
+      operationId: POST_Job_v0.1
+      security:
+        - LegacyAuthorizer: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostJobRequest'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostJobResponse'
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedResponse'
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobQuotaExceededResponse'
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+      x-amazon-apigateway-integration:
+        httpMethod: post
+        type: aws_proxy
+        uri:
+          'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${Environment}-${Brand}-${Application}-post-job-v01/invocations'
+      x-stoplight:
+        id: ph91ej722u9z2
+  '/v0.1/jobs/{id}':
+    get:
+      tags:
+        - Jobs
+      summary: GET Job Details
+      description: Returns job details for a specific Dice job post
+      operationId: GET_Job_By_Id_v0.1
+      security:
+        - LegacyAuthorizer: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: The job id
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetJobByIdResponse'
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedResponse'
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+      x-amazon-apigateway-integration:
+        httpMethod: post
+        type: aws_proxy
+        uri:
+          'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${Environment}-${Brand}-${Application}-get-job-by-id-v01/invocations'
+      x-stoplight:
+        id: 85b7bknbtiosy
+    patch:
+      tags:
+        - Jobs
+      summary: PATCH Job
+      description: Updates a job post in Dice with new information.
+      operationId: PATCH_Job_v0.1
+      security:
+        - LegacyAuthorizer: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchJobRequest'
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: The unique job id given by Dice
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatchJobResponse'
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedResponse'
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobQuotaExceededResponse'
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+      x-amazon-apigateway-integration:
+        httpMethod: post
+        type: aws_proxy
+        uri:
+          'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${Environment}-${Brand}-${Application}-patch-job-v01/invocations'
+      x-stoplight:
+        id: gwxbs0iwpovna
+    delete:
+      tags:
+        - Jobs
+      summary: DELETE Job
+      description: Deletes the specified job post from Dice
+      operationId: DELETE_Job_v0.1
+      security:
+        - LegacyAuthorizer: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: The unique job id given by Dice
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteJobResponse'
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedResponse'
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+      x-amazon-apigateway-integration:
+        httpMethod: post
+        type: aws_proxy
+        uri:
+          'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${Environment}-${Brand}-${Application}-delete-job-v01/invocations'
+      x-stoplight:
+        id: k02qa5rmzhgnd
+components:
+  schemas:
+    HealthResponse:
+      title: Gateway Health schema
+      description: The status of the gateway health
+      type: object
+      properties:
+        message:
+          type: string
+          description: The Gateway status success / error
+      required:
+        - message
+      x-stoplight:
+        id: 36xfhg1h00o0a
+    ApplicationDetailv01:
+      title: Application Detail schema
+      description: The application detail
+      type: object
+      properties:
+        id:
+          type: string
+          description: The application id
+        dateCreated:
+          type: string
+          description: The application created date (ISO 8601)
+        matchScore:
+          type: number
+          description: The overall match score
+        candidate:
+          $ref: '#/components/schemas/CandidateDetailv01'
+        job:
+          $ref: '#/components/schemas/JobDetail'
+        ofccp:
+          $ref: '#/components/schemas/OfccpDetail'
+        resume:
+          $ref: '#/components/schemas/ResumeDetail'
+        coverLetter:
+          $ref: '#/components/schemas/CoverLetterDetail'
+      required:
+        - id
+        - dateCreated
+        - jobId
+      x-stoplight:
+        id: 6h0yz7elfkw4e
+    CandidateDetailv01:
+      title: Candidate Detail schema
+      description: The candidate detail
+      type: object
+      properties:
+        id:
+          type: string
+          description: The candidate's id
+        contact:
+          $ref: '#/components/schemas/Contact'
+        location:
+          $ref: '#/components/schemas/Location'
+        workAuthorization:
+          type: string
+          description: The candidate's US work authorization
+        education:
+          type: array
+          items:
+            $ref: '#/components/schemas/Education'
+        securityClearance:
+          type: boolean
+          description: The candidate's security clearance status
+        workHistory:
+          type: array
+          description: A list of the candidate's work history sorted by most recent.
+          items:
+            $ref: '#/components/schemas/WorkHistory'
+        workLocationPreferences:
+          type: array
+          description: 'A list of work location preferences selected by the candidate. Valid values are remote, insite and hybrid'
+          items: {}
+      required:
+        - id
+      x-stoplight:
+        id: mi8yygjyj794k
+    Education:
+      title: Education detail schema
+      properties:
+        org:
+          type: string
+          description: The organization name
+        degree:
+          type: string
+          description: The type of the achieved education
+        locationName:
+          type: string
+          description: The location of the organization
+      x-stoplight:
+        id: 1nv85xwijr2bn
+    WorkHistory:
+      title: Work history detail schema
+      properties:
+        company:
+          type: string
+          description: The company name
+        title:
+          type: string
+          description: The job title
+        dateStarted:
+          type: string
+          description: The start date in YYYY-MM format
+        dateEnded:
+          type: string
+          description: The end date in YYYY-MM format
+      x-stoplight:
+        id: k0t0060ozi2ms
+    Contact:
+      title: Contact schema
+      properties:
+        firstName:
+          type: string
+          description: The candidate's first name
+        lastName:
+          type: string
+          description: The candidate's last aname
+        fullName:
+          type: string
+          description: The candidate's full name
+        emailAddress:
+          type: string
+          description: The candidate's email address
+        phoneNumbers:
+          type: array
+          items:
+            $ref: '#/components/schemas/PhoneNumber'
+      x-stoplight:
+        id: 06qk8qpctom2w
+    PhoneNumber:
+      title: Phone Number schema
+      properties:
+        value:
+          type: string
+          description: The phone number value
+        type:
+          type: string
+          description: The phone number type
+      x-stoplight:
+        id: 4zo5qslk0nuqc
+    Job:
+      title: Job schema
+      properties:
+        id:
+          type: string
+          description: The job id
+        externalId:
+          type: string
+          description: The external job id
+      required:
+        - id
+      x-stoplight:
+        id: 80izrxviy53px
+    JobDetail:
+      title: Job Detail schema
+      description: The job detail
+      type: object
+      properties:
+        id:
+          type: string
+          description: The job id
+        externalId:
+          type: string
+          description: The external job id
+        title:
+          type: string
+          description: The job title
+        applicantLocationRequirements:
+          type: string
+          description: 'Location requirements for employee expressed as one of onsite, remote, telecommute'
+        applyMethod:
+          type: string
+          description: The job apply method
+        applyEmail:
+          type: string
+          description: The job apply email
+        applyUrl:
+          type: string
+          description: The job apply url
+        locations:
+          $ref: '#/components/schemas/Locations'
+      required:
+        - id
+        - locations
+      x-stoplight:
+        id: auxlxy3ug8mcl
+    Locations:
+      title: Locations schema
+      type: array
+      description: The location where the technologist will be performing their work. Required when specified applicantLocationRequirements are either "onsite" or "telecommute"
+      items:
+        $ref: '#/components/schemas/Location'
+      x-stoplight:
+        id: fuz3xe9x16kcg
+    Location:
+      title: Location Detail schema
+      properties:
+        locationName:
+          type: string
+          description: 'city, state, postalCode combined in one field'
+        city:
+          type: string
+          description: The city name
+        state:
+          type: string
+          description: The two letter state alpha code (example "CO")
+        postalCode:
+          type: string
+          description: The postal code
+        countryCode:
+          type: string
+          description: The ISO Alpha-2 country code (example "US")
+      x-stoplight:
+        id: l1whqriade5j1
+    LocationPostPatch:
+      title: Location Detail schema
+      properties:
+        city:
+          type: string
+          description: The city name
+        state:
+          type: string
+          description: The two letter state alpha code (example "CO")
+        postalCode:
+          type: string
+          description: The postal code
+        countryCode:
+          type: string
+          description: The ISO Alpha-2 country code (example "US")
+      description: Provides the location for where the technologist will be performing thier work. Required if specified applicantLocationRequirements are either "onsite" or "telecommute"
+      x-stoplight:
+        id: urlkq7tld3jfx
+    Candidate:
+      title: Candidate schema
+      properties:
+        id:
+          type: string
+          description: The candidate id
+      required:
+        - id
+      x-stoplight:
+        id: 4zgvlmxo84x1y
+    ApplicationListDetail:
+      title: Application List Detail schema
+      description: The application list detail
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApplicationListItem'
+        meta:
+          $ref: '#/components/schemas/PaginatedResponseMeta'
+        _links:
+          $ref: '#/components/schemas/Links'
+      required:
+        - data
+        - meta
+      x-stoplight:
+        id: 05j5mkh722jte
+    ApplicationListItem:
+      title: Application List item schema
+      description: The application list item
+      type: object
+      properties:
+        id:
+          type: string
+          description: The application id
+        dateCreated:
+          type: string
+          description: The application created date (ISO 8601)
+        job:
+          $ref: '#/components/schemas/Job'
+        candidate:
+          $ref: '#/components/schemas/Candidate'
+      required:
+        - id
+        - dateCreated
+        - job
+      x-stoplight:
+        id: ic4ajy4ia0nt8
+    ResumeDetail:
+      title: Resume Detail schema
+      properties:
+        fileName:
+          type: string
+          description: The file name
+        contentType:
+          type: string
+          description: The file type
+        contentBase64:
+          type: string
+          description: The file content in base64 format
+        contentText:
+          type: string
+          description: The file content in text format
+      required:
+        - fileName
+        - contentType
+      x-stoplight:
+        id: 1vbqvn944ahbf
+    CoverLetterDetail:
+      title: Cover Letter Detail schema
+      properties:
+        fileName:
+          type: string
+          description: The file name
+        contentType:
+          type: string
+          description: The file type
+        contentBase64:
+          type: string
+          description: The file content in base64 format
+      required:
+        - fileName
+        - contentType
+      x-stoplight:
+        id: h19mzwd07j7h8
+    OfccpDetail:
+      title: The OFCCP Detail schema
+      properties:
+        ethnicity:
+          type: string
+          description: The ethnicity
+        gender:
+          type: string
+          description: The gender
+      x-stoplight:
+        id: 8j2f0sri70fuy
+    PaginatedResponseMeta:
+      title: Meta schema
+      properties:
+        page:
+          type: number
+          description: The current page number
+        pageSize:
+          type: number
+          description: The number of results on the page
+        count:
+          type: number
+          description: The total number of results
+      required:
+        - page
+        - pageSize
+        - count
+      description: 'Contains the current page of your response results, the number of results in the page, and the total count of results from your request. '
+      x-stoplight:
+        id: va81qp4iw9iry
+    QuotaMeta:
+      title: Meta Quota schema
+      description: 'Meta details for requests where a quota is in place. Includes the name of the resource the quota is attached to, the amount used, the amount available to use, and the contract limit put in place for your organization'
+      properties:
+        quotas:
+          $ref: '#/components/schemas/Quotas'
+      x-stoplight:
+        id: ozi66gpvura6q
+    Quotas:
+      title: Quota schema
+      description: The quota govering the amount and limits of the specified resource base on your Dice contract
+      properties:
+        name:
+          type: string
+          description: name of resource
+        used:
+          type: number
+          description: The total number of active jobs
+        available:
+          type: number
+          description: The total number of job available to use
+        limit:
+          type: number
+          description: The total amount of jobs (available + used)
+      x-stoplight:
+        id: qtue6l8nddyhn
+    Links:
+      title: Links schema
+      type: object
+      properties:
+        self:
+          $ref: '#/components/schemas/Href'
+        next:
+          $ref: '#/components/schemas/Href'
+      description: 'Contains important HAL hyperlinks to your current resource and other related resources. More information on Hypertext Application Language (HAL) can be found at https://stateless.group/hal_specification.html'
+      x-stoplight:
+        id: o39e5hlpqke0d
+    SelfLink:
+      title: Self link schema
+      properties:
+        self:
+          $ref: '#/components/schemas/Href'
+      description: 'Contains important HAL hyperlinks to your current resource and other related resources. More information on Hypertext Application Language (HAL) can be found at https://stateless.group/hal_specification.html'
+      x-stoplight:
+        id: h6vioaea2l2jg
+    Href:
+      title: Href schema
+      properties:
+        href:
+          type: string
+      x-stoplight:
+        id: xtrcyu2x440ui
+    ErrorResponse:
+      title: Error schema
+      description: The response body for an error
+      type: object
+      properties:
+        code:
+          type: string
+          description: The error code
+        description:
+          type: string
+          description: The error message
+        operation:
+          type: string
+          description: The operation performed
+        context:
+          type: object
+          description: The context of the error
+      required:
+        - code
+        - description
+        - operation
+      x-stoplight:
+        id: 1osxncb0ly5qf
+    UnauthorizedResponse:
+      title: Unauthorized schema
+      description: The response body for an unauthorized request
+      type: object
+      properties:
+        message:
+          type: string
+          description: The Unauthorized message
+          default: Unauthorized
+      required:
+        - message
+      x-stoplight:
+        id: mtiwn3123a42e
+    JobQuotaExceededResponse:
+      title: Job quota exceeded schema
+      description: The response body for a post/patch request that causes a job quota exceeded error
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/QuotaMeta'
+        description:
+          type: string
+      x-stoplight:
+        id: ynf71y90r3y62
+    DeleteJobResponse:
+      title: Delete Job Response schema
+      description: The response body for delete job
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/DeleteJob'
+        meta:
+          $ref: '#/components/schemas/QuotaMeta'
+      x-stoplight:
+        id: w7nv9b25ii0p3
+    PostJobRequest:
+      title: Job Post Request schema
+      type: object
+      properties:
+        externalId:
+          type: string
+          description: The unique job identifier that is used to connect the dice job to a job in an external system
+        status:
+          type: string
+          description: 'Describes the current status of the job. Valid values are "active", "inactive". Only active jobs are shown to technologists. Inactive jobs are hidden from technologist view. Deleted jobs are removed as a post from Dice. Defaults to "active".'
+        title:
+          type: string
+          description: The title of the posted job that is searchable by technologists on Dice
+        description:
+          type: string
+          description: 'The main body of the job description that communicates the work to be performed by a technologist, the required skills, qualifacation , benefits, and other context that will promote your job on Dice. This property may include standard linebreaks and escape tags. Both plain-text line breaks and these escaped HTML tags will be respected when the field is displayed. Please note: URLs, videos, iframes, and images are not allowed, and will be stripped from the job posting prior to going live.basic html.'
+        employmentType:
+          type: string
+          description: 'The type of employment the job is requesting to hire. Valid values are "fullTime", "partTime" or "contract"'
+        contractEmploymentRequirements:
+          $ref: '#/components/schemas/ContractEmploymentRequirements'
+        locations:
+          type: array
+          description: The location where the technologist will be performing their work. Required when specified applicantLocationRequirements are either "onsite" or "hybrid"
+          items:
+            $ref: '#/components/schemas/LocationPostPatch'
+        applicantLocationRequirements:
+          type: array
+          description: 'Array of strings. Describes to location requirements for the job, whether it requires the technologist to be onsite, remote, or hybrid. Valid values are "onsite", "remote" or "hybrid"'
+          items: {}
+        travelPercent:
+          type: number
+          description: 'Travel requirements for employee expressed as an expected percentage of travel in the job posting. Valid values are 0, 10, 25, 50, 75 and 100.'
+        skillsList:
+          type: array
+          description: 'A list of skills that the technologist is expected to have when applying for the job. Skills specified here will be used by Dice to promote jobs to technologists and affects the search results for technologists. If no value is specified, Dice will automatically determine which skills are searchable based on your job description. '
+          items: {}
+        compensation:
+          $ref: '#/components/schemas/Compensation'
+        willSponsor:
+          type: boolean
+          description: 'Flags the job to indicate if the employer is willing to sponsor a technologist for a visa. If true, the job will be marked as "Will Sponsor" on the job post.'
+        employer:
+          $ref: '#/components/schemas/EmployerContactRef'
+        applyMethod:
+          type: string
+          description: 'Controls whether the technologist application experience is onsite and shows up as an easy apply, or it redirects them offsite to apply on a careers page. Specifying "email" will enable the easy apply experience for a technlologist. Specifying "url" will make the job an offsite redirect posting.'
+        applyEmail:
+          type: string
+          description: 'The email inbox that all applications for this job will be sent to. Required if specified apply method is "email". '
+        applyUrl:
+          type: string
+          description: 'The URL to your career portal that applicants will be redirected to when they apply on Dice. Should include a Dice sourcing attribute when specified. Required when specified applyMethod is "url". '
+      required:
+        - title
+        - description
+        - employmentType
+        - applicantLocationRequirements
+        - applyMethod
+      x-stoplight:
+        id: clgid4ecaez5i
+    PostJobResponse:
+      title: Job Post Response schema
+      type: object
+      properties:
+        _links:
+          $ref: '#/components/schemas/SelfLink'
+        meta:
+          $ref: '#/components/schemas/QuotaMeta'
+      x-stoplight:
+        id: lxqyrrdor9n3h
+    ListJobsResponse:
+      title: List Job Response schema
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ListJobsDetail'
+        meta:
+          $ref: '#/components/schemas/PaginatedResponseMeta'
+        _links:
+          $ref: '#/components/schemas/Links'
+      x-stoplight:
+        id: razdwoixl4jh0
+    ListJobsDetail:
+      title: List Job Detail schema
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique Dice job id
+        externalId:
+          type: string
+          description: The unique job identifier that is used to connect the dice job to a job in an external system
+        title:
+          type: string
+          description: The title of the posted job that is searchable by technologists on Dice
+        status:
+          type: string
+          description: 'Describes the current status of the job. Valid values are "active", "inactive" or "deleted". Only active jobs are shown to technologists. Inactive jobs are hidden from technologist view. Deleted jobs are removed as a post from Dice.'
+        datePosted:
+          type: string
+          description: The recent posting date for when a job was posted to Dice
+        dateLastModified:
+          type: string
+          description: The recent date that a job was modified on Dice
+        employmentType:
+          type: string
+          description: 'The type of employment the job is requesting to hire. Valid values are "fullTime", "partTime" or "contract"'
+        applicantLocationRequirements:
+          type: array
+          items: {}
+          description: 'Describes to location requirements for the job, whether it requires the technologist to be onsite, remote, or hybrid.  Valid values are "onsite", "remote" or "hybrid"'
+        applyMethod:
+          type: string
+          description: 'Controls whether the technologist application experience is onsite and shows up as an easy apply, or it redirects them offsite to apply on a careers page. Specifying "email" will enable the easy apply experience for a technlologist. Specifying "url" will make the job an offsite redirect posting. '
+        applyEmail:
+          type: string
+          description: The email inbox that all applications for this job will be sent to
+        locations:
+          $ref: '#/components/schemas/Locations'
+        skillsList:
+          type: array
+          description: 'A list of skills that the technologist is expected to have when applying for the job. Skills specified here will be used by Dice to promote jobs to technologists and affects the search results for technologists. If no value is specified, Dice will automatically determine which skills are searchable based on your job description. '
+          items: {}
+      x-stoplight:
+        id: t5icrg98utyji
+    PatchJobRequest:
+      title: Job Patch Request schema
+      type: object
+      properties:
+        status:
+          type: string
+          description: 'Describes the current status of the job. Valid values are "active", "inactive" or "deleted". Only active jobs are shown to technologists. Inactive jobs are hidden from technologist view. Deleted jobs are removed as a post from Dice'
+        title:
+          type: string
+          description: The title of the posted job that is searchable by technologists on Dice
+        description:
+          type: string
+          description: 'The main body of the job description that communicates the work to be performed by a technologist, the required skills, qualifacation , benefits, and other context that will promote your job on Dice. This property may include standard linebreaks and escape tags. Both plain-text line breaks and these escaped HTML tags will be respected when the field is displayed. Please note: URLs, videos, iframes, and images are not allowed, and will be stripped from the job posting prior to going live.basic html.'
+        employmentType:
+          type: string
+          description: 'The type of employment the job is requesting to hire. Valid values are "fullTime", "partTime" or "contract"tract"'
+        contractEmploymentRequirements:
+          $ref: '#/components/schemas/ContractEmploymentRequirements'
+        locations:
+          type: array
+          description: The location where the technologist will be performing their work. Required when specified applicantLocationRequirements are either "onsite" or "hybrid"
+          items:
+            $ref: '#/components/schemas/LocationPostPatch'
+        applicantLocationRequirements:
+          type: array
+          items: {}
+          description: 'Array of strings. Describes to location requirements for the job, whether it requires the technologist to be onsite, remote, or hybrid. Valid values are "onsite", "remote" or "hybrid"'
+        travelPercent:
+          type: number
+          description: 'Travel requirements for employee expressed as an expected percentage of travel in the job posting. Valid values are 0, 10, 25, 50, 75 and 100.'
+        skillsList:
+          type: array
+          description: 'A list of skills that the technologist is expected to have when applying for the job. Skills specified here will be used by Dice to promote jobs to technologists and affects the search results for technologists. If no value is specified, Dice will automatically determine which skills are searchable based on your job description.'
+          items: {}
+        compensation:
+          $ref: '#/components/schemas/Compensation'
+        willSponsor:
+          type: boolean
+          description: 'Flags the job to indicate if the employer is willing to sponsor a technologist for a visa. If true, the job will be marked as "Will Sponsor" on the job post.'
+        employer:
+          $ref: '#/components/schemas/EmployerContactRef'
+        applyMethod:
+          type: string
+          description: 'Controls whether the technologist application experience is onsite and shows up as an easy apply, or it redirects them offsite to apply on a careers page. Specifying "email" will enable the easy apply experience for a technlologist. Specifying "url" will make the job an offsite redirect posting.'
+        applyEmail:
+          type: string
+          description: The email inbox that all applications for this job will be sent to. Required if specified apply method is "email".
+        applyUrl:
+          type: string
+          description: The URL to your career portal that applicants will be redirected to when they apply on Dice. Should include a Dice sourcing attribute when specified. Required when specified applyMethod is "url".
+      x-stoplight:
+        id: 5mgjxzvs0p1ma
+    PatchJobResponse:
+      title: Job Patch Response schema
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+              description: The unique Dice job id given to the job
+        _links:
+          $ref: '#/components/schemas/SelfLink'
+        meta:
+          $ref: '#/components/schemas/QuotaMeta'
+      x-stoplight:
+        id: d3fuvpcveoxco
+    GetJobByIdResponse:
+      title: Get Job by ID Response schema
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ExternalJob'
+        _links:
+          $ref: '#/components/schemas/SelfLink'
+      required:
+        - data
+        - _links
+      x-stoplight:
+        id: 03mntb3lla8r5
+    ExternalJob:
+      title: External Job schema
+      properties:
+        id:
+          type: string
+          description: The unique job id given by Dice
+        externalId:
+          type: string
+          description: The unique job identifier that is used to connect the dice job to a job in an external system
+        status:
+          type: string
+          description: 'Describes the current status of the job. Valid values are "active", "inactive" and "deleted". Only active jobs are shown to technologists. Inactive jobs are hidden from technologist view. Deleted jobs are removed as a post from Dice.'
+        datePosted:
+          type: string
+          description: The recent posting date for when a job was posted to Dice
+        dateLastModified:
+          type: string
+          description: The recent date that a job was modified on Dice
+        validThrough:
+          type: string
+          description: The date the job is valid to be posted on Dice. When the validThrough date is exceeded the job will be inactivated.
+        title:
+          type: string
+          description: The title of the posted job that is searchable by technologists on Dice
+        description:
+          type: string
+          description: 'The main body of the job description that communicates the work to be performed by a technologist, the required skills, qualifacation , benefits, and other context that will promote your job on Dice. This property may include standard linebreaks and escape tags. Both plain-text line breaks and these escaped HTML tags will be respected when the field is displayed. Please note: URLs, videos, iframes, and images are not allowed, and will be stripped from the job posting prior to going live.basic html'
+        employmentType:
+          type: string
+          description: 'The type of employment the job is requesting to hire. Valid values are "fullTime", "partTime" or "contract"'
+        contractEmploymentRequirements:
+          $ref: '#/components/schemas/ContractEmploymentRequirements'
+        locations:
+          $ref: '#/components/schemas/Locations'
+        applicantLocationRequirements:
+          type: array
+          items: {}
+          description: 'Describes to location requirements for the job, whether it requires the technologist to be onsite, remote, or hybrid. Valid values are "onsite", "remote" or "hybrid"'
+        travelPercent:
+          type: number
+          description: 'Travel requirements for employee expressed as an expected percentage of travel in the job posting. Valid values are 0, 10, 25, 50, 75 and 100.'
+        skillsList:
+          type: array
+          items: {}
+          description: 'A list of skills that the technologist is expected to have when applying for the job. Skills specified here will be used by Dice to promote jobs to technologists and affects the search results for technologists. If no value is specified, Dice will automatically determine which skills are searchable based on your job description.'
+        compensation:
+          $ref: '#/components/schemas/Compensation'
+        willSponsor:
+          type: boolean
+          description: 'Flags the job to indicate if the employer is willing to sponsor a technologist for a visa. If true, the job will be marked as "Will Sponsor" on the job post.'
+        employer:
+          $ref: '#/components/schemas/Employer'
+        applyMethod:
+          type: string
+          description: 'Controls whether the technologist application experience is onsite and shows up as an easy apply, or it redirects them offsite to apply on a careers page. Specifying "email" will enable the easy apply experience for a technlologist. Specifying "url" will make the job an offsite redirect posting.'
+        applyEmail:
+          type: string
+          description: The email inbox that all applications for this job will be sent to
+        applyUrl:
+          type: string
+          description: The URL to your career portal that applicants will be redirected to when they apply on Dice. Should include a Dice sourcing attribute when specified
+      required:
+        - id
+      x-stoplight:
+        id: t3iahgec9x7dv
+    EmployerContactRef:
+      title: Employer Contact Ref schema
+      type: object
+      description: ''
+      properties:
+        company:
+          $ref: '#/components/schemas/Company'
+        contactRef:
+          type: string
+          description: 'Username email of the recruiter that is connected with the job. The email must match the email of a valid Dice user. If the contactRef can''t be associated with a valid Dice user, the job will post without an associated recruiter contact.'
+      x-stoplight:
+        id: si1j2fuf9126l
+    Employer:
+      title: Employer schema
+      type: object
+      description: Contains information about the employer that is associated with the job
+      properties:
+        company:
+          $ref: '#/components/schemas/Company'
+        contactRef:
+          type: string
+          description: 'Username email of the recruiter that is connected with the job. The email must match the email of a valid Dice user. If the contactRef can''t be associated with a valid Dice user, the job will post without an associated recruiter contact. '
+      x-stoplight:
+        id: 8zw4b2fxjd9j5
+    Company:
+      title: Company schema
+      type: object
+      properties:
+        name:
+          type: string
+          description: Company name
+        url:
+          type: string
+          description: Company URL
+        location:
+          $ref: '#/components/schemas/Location'
+      x-stoplight:
+        id: espkequ7qbv8c
+    Compensation:
+      title: Compensation schema
+      type: object
+      properties:
+        currency:
+          type: string
+          description: Currency of the compensation
+        type:
+          type: string
+          description: Type of compensation for max and min values expressed as salary or hourly
+        max:
+          type: number
+          description: Maximum compensation
+        min:
+          type: number
+          description: Minimum compensation
+      description: 'Specifies the level of compensation that a technologist can expect to be paid for the work performed. If no compensation is specified, Dice will communicate that compensation depends on the experience of the technologist.'
+      x-stoplight:
+        id: 9pzppxum10vmj
+    ContractEmploymentRequirements:
+      title: Contract Employment Schema
+      type: object
+      properties:
+        duration:
+          type: number
+          description: The length of the contract employment engagement specified as a numberical value
+        durationPeriod:
+          type: string
+          description: 'Describes the period of duration length in terms of weeks, months, and years'
+        taxTerm:
+          type: array
+          description: 'The tax term (status) of the contract employment engagement. Valid values are "w2", "1099", "c2c".'
+          items: {}
+      description: Describes the context of a contract employment engagement. Required when specified employmentType is "contract"
+      x-stoplight:
+        id: 00b1iuapx7ybb
+    DeleteJob:
+      title: Delete Job Response schema
+      type: object
+      description: ''
+      properties:
+        status:
+          type: string
+          description: Confirms that the status of the job is deleted and that it is archived in Dice
+      required:
+        - status
+      x-stoplight:
+        id: v4er7r6um23cd
+  securitySchemes:
+    LegacyAuthorizer:
+      type: apiKey
+      name: authorization
+      in: header
+      x-amazon-apigateway-authtype: custom
+      x-amazon-apigateway-authorizer:
+        type: token
+        authorizerUri:
+          'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${Environment}-${Brand}-${Application}-legacy-authorizer-v01/invocations'
+        authorizerCredentials:
+          'Fn::GetAtt':
+            - ApiGatewayAuthorizerRoleV01
+            - Arn
+        authorizerResultTtlInSeconds: 300

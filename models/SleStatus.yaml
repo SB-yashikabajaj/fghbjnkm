@@ -1,0 +1,10 @@
+title: SleStatus
+x-stoplight:
+  id: cpckxca6f8559
+enum:
+  - Confirmed
+  - Cancelled
+description: |-
+  Confirmed when published
+  Cancelled if Producer decides to cancel a Confirmed Sle
+x-internal: false

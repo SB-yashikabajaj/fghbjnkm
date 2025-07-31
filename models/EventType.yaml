@@ -1,0 +1,21 @@
+title: EventType
+x-stoplight:
+  id: irfw3zy9tdss4
+type: object
+enum:
+  - Tennis
+  - Motorsport
+  - Soccer
+  - Golf
+  - Cricket
+  - Rugby League
+  - Rugby Union
+  - Fishing
+  - Netball
+  - Basketball
+  - American Football
+  - Boxing
+  - Darts
+  - Pool
+  - More Sports
+x-internal: false

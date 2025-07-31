@@ -1,0 +1,17 @@
+title: Discount
+x-stoplight:
+  id: ircqleehjr1m4
+type: object
+properties:
+  displayName:
+    type: string
+    x-stoplight:
+      id: wtfdt6o7futlt
+    example: New Customer Coupon
+  amount:
+    $ref: ./Money.yaml
+    x-stoplight:
+      id: w85xjd59e5xev
+x-tags:
+  - request-object
+description: Discount applied to an order

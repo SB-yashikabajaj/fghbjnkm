@@ -1,0 +1,9 @@
+title: Iso20022AccountBalances
+x-stoplight:
+  id: 6q9mdly6ythak
+type: array
+description: Collection of balance
+items:
+  $ref: ./AccountBalance.yaml
+  x-stoplight:
+    id: vo5gda95drku4

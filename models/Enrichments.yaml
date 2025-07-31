@@ -1,0 +1,19 @@
+type: object
+x-stoplight:
+  id: cvqt6f6k7ksse
+description: Additional enrichment data for the payment.
+properties:
+  initiation:
+    type: object
+    description: Information about how the payment was initiated.
+    properties:
+      actor:
+        type: string
+        description: The party that initiated the payment.
+        enum:
+          - MERCHANT
+          - CUSTOMER
+        x-stoplight:
+          id: piuwoamvzauc0
+    x-stoplight:
+      id: n6yxlz07gpefu

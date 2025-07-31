@@ -1,0 +1,27 @@
+title: Money
+x-stoplight:
+  id: ac3yv3q137j07
+type: object
+description: Object containing amount and currency
+x-tags:
+  - request-object
+properties:
+  amount:
+    type: string
+    x-stoplight:
+      id: oxvwrk9wixsn4
+    example: '100.00'
+    description: 'The amount as a string representation of a decimal number, rounded to 2 decimal places.'
+  currency:
+    type: string
+    enum:
+      - AUD
+      - NZD
+      - USD
+      - CAD
+      - GBP
+    x-stoplight:
+      id: 444lo1dbvg3fn
+required:
+  - amount
+  - currency

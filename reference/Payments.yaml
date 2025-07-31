@@ -1,0 +1,1039 @@
+openapi: 3.1.0
+x-stoplight:
+  id: y86f0l1cx8hxf
+info:
+  title: Online API
+  version: v2
+servers:
+  - url: 'https://global-api-sandbox.afterpay.com'
+    description: Sandbox
+  - url: 'https://global-api.afterpay.com'
+    description: Production
+components:
+  securitySchemes:
+    sec0:
+      type: http
+      scheme: basic
+  schemas:
+    AuthorizePayment:
+      title: AuthorizePayment
+      x-stoplight:
+        id: fgtgq43menig7
+      type: object
+      required:
+        - token
+      properties:
+        requestid:
+          x-stoplight:
+            id: 7gpl6ebyjs6xg
+          type: string
+          description: 'A unique request ID, required for idempotent retries. We recommend that merchants generate a Universally Unique Identifier (UUID) for each unique request.'
+          format: uuid
+        token:
+          type: string
+          x-stoplight:
+            id: 0u7p3map4vm84
+          example: 005.2fkv5o963b132z8ppa34srlh60987y87d55re237wsg9tr4q2
+        merchantReference:
+          type: string
+          x-stoplight:
+            id: r7zvjiwxfpu75
+          description: |-
+            The reference/order ID that this payment corresponds to in the merchant's system.
+
+            **Note:** Providing a new value updates any value previously set in the Create Checkout request.
+          example: merchant-order-123
+        amount:
+          $ref: ../models/Money.yaml
+          x-stoplight:
+            id: sxvdj2vxhh7dq
+          description: '**Required for express checkout only.** Amount to be checked against the value in the create checkout request. If the amounts do not match, then the request is rejected and an error specific to this scenario is returned.'
+        isCheckoutAdjusted:
+          type: boolean
+          x-stoplight:
+            id: gd4sarjqzgy5k
+          description: '**Express checkout only.** The isCheckoutAdjusted field can be used to allow the order amount to be changed after the checkout flow. Used for express checkout.'
+        paymentScheduleChecksum:
+          type: string
+          x-stoplight:
+            id: kt9jftvqgbrly
+          description: '**Express checkout only.** A unique value representing the payment schedule that must be provided when there has been changes since the initial order creation (retrieved from checkout widget).'
+        items:
+          type: array
+          x-stoplight:
+            id: nq7qarsjs2v6j
+          description: '**Express checkout only.** An array of order items that have been updated to be provided if it has changed since the initial order creation.'
+          items: {}
+        shipping:
+          $ref: ../models/Contact.yaml
+          x-stoplight:
+            id: ll972k9lbul4z
+          description: '**Express checkout only.** The shipping address if it has changed since the initial order creation.'
+        enrichments:
+          $ref: ../models/Enrichments.yaml
+      examples: []
+    CapturePayment:
+      title: CapturePayment
+      x-stoplight:
+        id: 43jx3ecllguvm
+      type: object
+      properties:
+        requestId:
+          type: string
+          format: uuid
+          description: 'A unique request ID, required for idempotent retries.'
+        merchantReference:
+          type: string
+          description: |-
+            The reference/order ID that this payment corresponds to in the merchant's system. 
+
+            Note: Providing a new value updates any value previously set in the Create Checkout request.
+          example: merchant-order-123
+        amount:
+          $ref: ../models/Money.yaml
+        paymentEventMerchantReference:
+          type: string
+          x-stoplight:
+            id: wcxlaey7hdchf
+          description: |
+            A unique reference for the individual payment capture event. If provided, the value appears in the daily settlement file as "Payment Event ID"
+          maxLength: 128
+          example: payment-ref-123
+  requestBodies:
+    Auth:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AuthorizePayment'
+            x-examples:
+              Example 1:
+                requestid: d22f5305-05f3-48a0-9131-a4e6e5f58b9a
+                token: string
+                merchantReference: order-12345
+                amount:
+                  amount: '100.00'
+                  currency: AUD
+security:
+  - sec0: []
+paths:
+  /v2/payments:
+    get:
+      summary: List Payments
+      description: |
+        This endpoint retrieves a collection of payments along with their order details.
+
+        **Connection Timeouts**
+        | Timeout | Time (Seconds) |
+        |---------|----------------|
+        | Open    | 10             |
+        | Read    | 20             |
+      operationId: list-payments
+      parameters:
+        - name: toCreatedDate
+          in: query
+          description: 'An inclusive end date and time to search, in [ISO 8601](http://www.iso.org/iso/home/standards/iso8601.htm) format.'
+          schema:
+            type: string
+            default: '2020-12-30'
+        - name: fromCreatedDate
+          in: query
+          description: 'An inclusive start date and time to search, in [ISO 8601](http://www.iso.org/iso/home/standards/iso8601.htm) format.'
+          schema:
+            type: string
+            default: '2020-01-01'
+        - name: tokens
+          in: query
+          description: One or more order tokens to search for.
+          schema:
+            type: array
+            items:
+              type: string
+            default:
+              - '10'
+        - name: includeNextLink
+          in: query
+          description: Returns a modified pagination object which includes a URL to return the next page. The default value is false.
+          schema:
+            type: boolean
+            default: false
+        - name: ids
+          in: query
+          description: One or more Cash App Afterpay Order IDs to search for.
+          schema:
+            type: array
+            items:
+              type: string
+            default:
+              - '0'
+        - name: merchantReferences
+          in: query
+          description: One or more Merchant Reference IDs to search for.
+          schema:
+            type: array
+            items:
+              type: string
+            default:
+              - '0'
+        - name: statuses
+          in: query
+          description: One or more Cash App Afterpay Order Statuses to search for. Possible values include "APPROVED" and "DECLINED".
+          schema:
+            type: array
+            items:
+              type: string
+            default:
+              - Approved
+        - name: orderBy
+          in: query
+          description: 'A field to order results by. If provided, must be one of "createdAt", "id", "totalAmount", "merchantReference" or "email".'
+          schema:
+            type: string
+            default: createdAt
+        - name: ascending
+          in: query
+          description: '`true` to order results in ascending order, or `false` for descending order.'
+          schema:
+            type: boolean
+            default: false
+        - name: User-Agent
+          in: header
+          required: true
+          schema:
+            type: string
+          description: 'View our [User Agent Header](https://developers.cash.app/docs/merchant/api-development/api-calls-payment-flows/user-agent-header) page for formatting details'
+        - name: Accept
+          in: header
+          schema:
+            type: string
+            default: application/json
+      responses:
+        '200':
+          description: 'Returns the matching Payment objects, enclosed in a Pagination object.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  totalResults:
+                    type: integer
+                    description: Total number of results
+                    example: 445
+                  offset:
+                    type: integer
+                    description: The offer of the pagination
+                    example: 3
+                  limit:
+                    type: integer
+                    description: The number of payments to include in the results
+                    example: 1
+                  results:
+                    type: array
+                    items:
+                      $ref: ../models/Payment.yaml
+        '422':
+          description: 'An invalid query parameter was provided. For example, a value for `limit` was provided, but was less than 1 or more than 250. Error code `error`.'
+        '500':
+          description: 'This is usually caused by sending a `fromCreatedDate` or `toCreatedDate` in an invalid format. Please ensure the dash and colon characters are included, and any plus characters are URL-encoded. Also, for the array parameters (`ids`, `tokens`, `merchantReferences` and `statuses`), do not use comma-separated values or square brackets. Instead, include each parameter multiple times, as needed.'
+        default:
+          description: See GET errors.
+      deprecated: false
+      x-stoplight:
+        id: p8n1rfjuh0ba0
+  /v2/payments/auth:
+    post:
+      summary: Auth
+      description: |
+        This endpoint requests a payment auth, which determines the order approval status. If approved, the auth has an expiration date and time, which is returned in the events list for the "AUTH_APPROVED" payment event. Authorization expires after 13 days.
+
+        This operation is [idempotent](../docs/ONLINE-API/Idempotent-Requests.md) based on the `requestId` (if provided), which allows for the safe retry of multiple requests, guaranteeing the payment operation is only made once.
+
+        The customer's payment plan starts at the time of auth approval.
+
+        **Note:** Authorization expires after 13 days and then the transaction is automatically voided. Voided transactions are frozen and cannot be reopened or changed in any way. In this case, use the `v2/checkouts` endpoint to create a new order.
+
+        **Connection Timeouts**
+        | Timeout | Time (Seconds) |
+        |---------|----------------|
+        | Open    | 10             |
+        | Read    | 70             |
+      operationId: auth
+      parameters:
+        - name: Content-Type
+          in: header
+          required: true
+          schema:
+            type: string
+            default: application/json
+        - name: User-Agent
+          in: header
+          required: true
+          schema:
+            type: string
+          description: 'View our [User Agent Header](https://developers.cash.app/docs/merchant/api-development/api-calls-payment-flows/user-agent-header) page for formatting details'
+        - name: Accept
+          in: header
+          schema:
+            type: string
+            default: application/json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthorizePayment'
+            examples:
+              Standard checkout:
+                value:
+                  requestid: d22f5305-05f3-48a0-9131-a4e6e5f58b9a
+                  token: 005.2fkv5o963b132z8ppa34srlh60987y87d55re237wsg9tr4q2
+                  merchantReference: merchant-order-123
+              Express checkoout:
+                value:
+                  requestid: d22f5305-05f3-48a0-9131-a4e6e5f58b9a
+                  token: 005.2fkv5o963b132z8ppa34srlh60987y87d55re237wsg9tr4q2
+                  merchantReference: merchant-order-123
+                  amount:
+                    amount: '100.00'
+                    currency: AUD
+                  isCheckoutAdjusted: true
+                  paymentScheduleChecksum: string
+                  items:
+                    - null
+                  shipping:
+                    name: Joe Consumer
+                    line1: Level 5
+                    line2: 390 Collins Street
+                    area1: Melbourne
+                    region: VIC
+                    postcode: '3000'
+                    countryCode: AU
+                    phoneNumber: 0400 000 000
+                  enrichments:
+                    initiation:
+                      actor: MERCHANT
+      responses:
+        '201':
+          description: 'If the payment is approved by Cash App Afterpay, a Payment object is returned with a `status` of **APPROVED** and a `paymentState` of **AUTH_APPROVED**.'
+          content:
+            application/json:
+              schema:
+                $ref: ../models/PaymentAuth.yaml
+              examples: {}
+        '402':
+          description: |
+            If payment is declined by Cash App Afterpay, for example, if invalid card details were entered, returns a Payment object in response, with a `status` of "DECLINED" and a `paymentState` of "AUTH_DECLINED". advise the customer to contact the Cash App Afterpay Customer Service team for more information.
+
+            As well, the following errorCodes are possible:
+            | errorCode | Description |
+            | --- | --- |
+            | invalid_token | The checkout token is invalid, expired, or does not exist.
+        '412':
+          description: The customer has not confirmed their payment for the order associated with this token. Error code `invalid_order_transaction_status`.
+        '422':
+          description: The checkout token was missing or empty. Error code `invalid_object`.
+        default:
+          description: see additional PUT/POST errors applicable to all POST endpoints.
+      deprecated: false
+      x-stoplight:
+        id: 4xv4d0ercp89x
+  /v2/payments/capture:
+    post:
+      summary: Capture Full Payment
+      description: |
+        This endpoint makes a payment capture for the full value of the payment plan.
+
+        This operation is [idempotent](../docs/ONLINE-API/Idempotent-Requests.md) based on the token, which allows for the safe retry of requests, guaranteeing the payment operation is only made once.
+
+        Since the idempotency of this endpoint is based on the token, the inclusion of a `requestId` is not required.
+
+        **Connection Timeouts**
+        | Timeout | Time (Seconds) |
+        |---------|----------------|
+        | Open    | 10             |
+        | Read    | 70             |
+      operationId: capture-full-payment
+      parameters:
+        - name: Content-Type
+          in: header
+          required: true
+          schema:
+            type: string
+            default: application/json
+        - name: User-Agent
+          in: header
+          required: true
+          schema:
+            type: string
+            example: 'MyCashAppAfterpayModule/1.0.0 (E-Commerce Platform Name/1.0.0; PHP/7.0.0; Merchant/60032000) https://merchant.example.com'
+          description: 'View our [User Agent Header](https://developers.cash.app/docs/merchant/api-development/api-calls-payment-flows/user-agent-header) page for formatting details.'
+        - name: Accept
+          in: header
+          schema:
+            type: string
+            default: application/json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - token
+              properties:
+                token:
+                  type: string
+                  description: The token returned in the Create Checkout request.
+                merchantReference:
+                  type: string
+                  description: The merchant’s order id/reference that this payment corresponds to. This updates any value previously provided in the Create Checkout request.
+                amount:
+                  $ref: ../models/Money.yaml
+                  x-stoplight:
+                    id: a2hq32eh2vadn
+                  description: '**Required for express checkout only.** Amount to be checked against the value in the create checkout request. If the amounts do not match, then the request is rejected and an error specific to this scenario is returned. '
+                isCheckoutAdjusted:
+                  type: boolean
+                  x-stoplight:
+                    id: 2zo05p6fybomd
+                  description: '**Express checkout only.** The isCheckoutAdjusted field can be used to allow the order amount to be changed after the checkout flow.'
+                paymentScheduleChecksum:
+                  type: string
+                  x-stoplight:
+                    id: 989i67fd8bqt6
+                  description: '**Express checkout only.** A unique value representing the payment schedule that must be provided when there have been changes since the initial order creation (retrieved from checkout widget).'
+                items:
+                  $ref: ../models/Item.yaml
+                  x-stoplight:
+                    id: ea72z63sprkuz
+                  description: '**Express checkout only.** An array of order items that have been updated. Provide if it has changed since the initial order creation.'
+                shipping:
+                  $ref: ../models/Contact.yaml
+                  x-stoplight:
+                    id: bns7fowy0mhfg
+                  description: '**Express checkout only.** The shipping address if it has changed since the initial order creation. '
+                enrichments:
+                  $ref: ../models/Enrichments.yaml
+            examples:
+              Standard checkout:
+                value:
+                  token: '{{afterpay_checkout_token}}'
+                  merchantReference: '{{merchant_order_number}}'
+              Express checkoout:
+                value:
+                  token: string
+                  merchantReference: string
+                  amount:
+                    amount: '100.00'
+                    currency: AUD
+                  isCheckoutAdjusted: true
+                  paymentScheduleChecksum: string
+                  items:
+                    name: Blue Carabiner
+                    sku: '12341234'
+                    quantity: 1
+                    pageUrl: 'https://merchant.example.com/carabiner-354193.html'
+                    imageUrl: 'https://merchant.example.com/carabiner-7378-391453-1.jpg'
+                    price:
+                      amount: '40.00'
+                      currency: AUD
+                    categories:
+                      - - Sporting Goods
+                        - Climbing Equipment
+                        - Climbing
+                        - Climbing Carabiners
+                      - - Sale
+                        - Climbing
+                    estimatedShipmentDate: '2023-08-01'
+                  shipping:
+                    name: Joe Consumer
+                    line1: Level 5
+                    line2: 390 Collins Street
+                    area1: Melbourne
+                    region: VIC
+                    postcode: '3000'
+                    countryCode: AU
+                    phoneNumber: 0400 000 000
+      responses:
+        '201':
+          description: |
+            | Status | Description |
+            | ----- | ----- |
+            | `APPROVED` | If payment is approved by Cash App Afterpay, returns a Payment object in response, with a status of "APPROVED". |
+            | `DECLINED` | If payment is declined by Cash App Afterpay, for example, if invalid card details were entered, returns a Payment object in response, with a status of "DECLINED". Please advise the customer to contact the Cash App Afterpay Customer Service team for more information. |
+          content:
+            application/json:
+              schema:
+                $ref: ../models/Payment.yaml
+        '402':
+          description: 'The checkout token is invalid, expired, or does not exist. Error code `invalid_token`.'
+        '412':
+          description: The Consumer has not confirmed their payment for the order associated with this token. Error code `invalid_order_transaction_status`.
+        '422':
+          description: The checkout token was missing or empty. Error code `invalid_object`.
+        default:
+          description: See additional PUT/POST Errors applicable to all POST endpoints.
+      deprecated: false
+      x-stoplight:
+        id: l1b965nte5ldb
+  '/v2/payments/{orderId}':
+    get:
+      summary: Get Payment By Order ID
+      description: |
+        This endpoint retrieves an individual payment along with its order details.
+
+        **Connection Timeouts**
+        | Timeout | Time (Seconds) |
+        |---------|----------------|
+        | Open    | 10             |
+        | Read    | 20             |
+      operationId: get-payment-by-order-id
+      parameters:
+        - name: orderId
+          in: path
+          description: 'The unique ID of the Cash App Afterpay Order, for which a Payment event has been completed.'
+          schema:
+            type: string
+          required: true
+        - name: User-Agent
+          in: header
+          required: true
+          schema:
+            type: string
+          description: 'View our [User Agent Header](https://developers.cash.app/docs/merchant/api-development/api-calls-payment-flows/user-agent-header) page for formatting details'
+        - name: Accept
+          in: header
+          schema:
+            type: string
+            default: application/json
+      responses:
+        '200':
+          description: Returns a Payment object in response.
+          content:
+            application/json:
+              schema:
+                $ref: ../models/Payment.yaml
+        '404':
+          description: No Cash App Afterpay Order was found matching the `orderId` provided. Error code `not_found`.
+        default:
+          description: See GET errors.
+      deprecated: false
+      x-stoplight:
+        id: 0jkl7uqnzq0rn
+    put:
+      summary: Update Payment by Order ID
+      description: This endpoint is to create merchant side order ID's following the Cash App Afterpay order ID creation. Call the endpoint immediately after the Cash App Afterpay order is created.
+      operationId: update-payment-by-order-id
+      parameters:
+        - name: User-Agent
+          in: header
+          required: true
+          schema:
+            type: string
+            example: 'MyCashAppAfterpayModule/1.0.0 (E-Commerce Platform Name/1.0.0; PHP/7.0.0; Merchant/60032000) https://merchant.example.com'
+        - name: Accept
+          in: header
+          schema:
+            type: string
+            default: application/json
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+            default: application/json
+        - name: orderId
+          in: path
+          description: The Order ID to update
+          schema:
+            type: string
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - merchantReference
+              properties:
+                merchantReference:
+                  type: string
+                  description: The merchant’s new order ID to replace with
+                  default: new_merchant_order_id_1234
+      responses:
+        '201':
+          description: Returns object containing the following attributes.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties:
+                  id:
+                    type: string
+                    description: The unique Cash App Afterpay (merchant payment) payment ID.
+                  token:
+                    type: string
+                    description: Checkout token to be used to complete customer checkout and payment.
+                  status:
+                    type: string
+                    description: \"APPROVED" (update is only valid for successful orders)
+                  created:
+                    type: string (ISO-8601)
+                    description: 'The payment creation time [ISO 8601 UTC/Zulu time](https://www.iso.org/iso-8601-date-and-time-format.html).'
+                  originalAmount:
+                    type: object
+                    description: Total amount for the order. See Money.
+                  openToCaptureAmount:
+                    type: object
+                    description: Total amount that can be captured for order. See Money.
+                  paymentState:
+                    type: string
+                    description: 'Available states: "AUTH_APPROVED", "CAPTURED", "VOIDED", "EXPIRED", "AUTH_DECLINED", "PARTIALLY_CAPTURED", "CAPTURE_DECLINED""'
+                  merchantReference:
+                    type: string | The merchant’s order id/reference that this payment corresponds to. |
+                  refunds:
+                    type: object
+                    description: The refund details for merchant's order. See Refund.
+                  orderDetails:
+                    type: object
+                    description: The order bound to the payment. See Order Details.
+                  events:
+                    type: object
+                    description: Event list for for merchant's order. See Events.
+        '404':
+          description: The Cash App Afterpay payment ID to update was not found. Error code `not_found`.
+        default:
+          description: See additional PUT/POST Errors applicable to all POST endpoints.
+      deprecated: false
+      x-stoplight:
+        id: u4equqoi2sysv
+  '/v2/payments/{orderId}/capture':
+    post:
+      summary: Capture Payment
+      description: |
+        This endpoint captures a full or partial payment. Any amounts successfully captured are settled from Cash App Afterpay to the merchant's nominated bank account on the following day. Records of all payments captured against an order are returned in the events list as events of type, "CAPTURED".
+
+        **Note:** Authorization expires after 13 days and then the transaction is automatically voided. Voided transactions are frozen and cannot be captured, reopened or changed in any way. In this case your only option is to use the v2/checkouts endpoint to create a new order.
+
+        This operation is [idempotent](../docs/ONLINE-API/Idempotent-Requests.md) based on the `requestId` (if provided), which allows the safe retry of multiple requests. This safe retry guarantees the payment operation only occurs once.
+
+        **Connection Timeouts**
+        | Timeout | Time (Seconds) |
+        |---------|----------------|
+        | Open    | 10             |
+        | Read    | 70             |
+      operationId: capture-payment
+      parameters:
+        - name: Content-Type
+          in: header
+          required: true
+          schema:
+            type: string
+            default: application/json
+        - name: User-Agent
+          in: header
+          required: true
+          schema:
+            type: string
+          description: 'View our [User Agent Header](https://developers.cash.app/docs/merchant/api-development/api-calls-payment-flows/user-agent-header). page for formatting details'
+        - name: Accept
+          in: header
+          schema:
+            type: string
+            default: application/json
+        - name: orderId
+          in: path
+          description: 'The unique ID of the Cash App Afterpay Order, returned as the `id` property of the Auth response.'
+          schema:
+            type: string
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CapturePayment'
+        description: ''
+      responses:
+        '201':
+          description: 'If successful, returns an updated copy of the Payment object, with the newly captured payment appended to the `events` array as a Payment Event object with a `type` of "CAPTURED".'
+          content:
+            application/json:
+              schema:
+                $ref: ../models/Payment.yaml
+        '404':
+          description: 'No numeric `orderId` was provided, or an invalid string was provided. Error code `not_found`.'
+        '410':
+          description: 'Payment has already been fully captured for this order, or partially captured with the remainder voided. Error code `payment_captured`.'
+        '412':
+          description: |
+            | errorCode | Description |
+            | --- | --- |
+            | error | A numeric `orderId` was provided, but did not match any valid order. |
+            | invalid_state | The order was declined by Cash App Afterpay; no payment can be captured for this order. |
+            | payment_voided | The auth for this order has already been completely voided. |
+            | payment_expired | The auth for this order has expired; no further payment can be captured. |
+        '422':
+          description: |
+            | errorCode | Description |
+            | --- | --- |
+            | invalid_object | The `amount` was missing or invalid, or the `paymentEventMerchantReference` exceeded 128 characters. |
+            | invalid_amount | The `amount` was less than the minimum capture amount, or more than the `openToCaptureAmount`. |
+        default:
+          description: see additional PUT/POST errors applicable to all POST endpoints.
+      deprecated: false
+      x-stoplight:
+        id: xgxvfj31aevr2
+  '/v2/payments/{orderId}/courier':
+    put:
+      summary: Update Shipping Courier
+      description: |
+        This endpoint updates an order with shipping courier information. The Cash App Afterpay team may use this information when providing support.
+
+        **Connection Timeouts**
+        | Timeout | Time (Seconds) |
+        |---------|----------------|
+        | Open    | 10             |
+        | Read    | 20             |
+      operationId: update-shipping-courier
+      parameters:
+        - name: orderId
+          in: path
+          description: The unique Cash App Afterpay Order ID to update.
+          schema:
+            type: string
+          required: true
+        - name: Content-Type
+          in: header
+          required: true
+          schema:
+            type: string
+            enum:
+              - application/json
+        - name: User-Agent
+          in: header
+          required: true
+          schema:
+            type: string
+            example: 'MyCashAppAfterpayModule/1.0.0 (E-Commerce Platform Name/1.0.0; PHP/7.0.0; Merchant/60032000) https://merchant.example.com'
+          description: View our  page for formatting details
+        - name: Accept
+          in: header
+          schema:
+            type: string
+            enum:
+              - application/json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/Shipping-Courier.yaml
+        description: ''
+      responses:
+        '200':
+          description: Returns a Payment object in response.
+          content:
+            application/json:
+              schema:
+                $ref: ../models/Payment.yaml
+        '412':
+          description: No Cash App Afterpay Order was found matching the `orderId` provided. Error code `precondition_failed`.
+        '422':
+          description: 'A value for shippedAt was provided, but not a valid [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) date. Or, a value for priority was provided, but wasn''t one of "STANDARD" or "EXPRESS". Error code `invalid_object`.'
+        default:
+          description: See additional PUT/POST Errors applicable to all POST endpoints.
+      deprecated: false
+      x-stoplight:
+        id: c11ahfffr9sxi
+    parameters:
+      - schema:
+          type: string
+        name: orderId
+        in: path
+        required: true
+        description: The Cash App Afterpay Order ID
+  '/v2/payments/{orderId}/refund':
+    post:
+      summary: Create Refund
+      description: |
+        This endpoint performs a full or partial refund. The refund operation is idempotent if a unique `requestId` and `merchantReference` are provided.
+
+        If using the [Deferred Payment Flow](../docs/ONLINE-API/Deferred-Payment-Flow.md), be aware that only captured funds can be refunded. Do not create refunds after 120 days from the date of purchase.
+
+        **Connection Timeouts**
+        | Timeout | Time (Seconds) |
+        |---------|----------------|
+        | Open    | 10             |
+        | Read    | 70             |
+      operationId: create-refund
+      parameters:
+        - name: orderId
+          in: path
+          description: The unique Cash App Afterpay Order ID to apply the refund to.
+          schema:
+            type: string
+          required: true
+        - name: Content-Type
+          in: header
+          required: true
+          schema:
+            type: string
+            default: application/json
+        - name: User-Agent
+          in: header
+          required: true
+          schema:
+            type: string
+          description: 'View our [User Agent Header](https://developers.cash.app/docs/merchant/api-development/api-calls-payment-flows/user-agent-header) page for formatting details.'
+        - name: Accept
+          in: header
+          schema:
+            type: string
+            default: application/json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/CreateRefund.yaml
+      responses:
+        '201':
+          description: |
+            Returns a Refund object in response. All request parameters are echoed in the response. In addition, the response includes the following:
+            | Attribute | Type | Description |
+            | --- | --- | --- |
+            | `refundId` | string | The unique, permanent, Cash App Afterpay-generated Refund ID. |
+            | `refundedAt` | string | The UTC timestamp of when the refund was completed, in [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format. |
+          content:
+            application/json:
+              schema:
+                $ref: ../models/Refund.yaml
+              examples: {}
+        '412':
+          description: 'The `orderId` is invalid, does not exist, or is not eligible for a refund. For example, the order was declined. Error code `precondition_failed`.'
+        '422':
+          description: |
+            | errorCode | Description |
+            | --- | --- |
+            | invalid_object | The `refundMerchantReference` exceeded 128 characters. |
+            | invalid_amount | The `amount` requested exceeded the amount available. |
+            | invalid_object | The currency of the refund does not match the currency of the order (and the Merchant account). |
+            | refund_timelimit_exceeded | The refund exceeds the time limit of 120 days. |
+        default:
+          description: See additional PUT/POST Errors applicable to all POST endpoints.
+      deprecated: false
+      x-stoplight:
+        id: th8guj6leeu36
+  '/v2/payments/{orderId}/void':
+    post:
+      summary: Void
+      description: |
+        This endpoint voids the remaining `openToCapture` amount of the payment auth, and refunds the customer.
+
+        <!-- theme: info -->
+        > **Note**
+        > 
+        > To make a partial void, specify an amount in the request body. 
+
+        This operation is [idempotent](../docs/ONLINE-API/Idempotent-Requests.md) based on the `requestId` (if provided), which allows for the safe retry of multiple requests, guaranteeing the payment operation is only made once.
+
+
+
+
+        **Connection Timeouts**
+        | Timeout | Time (Seconds) |
+        |---------|----------------|
+        | Open    | 10             |
+        | Read    | 70             |
+      operationId: void-payment
+      parameters:
+        - name: orderId
+          in: path
+          description: 'The unique ID of the Cash App Afterpay Order, returned as the `id` property of the Auth response.'
+          schema:
+            type: string
+          required: true
+        - name: Content-Type
+          in: header
+          required: true
+          schema:
+            type: string
+            default: application/json
+        - name: User-Agent
+          in: header
+          required: true
+          schema:
+            type: string
+          description: View our  page for formatting details
+        - name: Accept
+          in: header
+          schema:
+            type: string
+            default: application/json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                amount:
+                  $ref: ../models/Money.yaml
+                  description: The amount to void. Must be less than or equal to the open to capture amount.
+                requestId:
+                  type: string
+                  description: 'A unique request ID, required for safe retries. It is recommended that the merchant generate a UUID for each unique void.'
+                reason:
+                  type: string
+                  description: 'Can be passed in void requests to conditionally modify wording of the corresponding customer refund email. This can be set to 1 of 3 values, `cancelledItems`, `amountAdjustment` or `null`'
+        description: ''
+      responses:
+        '201':
+          description: |
+            If successful, returns an updated copy of the Payment object.
+            - A new Payment Event object is appended to the events array, with a type of "VOIDED".
+            - A new Refund object is prepended to the refunds array.
+            - If the openToCapture amount is reduced to zero as a result of this Void request, the paymentState is updated as follows:
+              - from "AUTH_APPROVED" to "VOIDED", or
+              - from "PARTIALLY_CAPTURED" to "CAPTURED".
+          content:
+            application/json:
+              schema:
+                $ref: ../models/Payment.yaml
+                x-examples:
+                  Example 1:
+                    amount:
+                      amount: '100.00'
+                      currency: USD
+                    requestId: your_unique_request_id
+                    reason: cancelledItems
+        '404':
+          description: The `orderId` string provided was empty or did not match a valid order. Error code `not_found`.
+        '422':
+          description: |
+            The amount in USD has exceeded the open-to-capture amount in USD. Example message: "Void amount USD 999.00 exceeded open to capture amount USD 40.00." Error code `invalid_amount`.
+        default:
+          description: see additional PUT/POST errors applicable to all POST endpoints.
+      deprecated: false
+      x-stoplight:
+        id: uezfhi5rjqycc
+  '/v2/payments/token:{token}':
+    get:
+      summary: Get Payment By Token
+      description: |
+        This endpoint retrieves an individual payment along with its order details.
+
+        **Connection Timeouts**
+        | Timeout | Time (Seconds) |
+        |---------|----------------|
+        | Open    | 10             |
+        | Read    | 20             |
+      operationId: get-payment-by-token
+      parameters:
+        - name: token
+          in: path
+          description: Order token that was used to complete payment.
+          schema:
+            type: string
+          required: true
+        - name: User-Agent
+          in: header
+          required: true
+          schema:
+            type: string
+          description: 'View our [User Agent Header](https://developers.cash.app/docs/merchant/api-development/api-calls-payment-flows/user-agent-header) page for formatting details'
+        - name: Accept
+          in: header
+          schema:
+            type: string
+            default: application/json
+      responses:
+        '200':
+          description: Returns a Payment object in response.
+          content:
+            application/json:
+              schema:
+                $ref: ../models/Payment.yaml
+        '404':
+          description: No Cash App Afterpay Order was found matching the `token` provided. Error code `not_found`.
+        default:
+          description: See GET errors errors.
+      deprecated: false
+      x-stoplight:
+        id: zwj6s10oefzbi
+  '/v2/payments/token:{token}/reversal':
+    post:
+      summary: Reverse Payment By Token
+      description: |
+        This endpoint makes a reversal of the checkout that is used to start the Cash App Afterpay payment process. This cancels the order asynchronously as soon as it is created without the need of an additional call to the void endpoint. For a payment to be eligible, the order must be in an Auth-Approved or Captured state, and it must be issued within 10 minutes of the order being created.
+
+        **Connection Timeouts**
+        | Timeout | Time (Seconds) |
+        |---------|----------------|
+        | Open    | 10             |
+        | Read    | 70             |
+      operationId: reverse-payment-by-token
+      parameters:
+        - name: User-Agent
+          in: header
+          required: true
+          schema:
+            type: string
+          description: 'View our [User Agent Header](https://developers.cash.app/docs/merchant/api-development/api-calls-payment-flows/user-agent-header) page for formatting details.'
+        - name: Accept
+          in: header
+          schema:
+            type: string
+            default: application/json
+        - name: token
+          in: path
+          description: The token of the checkout to be reversed (voided).
+          schema:
+            type: string
+          required: true
+      responses:
+        '204':
+          description: The Reversal endpoint indicates a successful response with a 204 status code response. Returns no content in the response.
+        '402':
+          description: Invalid Token. Error code `invalid_token`.
+        '412':
+          description: |
+            | errorCode | Description |
+            | --- | --- |
+            | precondition_failed | Payment reversal previously processed |
+            | precondition_failed | Payment not eligible for a reversal |
+            | precondition_failed | Order outside reversal window |
+            | precondition_failed | Order in pending reversal, no captures/auth accepted |
+        default:
+          description: see additional PUT/POST errors applicable to all POST endpoints.
+      deprecated: false
+      x-stoplight:
+        id: 21ethcn0opyxk
+  '/v2/payments/token:{token}/void':
+    post:
+      summary: Void By Checkout Token
+      description: 'This endpoint voids the remaining `openToCapture` amount of the payment auth, and refunds the customer.'
+      operationId: void-by-checkout-token
+      parameters:
+        - name: User-Agent
+          in: header
+          required: true
+          schema:
+            type: string
+          description: 'View our [User Agent Header](https://developers.cash.app/docs/merchant/api-development/api-calls-payment-flows/user-agent-header) page for formatting details.'
+        - name: Accept
+          in: header
+          schema:
+            type: string
+            default: application/json
+          required: true
+        - schema:
+            type: string
+          name: token
+          in: path
+          required: true
+          description: The unique token returned from initiating a Checkout.
+      x-internal: true
+      responses:
+        '200':
+          description: Returns an updated payment object.
+          content:
+            application/json:
+              schema:
+                $ref: ../models/Payment.yaml
+      x-stoplight:
+        id: n06tu85smdote

@@ -1,0 +1,35 @@
+title: relatedProgrammes
+x-stoplight:
+  id: 335jevhvjvkgy
+type: object
+properties:
+  epgChannelId:
+    type: string
+    x-stoplight:
+      id: ruma8be9fytet
+  epgDuration:
+    type: string
+    x-stoplight:
+      id: y3jlxq2h8jy85
+  epgEventId:
+    type: string
+    x-stoplight:
+      id: j44ibxe86ohfh
+  epgTitle:
+    type: string
+    x-stoplight:
+      id: gzdb6c36mbgvi
+  programmeUuid:
+    type: string
+    x-stoplight:
+      id: qrbou6cpwch6g
+  territory:
+    type: string
+    x-stoplight:
+      id: t28ol3d1duunk
+  programmeType:
+    type: string
+    x-stoplight:
+      id: x4l0qrd4wrgma
+    description: "if episodeNumber is not available in QXVP linear scheduling entityType=\"SportingEvent\" else entityType=\"Episode\"\r\n\r\n"
+x-internal: false

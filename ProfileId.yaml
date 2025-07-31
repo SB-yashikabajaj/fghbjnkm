@@ -1,0 +1,6 @@
+title: ProfileId
+x-stoplight:
+  id: 3es3bqkw53dmu
+type: integer
+example: 1
+description: ID of a Party's habilitation profile.

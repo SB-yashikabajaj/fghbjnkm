@@ -1,0 +1,1454 @@
+openapi: 3.0.0
+x-stoplight:
+  id: h9j9mm7o51av9
+x-internal: true
+servers:
+  - url: 'https://sandbox.skaleet.com/api'
+    description: Skaleet sandbox environment.
+info:
+  title: WebInterface API
+  version: '5.0'
+  description: |
+    # Output format
+    The following endpoints only output **XML** documents.
+
+    Every response defined below is also translated into JSON, but this is only for documentation rendering purposes.
+
+    *Currently no documentation tools implementing the OpenAPI specification can render valid XML documents as example.*
+  contact:
+    name: Skaleet
+    url: 'https://www.skaleet.com/en/'
+    email: api@skaleet.com
+  license:
+    name: Proprietary
+    url: 'https://www.skaleet.com/'
+tags:
+  - name: Paybill
+paths:
+  /tpbillerlist.php:
+    get:
+      security: []
+      tags:
+        - Paybill
+      summary: Get the bill issuer list
+      operationId: tpbillerlist
+      parameters:
+        - name: agentid
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/AgentCode'
+        - name: password
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/Password'
+        - name: mode
+          in: query
+          schema:
+            $ref: '#/components/schemas/PaybillMethod'
+        - name: paybillgroup
+          in: query
+          description: Comma separated list of paybill groups. Can be used to filter bill issuers by group
+          schema:
+            oneOf:
+              - type: string
+                pattern: '^\d(,\d)*$'
+              - type: integer
+      responses:
+        '200':
+          description: The tpbillerlist response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TPBillerListResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/TPBillerListResponse'
+      x-stoplight:
+        id: s4tmkks2ckle2
+  /tppaybill.php:
+    get:
+      security: []
+      tags:
+        - Paybill
+      summary: Pay a bill
+      operationId: tppaybill
+      parameters:
+        - name: agentid
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/AgentCode'
+        - name: merchantid
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/MerchantCode'
+        - name: password
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/Password'
+        - name: mode
+          in: query
+          schema:
+            $ref: '#/components/schemas/PaybillMode'
+        - name: method
+          in: query
+          schema:
+            $ref: '#/components/schemas/PaybillMethod'
+        - name: client
+          in: query
+          schema:
+            $ref: '#/components/schemas/Msisdn'
+        - name: mobile
+          in: query
+          deprecated: true
+          description: |
+            client phone number in international format (msisdn)
+
+            *Kept for retro-compatibility purposes, it will be removed in next version.*
+
+            **Please use "client" property instead**
+          schema:
+            $ref: '#/components/schemas/Msisdn'
+        - name: amount
+          in: query
+          description: 'Transaction amount, net of fees, in cents'
+          schema:
+            $ref: '#/components/schemas/AmountValue'
+        - name: currency
+          in: query
+          schema:
+            $ref: '#/components/schemas/Currency'
+        - name: billid
+          in: query
+          schema:
+            $ref: '#/components/schemas/BillId'
+        - name: option
+          in: query
+          description: |
+            if previous preauth call to tppaybill returned a list of option,
+            this parameter represent the selected option's id by the client
+          schema:
+            type: string
+        - name: pin
+          in: query
+          description: Client pincode without encryption
+          schema:
+            type: string
+            minLength: 4
+            maxLength: 4
+        - name: pinblock
+          in: query
+          description: Client pincode using 3DES encryption
+          schema:
+            type: string
+            minLength: 16
+            maxLength: 16
+        - name: terminalid
+          in: query
+          description: Id of the terminal used for the transaction
+          schema:
+            type: string
+        - name: paybillinput
+          in: query
+          description: |
+            If a previous call to this endpoint returned an `input` (in a `PaybillPreauthResponse`),
+            the same xml object should be given in the following request, with values filled.
+
+            The xml document should be url encoded for this parameter.
+          schema:
+            type: string
+        - name: paybillsessionid
+          in: query
+          description: 'if a previous call to this endpoint returned a `paybillsessionid` (in a `PaybillPreauthResponse`), it must be given in the following requests'
+          schema:
+            $ref: '#/components/schemas/PaybillSessionId'
+        - name: email
+          in: query
+          description: Whether or not an Email is sent when the transaction is executed
+          schema:
+            type: boolean
+            default: false
+        - name: sms
+          in: query
+          description: Whether or not a SMS is sent when the transaction is executed
+          schema:
+            type: boolean
+            default: false
+        - name: referenceid
+          in: query
+          description: A transaction reference from the calling system
+          schema:
+            type: string
+        - name: transactionToken
+          in: query
+          schema:
+            $ref: '#/components/schemas/TransactionToken'
+      responses:
+        '200':
+          description: The tppaybill response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TPPaybillResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/TPPaybillResponse'
+      x-stoplight:
+        id: qquf9ev6mtn3l
+components:
+  schemas:
+    AgentCode:
+      type: string
+      description: agent 16 digit identifier
+      example: '3220084071097168'
+      minLength: 16
+      maxLength: 16
+      x-stoplight:
+        id: s7vtyit6e1qet
+    Password:
+      type: string
+      format: password
+      description: originator md5 password
+      example: fc5e038d38a57032085441e7fe7010b0
+      x-stoplight:
+        id: o013vqwmizmx7
+    PaybillMethod:
+      type: string
+      description: Payment method
+      default: cash
+      enum:
+        - cash
+        - account
+      x-stoplight:
+        id: 91eylvyf9g1tz
+    TPBillerListResponse:
+      type: object
+      oneOf:
+        - $ref: '#/components/schemas/TPBillerListSuccessResponse'
+        - $ref: '#/components/schemas/TPApiErrorResponse'
+      x-stoplight:
+        id: vbwrrlsp8twc5
+    MerchantCode:
+      type: string
+      description: merchant 16 digit identifier
+      example: '2568131269418768'
+      minLength: 16
+      maxLength: 16
+      x-stoplight:
+        id: krk4721kgui3w
+    PaybillMode:
+      type: string
+      description: execution mode of paybill
+      default: transaction
+      enum:
+        - transaction
+        - preauth
+        - both
+      x-stoplight:
+        id: jxup2729evd6i
+    Msisdn:
+      type: string
+      description: client phone number in international format (msisdn)
+      example: '33612354678'
+      x-stoplight:
+        id: mpdjxljskh4gv
+    AmountValue:
+      type: integer
+      example: 1337
+      description: amount in integer format
+      x-stoplight:
+        id: loi2328lty06z
+    Currency:
+      description: Numeric iso code of associated currency (3 digits)
+      type: string
+      minLength: 3
+      maxLength: 3
+      example: '978'
+      x-stoplight:
+        id: pe444e8vfjv7z
+    BillId:
+      type: string
+      example: MyReference123456
+      description: Customer reference in the biller system
+      x-stoplight:
+        id: ss8ww7zjlhehq
+    PaybillSessionId:
+      type: string
+      description: session id used to perform successive related requests to this enpoint
+      example: abcde123546
+      x-stoplight:
+        id: hwsfogzyi1vcl
+    TransactionToken:
+      type: string
+      example: fc5e038d38a57032085441e7fe7010b0
+      description: A transaction token that can be given during call in "TRANSACTION" mode instead of all other parameters.
+      x-stoplight:
+        id: d02abxsvw79wd
+    TPPaybillResponse:
+      oneOf:
+        - $ref: '#/components/schemas/TPPaybillSuccessResponse'
+        - $ref: '#/components/schemas/TPApiErrorResponse'
+      x-stoplight:
+        id: q8gu0vk7buxxn
+    TPBillerListSuccessResponse:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/TPApiResponse'
+        - type: object
+          required:
+            - categories
+          properties:
+            categories:
+              type: array
+              xml:
+                wrapped: true
+              items:
+                $ref: '#/components/schemas/BillerCategory'
+      x-stoplight:
+        id: ke0vjpms3kr2b
+    TPApiErrorResponse:
+      allOf:
+        - $ref: '#/components/schemas/TPApiResponse'
+        - type: object
+          description: An error occured during request processing
+          properties:
+            result:
+              example: '014: Bad parameters'
+      x-stoplight:
+        id: 3cx65xlndzfcy
+    TPPaybillSuccessResponse:
+      type: object
+      oneOf:
+        - $ref: '#/components/schemas/TPPaybillPreauthResponse'
+        - $ref: '#/components/schemas/TPPaybillTransactionResponse'
+        - $ref: '#/components/schemas/TPPaybillBothResponse'
+      discriminator:
+        propertyName: mode
+        mapping:
+          preauth: '#/components/schemas/TPPaybillPreauthResponse'
+          both: '#/components/schemas/TPPaybillBothResponse'
+          transaction: '#/components/schemas/TPPaybillTransactionResponse'
+      x-stoplight:
+        id: n9d99dtato6fb
+    TPApiResponse:
+      type: object
+      required:
+        - result
+      xml:
+        name: tagpay
+      properties:
+        result:
+          type: string
+          description: 'execution result, contains error code and message if execution encounter an error'
+          example: '0: success'
+      x-stoplight:
+        id: uouub50duf57s
+    BillerCategory:
+      type: object
+      xml:
+        name: category
+      required:
+        - name
+        - billers
+      properties:
+        name:
+          type: string
+        billers:
+          type: array
+          xml:
+            wrapped: true
+          items:
+            $ref: '#/components/schemas/Biller'
+      x-stoplight:
+        id: pfddtkt4jxpuj
+    TPPaybillPreauthResponse:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/TPPaybillBaseResponse'
+        - type: object
+          required:
+            - bill_companyname
+          properties:
+            bill_id:
+              type: string
+              deprecated: true
+              example: MyReference123456
+              description: |
+                Customer reference in the biller system.
+
+                *Kept for retro-compatibility purposes, it will be removed in next version.*
+
+                **Please use "billid" property instead**
+            bill_companyname:
+              type: string
+              deprecated: true
+              example: MyBiller
+              description: |
+                Biller company name.
+
+                *Kept for retro-compatibility purposes, it will be removed in next version.*
+
+                **Please use "billcompanyname" property instead**
+            billapiinfo:
+              type: string
+              example: This is something you need to known before paying your bill
+              description: information returned by the biller system to be displayed to the end user
+            select:
+              type: array
+              xml:
+                wrapped: true
+              items:
+                $ref: '#/components/schemas/BillOption'
+            paybillsessionid:
+              $ref: '#/components/schemas/PaybillSessionId'
+            input:
+              $ref: '#/components/schemas/Input'
+            transactionToken:
+              $ref: '#/components/schemas/TransactionToken'
+      x-stoplight:
+        id: k670gzm5sxrfm
+    TPPaybillTransactionResponse:
+      type: object
+      required:
+        - amount
+        - currency
+      allOf:
+        - $ref: '#/components/schemas/TPPaybillBaseResponse'
+        - type: object
+          required:
+            - referenceid
+            - billcompanyname
+            - billremoteid
+          properties:
+            referenceid:
+              type: string
+              deprecated: true
+              description: |
+                transaction ID.
+
+                *Kept for retro-compatibility purposes, it will be removed in next version.*
+
+                **Please use "transactionid" property instead**
+              example: '123456'
+            transactionid:
+              type: string
+              description: transaction ID
+              example: '123456'
+            billvoucher:
+              type: string
+              example: VCHR42
+              description: 'voucher returned by the biller, if any.'
+            billremoteid:
+              type: string
+              example: AZERTY123
+              description: Transaction ID in the biller system
+      x-stoplight:
+        id: jx2n13mtr9pbk
+    TPPaybillBothResponse:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/TPPaybillTransactionResponse'
+      x-stoplight:
+        id: 3cwg63d34b1yy
+    Biller:
+      type: object
+      xml:
+        name: biller
+      required:
+        - name
+        - code
+        - param
+        - billCompanyName
+      properties:
+        name:
+          type: string
+          description: The biller name
+          example: EDF
+        code:
+          $ref: '#/components/schemas/MerchantCode'
+        logo:
+          type: string
+          format: uri
+          description: The biller logo
+          example: 'https://edf.example.com/logo.png'
+        info:
+          type: string
+          description: Additional information on the biller
+          example: The french elecricity company
+        category:
+          type: string
+          description: Biller's service category
+          example: Electricity
+        billCompanyName:
+          type: string
+          description: 'Biller''s company name, to be displayed. Can contain any character except & " < >'
+          example: EDF
+        billCompanyAlias:
+          type: string
+          description: 'Biller''s company name alias, without any special character, that can be used in SMS MO paybill transactions.'
+          example: EDF
+        alias:
+          type: string
+          description: Biller's identity alias
+          example: Electricite de France
+        longitude:
+          type: number
+          format: double
+          minimum: -180
+          maximum: 180
+          description: Biller's office longitude
+          example: -0.1587536
+        latitude:
+          type: number
+          format: double
+          description: Biller's office latitude
+          minimum: -90
+          maximum: 90
+          example: 51.5237908
+        address:
+          type: string
+          description: Biller's address
+          example: 221b Baker Street
+        zipCode:
+          type: string
+          description: Biller's ZIP code
+          example: NW1 6XE
+        city:
+          type: string
+          description: Biller's city
+          example: London
+        region:
+          type: string
+          description: Biller's region
+          example: London
+        country:
+          type: string
+          description: Biller's country
+          example: United Kingdom
+        email:
+          type: string
+          format: email
+          description: Biller's contact email
+          example: contact@billerdomain.com
+        contactPhone:
+          type: string
+          description: Biller's contact phone
+          example: '33123456789'
+        language:
+          type: string
+          description: Biller's language code
+          example: en_US
+        billerGroup:
+          type: integer
+          format: int32
+          minimum: 0
+          description: Biller's group ID
+          example: 1
+        param:
+          type: object
+          description: Parameters to be asked to the end user in order to process a `tppaybill` with this biller.
+          properties:
+            billref:
+              $ref: '#/components/schemas/BillIdDefinition'
+            amount:
+              $ref: '#/components/schemas/AmountDefinition'
+            mobile:
+              $ref: '#/components/schemas/MobileDefinition'
+            offers:
+              xml:
+                wrapped: true
+              type: array
+              description: Available offers for this biller
+              items:
+                $ref: '#/components/schemas/BillOffer'
+      x-stoplight:
+        id: uzdho7p09yxta
+    TPPaybillBaseResponse:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/TPApiResponse'
+        - type: object
+          required:
+            - mode
+            - agentid
+            - merchantid
+            - billcompanyname
+          properties:
+            mode:
+              $ref: '#/components/schemas/PaybillMode'
+            client:
+              $ref: '#/components/schemas/Msisdn'
+            agentid:
+              $ref: '#/components/schemas/AgentCode'
+            merchantid:
+              $ref: '#/components/schemas/MerchantCode'
+            amount:
+              allOf:
+                - description: bill amount to be paid
+                - $ref: '#/components/schemas/AmountValue'
+            currency:
+              $ref: '#/components/schemas/Currency'
+            clientfees:
+              type: integer
+              example: 30
+              description: fees/commissions applied to the client
+            agentfees:
+              type: integer
+              example: 20
+              description: fees/commissions applied to the agent
+            merchantfees:
+              type: integer
+              example: 10
+              description: fees/commissions applied to the merchant
+            billapidata:
+              type: string
+              example: This can be anything to display to the end user
+              description: additional data returned by the biller system
+            billid:
+              $ref: '#/components/schemas/BillId'
+            billcompanyname:
+              type: string
+              example: MyBiller
+              description: Biller company name
+      x-stoplight:
+        id: xfsg9uwp42fq5
+    BillOption:
+      type: object
+      xml:
+        name: option
+      required:
+        - id
+        - label
+      properties:
+        id:
+          type: string
+          example: OPTION_ID_X
+        label:
+          type: string
+          example: This is option X
+        amount:
+          type: integer
+          example: 1337
+        currency:
+          $ref: '#/components/schemas/Currency'
+        billid:
+          type: string
+          example: BILL_ID_Y
+      x-stoplight:
+        id: uqikqk5w97t9e
+    Input:
+      oneOf:
+        - $ref: '#/components/schemas/TextInput'
+        - $ref: '#/components/schemas/AmountInput'
+        - $ref: '#/components/schemas/BoolInput'
+        - $ref: '#/components/schemas/DateInput'
+        - $ref: '#/components/schemas/DateTimeInput'
+        - $ref: '#/components/schemas/DurationInput'
+        - $ref: '#/components/schemas/EmailInput'
+        - $ref: '#/components/schemas/FileInput'
+        - $ref: '#/components/schemas/ImageInput'
+        - $ref: '#/components/schemas/FileContentInput'
+        - $ref: '#/components/schemas/InputCollection'
+        - $ref: '#/components/schemas/IntInput'
+        - $ref: '#/components/schemas/IpInput'
+        - $ref: '#/components/schemas/SelectInput'
+        - $ref: '#/components/schemas/MultiSelectInput'
+        - $ref: '#/components/schemas/NumberInput'
+        - $ref: '#/components/schemas/PercentInput'
+        - $ref: '#/components/schemas/PasswordInput'
+        - $ref: '#/components/schemas/PhoneInput'
+        - $ref: '#/components/schemas/RateInput'
+        - $ref: '#/components/schemas/SelectWithAmountInput'
+      discriminator:
+        propertyName: type
+        mapping:
+          TEXT: '#/components/schemas/TextInput'
+          COLLECTION: '#/components/schemas/InputCollection'
+          AMOUNT: '#/components/schemas/AmountInput'
+          BOOL: '#/components/schemas/BoolInput'
+          DATE: '#/components/schemas/DateInput'
+          DATE_TIME: '#/components/schemas/DateTimeInput'
+          DURATION: '#/components/schemas/DurationInput'
+          EMAIL: '#/components/schemas/EmailInput'
+          FILE: '#/components/schemas/FileInput'
+          FILE_CONTENT: '#/components/schemas/FileContentInput'
+          IMAGE: '#/components/schemas/ImageInput'
+          INT: '#/components/schemas/IntInput'
+          IP: '#/components/schemas/IpInput'
+          MULTI_SELECT: '#/components/schemas/MultiSelectInput'
+          NUMBER: '#/components/schemas/NumberInput'
+          PASSWORD: '#/components/schemas/PasswordInput'
+          PERCENT: '#/components/schemas/PercentInput'
+          PHONE: '#/components/schemas/PhoneInput'
+          RATE: '#/components/schemas/RateInput'
+          SELECT: '#/components/schemas/SelectInput'
+          SELECT_WITH_AMOUNT: '#/components/schemas/SelectWithAmountInput'
+          COMPLIANCE: '#/components/schemas/SelectInput'
+      x-stoplight:
+        id: f58ck7upuigv2
+    BillIdDefinition:
+      type: object
+      description: |
+        Defines attributes on billid asked to the end user.
+
+        If present, the end user must enter a billid to pay his bill.
+
+        *Value of this input must be given in the `billid` parameter of the `tppaybill` endpoint.*
+      required:
+        - label
+      properties:
+        label:
+          type: string
+          description: Label to be displayed to the end user when the system ask him the "billid"
+          example: Electricity meter number
+        format:
+          type: string
+          description: A regular expression for the system to validate the user input
+          example: '/^[A-Z]{3}\d{5}$/'
+        inputmask:
+          type: string
+          description: An input mask to be displayed to the end user to help him remember the awaited "billid" format
+          example: ABC99999
+      x-stoplight:
+        id: b24zcuu1hsnkw
+    AmountDefinition:
+      type: object
+      description: |
+        Defines attributes on amount asked to the end user.
+
+        If present, the end user must enter an amount to pay his bill.
+
+        *Value of this input must be given in the `amount` parameter of the `tppaybill` endpoint.*
+      required:
+        - currencyid
+        - currencyname
+        - cents
+      properties:
+        currencyid:
+          $ref: '#/components/schemas/Currency'
+        currencyname:
+          type: string
+          description: The currency name
+          example: Euro
+        cents:
+          type: integer
+          minimum: 0
+          description: The decimal number for amounts in this currency
+          example: 2
+      x-stoplight:
+        id: x9kzyyzwkmk00
+    MobileDefinition:
+      type: object
+      description: |
+        Defines attributes on mobile number asked to the end user.
+
+        *Value of this input must be given in the `client` parameter of the `tppaybill` endpoint.*
+      required:
+        - client
+      properties:
+        client:
+          $ref: '#/components/schemas/BillClientMode'
+      x-stoplight:
+        id: skxzmih6g0fhq
+    BillOffer:
+      type: object
+      xml:
+        name: offer
+      required:
+        - name
+        - durations
+        - options
+      properties:
+        name:
+          type: string
+          description: The offer label
+          example: Eco Green
+        durations:
+          type: array
+          xml:
+            wrapped: true
+          description: Available durations for this offer
+          example:
+            - 1 month
+            - 3 months
+            - 6 months
+          items:
+            type: string
+            description: The duration label
+            xml:
+              name: duration
+        options:
+          type: array
+          xml:
+            wrapped: true
+          description: Available options for this offer
+          example:
+            - Basic
+            - Off-peak times
+          items:
+            type: string
+            description: The option label
+            xml:
+              name: option
+      x-stoplight:
+        id: ets25a2x9tidu
+    TextInput:
+      allOf:
+        - $ref: '#/components/schemas/AbstractInput'
+        - type: object
+          properties:
+            value:
+              type: string
+      x-stoplight:
+        id: t9pcas0qh4fiy
+    AmountInput:
+      allOf:
+        - $ref: '#/components/schemas/AbstractInput'
+        - type: object
+          properties:
+            value:
+              $ref: '#/components/schemas/Amount'
+            currencies:
+              type: array
+              items:
+                $ref: '#/components/schemas/Currency'
+      x-stoplight:
+        id: 2y8w13sdr8c21
+    BoolInput:
+      allOf:
+        - $ref: '#/components/schemas/AbstractInput'
+        - type: object
+          properties:
+            value:
+              type: boolean
+      x-stoplight:
+        id: nz2iq37ogmfxt
+    DateInput:
+      allOf:
+        - $ref: '#/components/schemas/AbstractInput'
+        - type: object
+          properties:
+            value:
+              type: string
+              example: '20180717'
+            format:
+              type: string
+              description: 'Possible formats are the ones accepted by the [date function (php)](https://php.net/manual/en/function.date.php)'
+              example: Ymd
+      x-stoplight:
+        id: 19i0xe4qrvev4
+    DateTimeInput:
+      allOf:
+        - $ref: '#/components/schemas/AbstractInput'
+        - type: object
+          properties:
+            value:
+              type: string
+              example: '20180717162042'
+            format:
+              type: string
+              description: 'Possible formats are the ones accepted by the [date function (php)](https://php.net/manual/en/function.date.php)'
+              example: YmdHis
+      x-stoplight:
+        id: gjpy01swpefp6
+    DurationInput:
+      allOf:
+        - $ref: '#/components/schemas/AbstractInput'
+        - type: object
+          properties:
+            value:
+              $ref: '#/components/schemas/Duration'
+            periodicities:
+              type: array
+              items:
+                $ref: '#/components/schemas/Periodicity'
+      x-stoplight:
+        id: u0hs9vdm4jr6u
+    EmailInput:
+      allOf:
+        - $ref: '#/components/schemas/TextInput'
+        - type: object
+          properties:
+            value:
+              type: string
+              format: email
+      x-stoplight:
+        id: nyyscq7ze0z47
+    FileInput:
+      allOf:
+        - $ref: '#/components/schemas/AbstractFileInput'
+        - type: object
+          properties:
+            value:
+              type: object
+              readOnly: true
+              properties:
+                content:
+                  type: string
+                  description: 'File content, Base64 encoded'
+                  format: byte
+                name:
+                  type: string
+                  description: Original file name and extension
+                  example: fileName.txt
+                type:
+                  type: string
+                  description: File MIME type
+                  example: text/plain
+                size:
+                  type: integer
+                  description: 'File size, in bytes'
+      x-stoplight:
+        id: ufxdgs9zjigwi
+    ImageInput:
+      allOf:
+        - $ref: '#/components/schemas/AbstractFileInput'
+        - type: object
+          properties:
+            value:
+              type: string
+              description: Image content base64 encoded
+      x-stoplight:
+        id: qaku1jw847a4q
+    FileContentInput:
+      allOf:
+        - $ref: '#/components/schemas/AbstractFileInput'
+        - type: object
+          properties:
+            value:
+              oneOf:
+                - type: object
+                  properties:
+                    documentId:
+                      $ref: '#/components/schemas/ReadOnlyDocumentId'
+                - type: string
+                  description: File content as Base64 encoded string
+            links:
+              type: array
+              readOnly: true
+              description: |
+                Can contain the following actions (identified by their `rel` attribute):
+                  * `getDocument` [GET] Load the document details linked to this input
+                  * `getDocumentContent` [GET] Load the document content
+                  * `getDocumentPreview` [GET] Get a small sized preview of the document content
+              items:
+                $ref: '#/components/schemas/Link'
+              example:
+                - rel: getDocument
+                  href: 'https://99906.tagpay.fr/documents/42'
+                - rel: getDocumentContent
+                  href: 'https://99906.tagpay.fr/documents/42/content'
+                - rel: getDocumentPreview
+                  href: 'https://99906.tagpay.fr/documents/42/preview'
+      x-stoplight:
+        id: zzfjmwjbk29n1
+    InputCollection:
+      allOf:
+        - $ref: '#/components/schemas/AbstractInput'
+        - type: object
+          properties:
+            inputs:
+              type: array
+              items:
+                $ref: '#/components/schemas/Input'
+      x-stoplight:
+        id: twm8pc1ysz9ek
+    IntInput:
+      allOf:
+        - $ref: '#/components/schemas/AbstractInput'
+        - type: object
+          properties:
+            value:
+              type: integer
+      x-stoplight:
+        id: 9e74fxu9rb7tv
+    IpInput:
+      allOf:
+        - $ref: '#/components/schemas/TextInput'
+        - type: object
+          properties:
+            value:
+              type: string
+      x-stoplight:
+        id: hc9gv1cp43bmr
+    SelectInput:
+      allOf:
+        - $ref: '#/components/schemas/AbstractInput'
+        - type: object
+          properties:
+            value:
+              type: string
+              example: someValue
+            values:
+              type: array
+              items:
+                $ref: '#/components/schemas/Option'
+      x-stoplight:
+        id: bjwj4nrmua46j
+    MultiSelectInput:
+      allOf:
+        - $ref: '#/components/schemas/AbstractInput'
+        - type: object
+          properties:
+            value:
+              type: array
+              items:
+                type: string
+              example:
+                - someValue
+                - anotherValue
+            values:
+              type: array
+              items:
+                $ref: '#/components/schemas/Option'
+      x-stoplight:
+        id: q6y20kupa7s83
+    NumberInput:
+      allOf:
+        - $ref: '#/components/schemas/AbstractInput'
+        - type: object
+          properties:
+            value:
+              type: number
+              format: float
+      x-stoplight:
+        id: ytcv4dzvbk6pv
+    PercentInput:
+      allOf:
+        - $ref: '#/components/schemas/NumberInput'
+      x-stoplight:
+        id: 9i6is7xchmnu7
+    PasswordInput:
+      allOf:
+        - $ref: '#/components/schemas/TextInput'
+      x-stoplight:
+        id: 304a828z07oii
+    PhoneInput:
+      allOf:
+        - $ref: '#/components/schemas/TextInput'
+        - type: object
+          properties:
+            value:
+              type: string
+              example: '33612345678'
+              description: Phone number in international format (MSISDN)
+      x-stoplight:
+        id: wp3s18fh9lff1
+    RateInput:
+      allOf:
+        - $ref: '#/components/schemas/AbstractInput'
+        - type: object
+          properties:
+            inputs:
+              type: object
+              required:
+                - value
+                - periodicity
+              properties:
+                value:
+                  $ref: '#/components/schemas/NumberInput'
+                periodicity:
+                  $ref: '#/components/schemas/SelectInput'
+      x-stoplight:
+        id: gmzgg2rqv73jg
+    SelectWithAmountInput:
+      allOf:
+        - $ref: '#/components/schemas/AbstractInput'
+        - type: object
+          properties:
+            value:
+              type: string
+              example: someValue
+            values:
+              type: array
+              items:
+                $ref: '#/components/schemas/OptionWithAmount'
+      x-stoplight:
+        id: y1r5tr8kjwtcz
+    BillClientMode:
+      type: string
+      description: Defines if mobile number is mandatory or optional
+      enum:
+        - MANDATORY
+        - OPTIONAL
+      x-stoplight:
+        id: nj2wsf2kfysgm
+    AbstractInput:
+      type: object
+      required:
+        - id
+        - type
+      properties:
+        id:
+          type: string
+          description: the identification key of the Input. Use that ID as object key in form submission.
+          example: lastName
+        type:
+          $ref: '#/components/schemas/InputType'
+        label:
+          type: string
+          description: Displayable Input label
+          example: Last Name
+        description:
+          type: string
+          description: A potentially long description of the input content
+          example: Enter your last name
+        required:
+          type: boolean
+          description: 'If true, an input value must be provided on form submission'
+        validators:
+          type: array
+          items:
+            $ref: '#/components/schemas/Validator'
+        disabled:
+          type: boolean
+          default: false
+          description: 'If true, this input cannot be change'
+      x-stoplight:
+        id: mykt54fot96az
+    Amount:
+      type: object
+      properties:
+        value:
+          $ref: '#/components/schemas/AmountValue'
+        currency:
+          $ref: '#/components/schemas/Currency'
+        display:
+          type: string
+          example: '13,37 €'
+      x-stoplight:
+        id: px06ksft6q4ij
+    Duration:
+      type: object
+      properties:
+        value:
+          type: integer
+          example: 42
+        unit:
+          $ref: '#/components/schemas/Periodicity'
+      x-stoplight:
+        id: kfr0sswzdn0j4
+    Periodicity:
+      description: Available periodicities
+      type: string
+      enum:
+        - HOUR
+        - WEEK
+        - DAY
+        - MONTH
+        - YEAR
+      example: DAY
+      x-stoplight:
+        id: m9i18vrhkf0y9
+    AbstractFileInput:
+      allOf:
+        - $ref: '#/components/schemas/AbstractInput'
+        - type: object
+          properties:
+            maxSize:
+              type: integer
+              description: 'Maximum allowed file size, in bytes'
+            acceptedTypes:
+              type: array
+              description: Accepted file types list as MIME types
+              items:
+                type: string
+              example:
+                - text/plain
+                - text/csv
+                - application/vnd.ms-excel
+                - image/png
+            minimumPageCount:
+              type: integer
+              description: Expected minimum page count
+            maximumPageCount:
+              type: integer
+              description: Expected maximum page count
+      x-stoplight:
+        id: luzier689t1tw
+    ReadOnlyDocumentId:
+      allOf:
+        - $ref: '#/components/schemas/DocumentId'
+        - readOnly: true
+      x-stoplight:
+        id: biwqsiwzikgui
+    Link:
+      type: object
+      readOnly: true
+      required:
+        - rel
+        - href
+      properties:
+        rel:
+          type: string
+          description: Link relation
+        href:
+          type: string
+          format: uri
+          description: Location URI
+      x-stoplight:
+        id: dnrgnhazzd0xb
+    Option:
+      type: object
+      required:
+        - id
+        - label
+      properties:
+        id:
+          type: string
+          example: someValue
+        label:
+          type: string
+          example: Label for someValue
+      x-stoplight:
+        id: xb9x0wp7sq42y
+    OptionWithAmount:
+      allOf:
+        - $ref: '#/components/schemas/Option'
+        - type: object
+          required:
+            - amount
+          properties:
+            amount:
+              $ref: '#/components/schemas/Amount'
+      x-stoplight:
+        id: gncj6x442ht8g
+    InputType:
+      type: string
+      enum:
+        - TEXT
+        - COLLECTION
+        - AMOUNT
+        - BOOL
+        - DATE
+        - DATE_TIME
+        - DURATION
+        - EMAIL
+        - FILE
+        - FILE_CONTENT
+        - IMAGE
+        - INT
+        - IP
+        - MULTI_SELECT
+        - NUMBER
+        - PASSWORD
+        - PERCENT
+        - PHONE
+        - PINCODE
+        - RATE
+        - SELECT
+        - SELECT_WITH_AMOUNT
+      x-stoplight:
+        id: zpqdra0veym8x
+    Validator:
+      oneOf:
+        - $ref: '#/components/schemas/AmountValidator'
+        - $ref: '#/components/schemas/MinValidator'
+        - $ref: '#/components/schemas/MaxValidator'
+        - $ref: '#/components/schemas/BetweenValidator'
+        - $ref: '#/components/schemas/BlacklistValidator'
+        - $ref: '#/components/schemas/WhitelistValidator'
+        - $ref: '#/components/schemas/LengthValidator'
+        - $ref: '#/components/schemas/MaxLengthValidator'
+        - $ref: '#/components/schemas/MinLengthValidator'
+        - $ref: '#/components/schemas/PasswordValidator'
+        - $ref: '#/components/schemas/RegexValidator'
+      discriminator:
+        propertyName: type
+        mapping:
+          AMOUNT: '#/components/schemas/AmountValidator'
+          MIN: '#/components/schemas/MinValidator'
+          MAX: '#/components/schemas/MaxValidator'
+          BETWEEN: '#/components/schemas/BetweenValidator'
+          BLACKLIST: '#/components/schemas/BlacklistValidator'
+          WHITELIST: '#/components/schemas/WhitelistValidator'
+          LENGTH: '#/components/schemas/LengthValidator'
+          MAX_LENGTH: '#/components/schemas/MaxLengthValidator'
+          MIN_LENGTH: '#/components/schemas/MinLengthValidator'
+          PASSWORD: '#/components/schemas/PasswordValidator'
+          REGEX: '#/components/schemas/RegexValidator'
+      x-stoplight:
+        id: 4ng9ttx4asc6l
+    DocumentId:
+      type: string
+      example: DOC123
+      description: document id
+      x-stoplight:
+        id: soo3y609vf570
+    AmountValidator:
+      allOf:
+        - $ref: '#/components/schemas/AbstractValidator'
+        - type: object
+          required:
+            - currencies
+          properties:
+            currencies:
+              type: array
+              items:
+                $ref: '#/components/schemas/Currency'
+      x-stoplight:
+        id: 0pd46njf6wylt
+    MinValidator:
+      allOf:
+        - $ref: '#/components/schemas/AbstractValidator'
+        - type: object
+          required:
+            - min
+          properties:
+            min:
+              type: number
+      x-stoplight:
+        id: 2q2cfto8i7wo9
+    MaxValidator:
+      allOf:
+        - $ref: '#/components/schemas/AbstractValidator'
+        - type: object
+          required:
+            - max
+          properties:
+            max:
+              type: number
+      x-stoplight:
+        id: 92bqou93t0dh5
+    BetweenValidator:
+      allOf:
+        - $ref: '#/components/schemas/AbstractValidator'
+        - type: object
+          required:
+            - min
+            - max
+          properties:
+            min:
+              type: number
+            max:
+              type: number
+      x-stoplight:
+        id: nad8nj465ov9d
+    BlacklistValidator:
+      allOf:
+        - $ref: '#/components/schemas/AbstractValidator'
+        - type: object
+          required:
+            - blacklist
+          properties:
+            blacklist:
+              type: array
+              items:
+                type: string
+      x-stoplight:
+        id: qc4wmfobhesqx
+    WhitelistValidator:
+      allOf:
+        - $ref: '#/components/schemas/AbstractValidator'
+        - type: object
+          required:
+            - whitelist
+          properties:
+            whitelist:
+              type: array
+              items:
+                type: string
+      x-stoplight:
+        id: z7o8kqab63yk3
+    LengthValidator:
+      allOf:
+        - $ref: '#/components/schemas/AbstractValidator'
+        - type: object
+          required:
+            - length
+          properties:
+            length:
+              type: integer
+      x-stoplight:
+        id: 6ozom5u4lmayq
+    MaxLengthValidator:
+      allOf:
+        - $ref: '#/components/schemas/AbstractValidator'
+        - type: object
+          required:
+            - maxLength
+          properties:
+            maxLength:
+              type: integer
+      x-stoplight:
+        id: xgnyqgjh1c27k
+    MinLengthValidator:
+      allOf:
+        - $ref: '#/components/schemas/AbstractValidator'
+        - type: object
+          required:
+            - minLength
+          properties:
+            minLength:
+              type: integer
+      x-stoplight:
+        id: l7zj6ruclc4dm
+    PasswordValidator:
+      allOf:
+        - $ref: '#/components/schemas/AbstractValidator'
+        - type: object
+          properties:
+            minLength:
+              type: integer
+            regexp:
+              type: string
+              description: regexp in PCRE format. Password must match this regexp
+            forbidRegex:
+              type: string
+              description: regexp in PCRE format. Password must not match this regexp
+            forbidDates:
+              type: boolean
+              description: 'if true, you cannot choose a date as a password'
+            blacklist:
+              type: array
+              description: list of forbidden passwords
+              example:
+                - azerty
+                - qwerty
+                - '123456'
+                - password
+              items:
+                type: string
+      x-stoplight:
+        id: iawefw7i9gmdl
+    RegexValidator:
+      allOf:
+        - $ref: '#/components/schemas/AbstractValidator'
+        - type: object
+          required:
+            - regex
+          properties:
+            regex:
+              type: string
+              description: regexp in PCRE format. Value must match this regexp
+      x-stoplight:
+        id: 20o5zju51tb08
+    AbstractValidator:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          $ref: '#/components/schemas/ValidatorType'
+      x-stoplight:
+        id: cb23d2vp8bwz0
+    ValidatorType:
+      type: string
+      enum:
+        - AMOUNT
+        - MIN
+        - MAX
+        - BETWEEN
+        - BLACKLIST
+        - LENGTH
+        - MAX_LENGTH
+        - MIN_LENGTH
+        - PASSWORD
+        - REGEX
+        - WHITELIST
+      x-stoplight:
+        id: 65zx2p91ah7te

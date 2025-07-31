@@ -1,0 +1,294 @@
+openapi: 3.0.1
+x-stoplight:
+  id: e1s0cckz8h6bi
+info:
+  version: '1.0'
+  title: Authentication API
+  description: Securely authenticate and authorize access to our APIs for enhanced data protection. This allows you to request a JSON Web Token (JWT) which can be used to authenticate API requests and to retrieve the Client ID that will be required for subsequent API requests.
+  contact:
+    name: API Support
+    url: 'https://support.validis.com/'
+    email: support@validis.com
+  license:
+    url: 'https://www.apache.org/licenses/LICENSE-2.0.html'
+    name: Apache 2.0
+  termsOfService: 'https://www.validis.com/privacy-policy/'
+servers:
+  - url: 'https://api.sandbox.validis.com'
+    description: Sandbox Server
+paths:
+  /v1/oauth/token:
+    post:
+      tags:
+        - Authentication
+      summary: Get access token and clientId
+      description: |-
+        Allows you to request a JSON Web Token (JWT) which can be used to authenticate API requests. Allows you to retrieve the Client ID that will be required for subsequent API requests.
+
+
+        Mock Server will not work for token endpoint because platform does not support multipart/form-data request and response types. 400 Bad Request will be returned if you try to use mock servers.
+      operationId: oauth-authentication
+      requestBody:
+        description: ''
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                key:
+                  type: string
+                  description: API Key from Validis admin portal
+                grant_type:
+                  type: string
+                  default: vapi_key
+                  example: vapi_key
+              required:
+                - key
+                - grant_type
+            examples:
+              Example 1:
+                value:
+                  key: 98273SDFGsdfgsd24234324234
+                  grant_type: vapi_key
+      responses:
+        '200':
+          description: Bearer Token with client Id.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Token'
+              examples:
+                Example 1:
+                  $ref: '#/components/examples/Token-Reference-Example'
+        '400':
+          $ref: '#/components/responses/400-BadRequest'
+        '401':
+          $ref: '#/components/responses/401-Unauthorized'
+        '406':
+          $ref: '#/components/responses/406-NotAcceptableResponse'
+        '429':
+          $ref: '#/components/responses/429-TooManyRequests'
+        '500':
+          $ref: '#/components/responses/500-UnknownInternalServerError'
+      security:
+        - ApiKey: []
+      x-stoplight:
+        id: 9fimfi9gtvlwc
+tags:
+  - name: Authentication
+    description: Allows you to request a JSON Web Token (JWT) which can be used to authenticate API requests. Allows you to retrieve the Client ID that will be required for subsequent API requests.
+components:
+  securitySchemes:
+    ApiKey:
+      type: apiKey
+      description: |
+        API Key fetched from Validis Admin. Example:- 0bcbf42ef97c41234515921fec79ab9
+      name: Ocp-Apim-Subscription-Key
+      in: header
+  responses:
+    400-BadRequest:
+      description: Bad or malformed request.
+      content:
+        application/vnd.api+json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                description: Error code.
+              error_description:
+                type: string
+                description: Error description.
+          examples:
+            Example 1:
+              value:
+                error: unsupported_grant_type
+                error_description: 'Unsupported grant type: vapi_keyyy'
+    401-Unauthorized:
+      description: Error code for a missing or invalid authentication token.
+      content:
+        text/plain:
+          schema:
+            type: string
+            example: Unauthorized. Access token is missing or invalid.
+          examples:
+            Example 1:
+              value: Unauthorized. Access token is missing or invalid.
+    406-NotAcceptableResponse:
+      description: Error code provided when an HTTP Accept header can’t be satisfied.
+    429-TooManyRequests:
+      description: Too many request were made.
+      content:
+        application/vnd.api+json:
+          schema:
+            type: object
+            properties:
+              statusCode:
+                type: integer
+                description: The status code of the response.
+              message:
+                type: string
+                description: The detailed message of the error. Must contain the remaining waiting period.
+          examples:
+            Example 1:
+              value:
+                statusCode: 429
+                message: Rate limit is exceeded. Try again in 46 seconds.
+      headers:
+        Retry-After:
+          $ref: '#/components/headers/Retry-After'
+        X-RateLimit-Reset:
+          $ref: '#/components/headers/X-RateLimit-Reset'
+        X-RateLimit-Limit:
+          $ref: '#/components/headers/X-RateLimit-Limit'
+        X-RateLimit-Remaining:
+          $ref: '#/components/headers/X-RateLimit-Remaining'
+    500-UnknownInternalServerError:
+      description: Unknown internal server error has occurred.
+      content:
+        application/vnd.api+json:
+          schema:
+            type: object
+            properties:
+              exception:
+                type: string
+                description: Detailed exception that had been thrown.
+              message:
+                type: string
+                description: Detailed error message.
+              path:
+                type: string
+                description: URI to which the request was sent.
+              status:
+                type: integer
+                description: The status code of the response.
+              timestamp:
+                type: string
+                description: The timestamp when the request was processes.
+                format: date-time
+          examples:
+            Example 1:
+              value:
+                timestamp: '2023-06-06T13:13:13.009+0000'
+                status: 500
+                exception: UndeclaredThrowableException
+                path: /v1/token
+                message: A unexpected error occurred while processing the request
+  headers:
+    X-RateLimit-Limit:
+      schema:
+        type: integer
+        minimum: 60
+        maximum: 5000
+        default: 60
+      description: The maximum number of requests that are permitted before exhausting the rate limit.
+    X-RateLimit-Remaining:
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 5000
+      description: Remaining number of requests until reset.
+      required: false
+    Retry-After:
+      schema:
+        type: integer
+        minimum: 60
+        maximum: 86400
+        default: 60
+      description: Indicates how long the user agent should wait (in seconds) before making further requests.
+      required: false
+    X-RateLimit-Reset:
+      schema:
+        type: integer
+        minimum: 0
+        maximum: 86400
+      description: 'Indicates when the rate limit will be reset, in UNIX timestamp format.'
+      required: false
+  schemas:
+    Token:
+      type: object
+      title: Access token
+      description: The generated token.
+      example:
+        access_token: eyJhbGciOiJIUzI1NiIs213213123vdssds.eyJyZXNlbGxlcklkIjoiN2NjMGMyZjUtODkwOC00N2U1LThhMjMtZTI3NTc1ZDQ4NGM2IiwiY2xpZW50SWQiOiIxNzEzMTJjYy01YjgyLTQ5YTUtYWJlOC0wM2M5ZDZiOTIwZjciLCJwZXJtaXNzaW9ucyI6WyJCQjNBQjAiLCJGRDY1MjgiLCI3Rk1LTlYiLCJBTEpQNDQiLCJMRjZVWDQiLCI4RjI0UFAiLCI5QzJET1AiLCIzRjk5NzIiLCI2UEdETTIiLCIzOUFLRE8iLCJCOTA5QzIiLCJaVVFSWDAiLCJHNjBOM0siLCJGRjc0NTEiLCJGMzlSVDEiLCIyUzNKTTciLCIxQkU2NjQiLCJETDM3UFoiLCJFR0RFNjQiLCI0NUVCMEEiLCI0Q0FBMUIiLCJGMzhOM0YiLCJQRDVMODgiLCJMQklGSDkiLCJUNzlTR1IiLCJOMEc1TEoiLCJZQTBWSzUiLCJZOEtSM1EiLCJYQk9TMUoiLCIxNEFCNTMiXSwicm9sZXMiOlsiY2xpZW50LmFwaSJdLCJleHAiOjE2OTYyOTQwNDQsInVzZXJJZCI6MTE3MTAsImp0aSI6ImMzNjRmMGVjLTA5ODYtNDJiOS04MWI4LTQ2OTViYmVjZWExMSIsImNsaWVudF9pZCI6InZhcGkiLCJ1c2VybmFtZSI6ImFwaUBleGFtcGxlLmNvbSIsInZjb25uZWN0Q2xpZW50SWQiOiIxNzEzMTJjYy01YjgyLTQ5YTUtYWJlOC0wM2M5ZDZiOTIwZjcifQ.DOSgcud9D7S9z1SqioBaCAlXzs3CsFXkz8MG8iGXAKs
+        token_type: bearer
+        expires_in: 2344
+        resellerId: 3rt6gj57-4078-9o70-2t78-e275759u87c6
+        clientId: 171312cc-5b82-49a5-abe8-03c9d6b920f7
+        permissions:
+          - 6P1DM2
+          - 39A6DO
+          - B109C2
+          - ZUQAS0
+          - G10N3K
+          - FF0351
+          - F11RY2
+          - 2S3JM7
+          - 1BE333
+          - DL31QZ
+        userId: 12310
+        username: api@example.com
+        vconnectClientId: d2c5961e-e54c-409e-860a-dc345342c3a9
+        jti: c364f0ec-0986-42b9-81b8-4695bbecea11
+      properties:
+        access_token:
+          type: string
+          description: JSON Web Token (JWT).
+        token_type:
+          type: string
+          description: The JWT grant type.
+          default: bearer
+        expires_in:
+          type: integer
+          description: Time in seconds until the access token expires.
+        resellerId:
+          type: string
+          description: The unique identifier of your reseller within the Validis system.
+        clientId:
+          type: string
+          description: The unique identifier of your organisation within the Validis system.
+          format: uuid
+        permissions:
+          type: array
+          description: An obfuscated list of permissions granted by the token. All granted permissions are already included in the JWT but this may be useful when investigating permission issues.
+          items:
+            type: string
+        userId:
+          type: integer
+          description: The unique identifier of the user.
+        username:
+          type: string
+          description: The username of the user.
+        vconnectClientId:
+          type: string
+          description: 'The unique identifier of your Validis system, as provided by the Authentication endpoint.'
+          format: uuid
+        jti:
+          type: string
+          description: JSON Web Token Id.
+          format: uuid
+      x-stoplight:
+        id: 8fdu027t4fljn
+  examples:
+    Token-Reference-Example:
+      value:
+        access_token: eyJhbGciOiJIUzI1NiIs213213123vdssds.eyJyZXNlbGxlcklkIjoiN2NjMGMyZjUtODkwOC00N2U1LThhMjMtZTI3NTc1ZDQ4NGM2IiwiY2xpZW50SWQiOiIxNzEzMTJjYy01YjgyLTQ5YTUtYWJlOC0wM2M5ZDZiOTIwZjciLCJwZXJtaXNzaW9ucyI6WyJCQjNBQjAiLCJGRDY1MjgiLCI3Rk1LTlYiLCJBTEpQNDQiLCJMRjZVWDQiLCI4RjI0UFAiLCI5QzJET1AiLCIzRjk5NzIiLCI2UEdETTIiLCIzOUFLRE8iLCJCOTA5QzIiLCJaVVFSWDAiLCJHNjBOM0siLCJGRjc0NTEiLCJGMzlSVDEiLCIyUzNKTTciLCIxQkU2NjQiLCJETDM3UFoiLCJFR0RFNjQiLCI0NUVCMEEiLCI0Q0FBMUIiLCJGMzhOM0YiLCJQRDVMODgiLCJMQklGSDkiLCJUNzlTR1IiLCJOMEc1TEoiLCJZQTBWSzUiLCJZOEtSM1EiLCJYQk9TMUoiLCIxNEFCNTMiXSwicm9sZXMiOlsiY2xpZW50LmFwaSJdLCJleHAiOjE2OTYyOTQwNDQsInVzZXJJZCI6MTE3MTAsImp0aSI6ImMzNjRmMGVjLTA5ODYtNDJiOS04MWI4LTQ2OTViYmVjZWExMSIsImNsaWVudF9pZCI6InZhcGkiLCJ1c2VybmFtZSI6ImFwaUBleGFtcGxlLmNvbSIsInZjb25uZWN0Q2xpZW50SWQiOiIxNzEzMTJjYy01YjgyLTQ5YTUtYWJlOC0wM2M5ZDZiOTIwZjcifQ.DOSgcud9D7S9z1SqioBaCAlXzs3CsFXkz8MG8iGXAKs
+        token_type: bearer
+        expires_in: 2344
+        resellerId: 3rt6gj57-4078-9o70-2t78-e275759u87c6
+        clientId: 171312cc-5b82-49a5-abe8-03c9d6b920f7
+        permissions:
+          - 6P1DM2
+          - 39A6DO
+          - B109C2
+          - ZUQAS0
+          - G10N3K
+          - FF0351
+          - F11RY2
+          - 2S3JM7
+          - 1BE333
+          - DL31QZ
+        userId: 12310
+        username: api@example.com
+        vconnectClientId: d2c5961e-e54c-409e-860a-dc345342c3a9
+        jti: c364f0ec-0986-42b9-81b8-4695bbecea11

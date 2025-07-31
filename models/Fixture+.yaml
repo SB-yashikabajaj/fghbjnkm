@@ -1,0 +1,524 @@
+type: object
+x-stoplight:
+  id: h02hbi1qjbu01
+title: Fixture+
+description: Metadata coming from Portal UI (Fixture+)
+$defs:
+  SleTypeTactical:
+    type: string
+    enum:
+      - Planned Fixture
+      - Planned Placeholder
+    title: SleTypeTactical
+    description: |-
+      Single Live Event Type.
+
+      Planned Placeholder if the confirmed event has no data attached.
+      Planned Fixture if the confirmed event has real data attached to it.
+    x-stoplight:
+      id: 161c45nxypvp1
+  EventType:
+    type: object
+    enum:
+      - Sports
+      - Entertainment
+      - News
+      - Other
+    title: EventType
+    x-stoplight:
+      id: 9kiakv5dl4r05
+  EventSubType:
+    type: object
+    enum:
+      - Tennis
+      - Undefined
+      - AmericanFootball
+      - Athletics
+      - Baseball
+      - Basketball
+      - Boxing
+      - Cricket
+      - Fishing
+      - Football
+      - Golf
+      - IceHockey
+      - MotorSport
+      - Racing
+      - Rugby
+      - Equestrian
+      - WinterSports
+      - SnookerPool
+      - Wrestling
+      - Darts
+      - WaterSports
+      - Extreme
+      - Business
+      - Features
+      - Politics
+      - News
+      - WorldAffairs
+      - Showbiz
+      - Transport
+    title: EventSubType
+    x-stoplight:
+      id: popmxyftensyy
+  EventTier:
+    type: object
+    enum:
+      - BRONZE
+      - SILVER
+      - GOLD
+      - PLATINUM
+    title: EventTier
+    x-stoplight:
+      id: w51cg3f9djg90
+  DataProvider:
+    type: string
+    enum:
+      - Opta
+      - Smt
+      - Pa
+      - Sky
+    title: DataProvider
+    x-stoplight:
+      id: erl5f52zklt7x
+  SleStatus:
+    type: string
+    enum:
+      - Confirmed
+      - Cancelled
+    title: SleStatus
+    description: |-
+      Confirmed when published
+      Cancelled if Producer decides to cancel a Confirmed Sle
+    x-stoplight:
+      id: vtqli623c51rz
+  FixtureStatus:
+    type: object
+    enum:
+      - Played
+      - Cancelled
+      - Fixture
+      - Playing
+      - Postponed
+      - Suspended
+      - Walkover
+    title: FixtureStatus
+    x-stoplight:
+      id: wfgi7yyowoj01
+  Territory:
+    type: object
+    enum:
+      - GB
+      - IT
+      - DE
+    title: Territory
+    x-stoplight:
+      id: kb8w6w3ll9fuv
+required:
+  - fixtureId
+  - eventGroupId
+  - eventGroupName
+  - eventParentGroupId
+  - eventParentGroupName
+  - estimatedStart
+  - estimatedEnd
+  - sleType
+  - eventCategory
+  - eventType
+  - eventTypeId
+  - eventSubType
+  - eventSubTypeId
+  - eventTier
+  - eventRegion
+  - dataProvider
+  - sleStatus
+  - eventAttributes
+  - descriptions
+  - propositions
+  - eventNames
+  - visibilityStart
+  - playableStart
+  - playableEnd
+  - displayStart
+  - displayEnd
+properties:
+  fixtureId:
+    type: string
+    x-stoplight:
+      id: iltoc0k712d1n
+    description: Unique ID of the sport fixture (match or event) unrespectful how many sleId Programs exist for it
+    example: 2ec46b2b-6737-4f43-8a91-26470a0529d5
+  sleGroupId:
+    type: string
+    description: 'Parent container for this single live event. All events under the same stream, encoder, court, session have the same sleGroupID. This ID is sky generated and not directly representing any of CourtID, StreamID, ServiceKey etc.'
+    x-stoplight:
+      id: j5mpg7zeiposf
+    example: '1'
+  lastUpdated:
+    type: string
+    description: "last date/time when the event was updated\r\n\r\n"
+    format: date-time
+    examples:
+      - '2024-01-29T00:00:00Z'
+    x-stoplight:
+      id: 3ho1rmr20auva
+    example: '2024-01-29T00:00:00Z'
+  eventGroupId:
+    type: string
+    description: "Group id - Owned by external data provider\r\n\r\n"
+    examples:
+      - 2zkaohlpaytn14bg5uhqskzro
+    x-stoplight:
+      id: cxtsijvt6iu25
+    example: 2zkaohlpaytn14bg5uhqskzro
+  eventGroupName:
+    type: string
+    description: "The name of the Competition. Taked from Data Provider by default. Editorialized Field\r\n\r\n"
+    examples:
+      - United Cup 2024
+    x-stoplight:
+      id: o5wqocvxy81qn
+    example: United Cup 2024
+  eventParentGroupId:
+    type: string
+    x-stoplight:
+      id: oq29far75iqem
+    description: "Parent container for Group. In case of Tennis this represents the Tour Calendar, ATP or WTA, and would be year specific).\r\n\r\nThe hiearchy is: SleID -> sleGroupID -> eventGroupID -> eventParentGroupID\r\n\r\nin case fewer containers apply, the last biggest needed will be then replicated until the end of the hiearchy"
+  eventParentGroupName:
+    type: string
+    x-stoplight:
+      id: oy6tg18dif5h6
+    description: 'Parent container for Group. For Tennis this represents an istance of the Tour Calendar (ATP World Tour or WTA) in a specific year, while eventSubType represents the Tour (year agnostic) to which each Tour Calendar relates$0'
+  actualStart:
+    type: string
+    description: "Start time of the Tournament in case of Planned Placeholder\r\nStart time of the Match in case of Planned Fixture"
+    examples:
+      - '2024-01-29T00:00:00Z'
+    x-stoplight:
+      id: husr5zkxryzk6
+    example: '2024-01-29T00:00:00Z'
+  actualEnd:
+    type: string
+    description: "End time of the Tournament in case of Planned Placeholder\r\nEnd time of the Match in case of Planned Fixture at the end of the match."
+    examples:
+      - '2024-01-29T00:00:00Z'
+    x-stoplight:
+      id: 2zveqp4z3jcix
+    example: '2024-01-29T00:00:00Z'
+  estimatedStart:
+    type: string
+    description: "Actual Start by default\r\nEditable field by Producer"
+    format: date-time
+    examples:
+      - '2023-06-25T14:45:00.000000Z'
+    x-stoplight:
+      id: oaqtyihaflwqw
+    example: '2024-01-29T00:00:00Z'
+  estimatedEnd:
+    type: string
+    description: "Actual Start of the next match by default\r\nEditable field by Producer"
+    format: date-time
+    examples:
+      - '2023-06-25T14:45:00.000000Z'
+    x-stoplight:
+      id: cxq5tson54hhv
+    example: '2024-01-29T00:00:00Z'
+  sleType:
+    $ref: ./SleTypeTactical.yaml
+    description: "Single Live Event Type.\r\nPlanned Placeholder if the confirmed event has no data attached.\r\nPlanned Fixture if the confirmed event has real data attached to it."
+    x-stoplight:
+      id: v62z3jz6xfy3b
+  eventCategory:
+    x-stoplight:
+      id: 1blq89wf8j1da
+    enum:
+      - Sports
+      - News
+      - Entertainment
+  eventType:
+    $ref: ../models/EventType.yaml
+    x-stoplight:
+      id: kyqnq522x7723
+    description: "This value drives the eventAttributes object that is specific to the Type and SubType of the event\r\n\r\nE.g. for Type \"Sport\", SubType \"Motorsport\" eventAttributes will be different than Tennis"
+  eventTypeId:
+    type: string
+    x-stoplight:
+      id: s8ssodv7na5gq
+    description: Unique if for the type of sport (links with ID in sMDS interface)
+  eventSubType:
+    x-stoplight:
+      id: ikdy3clufurhq
+    description: "subtype of the sport (e.g. Campionato Serie A, FIA F1 World Championship)\r\n\r\nFor Tennis this represents a Tour (ATP World Tour or WTA). The year version of that tour (instance of) is the Tour Calendar represented in this message by eventParentGroupName$0"
+    type: string
+  eventSubTypeId:
+    type: string
+    x-stoplight:
+      id: acgu1qy053o7q
+  eventTier:
+    $ref: ../models/EventTier.yaml
+    x-stoplight:
+      id: 60w50zvparhqh
+  eventRegion:
+    type: string
+    description: "The Region where the event is placed.Taked from Data Provider\r\n\r\n"
+    examples:
+      - Australia
+    x-stoplight:
+      id: 5nj52joujczdh
+    example: Australia
+  groupOfFixtures:
+    type: array
+    x-stoplight:
+      id: ltqfu9gvpsy9h
+    items:
+      x-stoplight:
+        id: 62naw5m4chf7d
+      type: string
+  fixtureGroup:
+    type: string
+    x-stoplight:
+      id: pq5bskild4vlb
+    description: 'In a multicamera sport event, all the children fixtures representing individual camera events, share the same fixtureGroup representing the father (e.g. camera cars in a race)'
+  dataProvider:
+    $ref: ../models/DataProvider.json
+    x-stoplight:
+      id: 1subwck6e2vfc
+  sleStatus:
+    $ref: ./SleStatus.yaml
+    description: "Confirmed when published\r\nCancelled if Producer decides to cancel a Confirmed Sle\r\n\r\nif an event is Cancelled because not televised. All *End dates will be set to now() if an event is Cancelled because the Sport event has been cancelled, all dates remain the same"
+    x-stoplight:
+      id: 9mp6p0h5ocybq
+  eventAttributes:
+    type: object
+    description: "List of attributes based on Event Type and Event SubType\r\n\r\n"
+    x-stoplight:
+      id: xurorsads3rrf
+    required:
+      - eventDate
+    properties:
+      contestants:
+        type: array
+        x-stoplight:
+          id: eam463svhx5mr
+        items:
+          x-stoplight:
+            id: twyev5s2ju3hy
+          type: object
+          required:
+            - id
+            - name
+            - type
+          properties:
+            id:
+              type: string
+              x-stoplight:
+                id: 8whp63oy0zywg
+              example: da1i4xy1pkgjpg95yapxgcbkk
+            name:
+              type: string
+              x-stoplight:
+                id: p4bsnzq5s6bmv
+              example: Jessica Pegula
+            position:
+              type: string
+              x-stoplight:
+                id: t3ni8zllincll
+              example: a
+            type:
+              x-stoplight:
+                id: kn7mywsw0cym0
+              enum:
+                - Team
+                - Person
+            country:
+              type: string
+              x-stoplight:
+                id: vyaeuuh0trz60
+      locationName:
+        type: string
+        x-stoplight:
+          id: bdq681tksnizk
+      locationId:
+        type: string
+        x-stoplight:
+          id: m2vt9xe83dj83
+      eventDate:
+        type: string
+        x-stoplight:
+          id: 1totkkxp8fcuc
+        description: Day of the event (referred to UTC)
+      matchType:
+        type: string
+        x-stoplight:
+          id: tcoi3x5c3634j
+        description: 'Single, Double, Mixed'
+      gender:
+        type: string
+        x-stoplight:
+          id: 9tuzg8rytu964
+        description: 'woman, man'
+      matchStatus:
+        x-stoplight:
+          id: y5spybyvls9b2
+        description: 'tennis specific (bye, walkover, fixture, playing, played, postponed, suspended, cancelled)'
+        type: string
+        example: Cancelled
+      roundTitle:
+        type: string
+        x-stoplight:
+          id: vi1t6wo4d0z8k
+        description: 'Round title e.g. 1/32 final, final etc.'
+      tournamentType:
+        type: string
+        description: "Type of tournament (e.g WTA 250)\r\n\r\n"
+        x-stoplight:
+          id: urq50xmfd50yg
+      bonusStreamType:
+        x-stoplight:
+          id: bu9nioygn4d3y
+        type: string
+        description: 'The type of multicamera feed in the fixture (e.g. “onboardCamera", "timings", "battlecam") If this field exists, than that fixture is a bonus stream of type valueOf(bonusStreamType). If the attribute doesn''t exist, than that fixture is a standard fixture'
+      bonusStreamOrder:
+        type: integer
+        x-stoplight:
+          id: kyqdaxzv6l64h
+        description: "The field expresses a suggestion for ordering, that is: the tile for a fixture with a lower order number should be placed in the catalogue before a fixture with a higher number\r\nThe field is not mandatory. In case the Sport Producer don’t express any ordering number, the field won’t be present and the ordering left to the end platform\r\nFixtures might arrive in random order to ECP and SLE Publisher. It’s not guaranteed that a fixture with order 2 will arrive after the one with order 1\r\nDue to the editorial choice of order numbers by the Sport Producer and due to editorial decisions to produce/not produce a bonus stream: a. there might be missing number in the sequence. For example the sequence 1, 2, 4, 9, 20, 100 represents 6 ordered fixtures, not 100 fixtures with 94 holes b. during a manual reshuffle (e.g. the producer wants to swap 1 and 4) there may temporarily be two different fixtures with the same ordering number (e.g. the “4” that former was “1” and the original “4” remained “4”) followed by another update (“4” that become “1”)"
+  descriptions:
+    type: array
+    description: "List of event descriptions\r\n\r\n"
+    x-stoplight:
+      id: kvgknfhq1oix7
+    items:
+      type: object
+      x-stoplight:
+        id: xxukf7scb3jgp
+      required:
+        - tag
+        - description
+      properties:
+        tag:
+          type: string
+          examples:
+            - Simple Description
+          x-stoplight:
+            id: 2vf6hcmuvdwuh
+          example: tvapp_en; tvapp_it; tvapp_de; mobile_en; mobile_it; mobile_de
+        description:
+          type: string
+          examples:
+            - Us Open men's match 1
+          x-stoplight:
+            id: 76nyqz2s3evja
+          example: Us Open men's match 1
+  propositions:
+    type: array
+    x-stoplight:
+      id: nxjfce2r7rymd
+    items:
+      type: object
+      x-stoplight:
+        id: vpqannwwzg4pf
+      required:
+        - territory
+        - platform
+      properties:
+        territory:
+          $ref: ../models/Territory.yaml
+          x-stoplight:
+            id: 1wl35i3vp9g22
+        platform:
+          $ref: ./Platform.yaml
+          description: "List of proposition strings (e.g. \"PPTV\", \"Q\", \"Glass\", \"Mobile\", \"Wholesale\"). TO BE DEFINED\r\n\r\n"
+          x-stoplight:
+            id: r6inz19ywp203
+        rights:
+          $ref: ../models/Rights.yaml
+          x-stoplight:
+            id: 3sc8wb8znk0wc
+  eventNames:
+    type: array
+    x-stoplight:
+      id: sz9ao4xrmbo23
+    description: List of editorialized event names. Tags to be defined
+    items:
+      type: object
+      x-stoplight:
+        id: bori7rxr74fn5
+      required:
+        - tag
+        - title
+      properties:
+        tag:
+          type: string
+          x-stoplight:
+            id: cjmulx9i23b1w
+          example: tvapp_en; tvapp_it; tvapp_de; mobile_en; mobile_it; mobile_de
+        title:
+          type: string
+          description: Event Name tag title
+          examples:
+            - Player 1 vs Player 2
+          x-stoplight:
+            id: dgi89luin7yl1
+  visibilityStart:
+    type: string
+    x-stoplight:
+      id: n2ob5jp5zcx7f
+    description: The date from when the event will be discoverable to customers in the apps. This date is sport specific and for Tennis is statically set to -24 hrs from the estimatedStart of the match
+    example: '2024-01-29T00:00:00Z'
+  playableStart:
+    type: string
+    description: "null or not safe until MD. It will be set according to estimatedStart with static offeset to be defined. Pending requirements definition\r\n\r\n"
+    examples:
+      - '2024-01-29T00:00:00Z'
+    x-stoplight:
+      id: 2yafo4niovl4k
+    example: '2024-01-29T00:00:00Z'
+  playableEnd:
+    type: string
+    description: "null or not safe until MD. It will be set according to estimatedStart with static offeset to be defined. Pending requirements definition\r\n\r\n"
+    examples:
+      - '2024-01-29T00:00:00Z'
+    x-stoplight:
+      id: ke6xt25jz6do7
+    example: '2024-01-29T00:00:00Z'
+  displayStart:
+    type: string
+    description: "null or not safe until MD. It will be set according to estimatedStart with static offeset to be defined. Pending requirements definition\r\n\r\n"
+    examples:
+      - '2024-01-29T00:00:00Z'
+    x-stoplight:
+      id: fetybhlwcyqmb
+    example: '2024-01-29T00:00:00Z'
+  displayEnd:
+    type: string
+    description: "null or not safe until MD. It will be set according to estimatedStart with static offeset to be defined. Pending requirements definition\r\n\r\n"
+    examples:
+      - '2024-01-29T00:00:00Z'
+    x-stoplight:
+      id: xer3n2d51mqqq
+    example: '2024-01-29T00:00:00Z'
+  relatedProgrammes:
+    type: array
+    x-stoplight:
+      id: utdleapizwv8v
+    items:
+      $ref: ../models/relatedProgrammes.yaml
+      x-stoplight:
+        id: nmloicfornetq
+  extDataProvider:
+    type: string
+    x-stoplight:
+      id: dbu5jka0yk0xc
+    description: "the name of the external data provider. Ex. Opta\r\n\r\n"
+  extEventGroupId:
+    type: string
+    x-stoplight:
+      id: uplfhxnxyyx3n
+    description: "id of the external competition linked to the fixtureId. Note: It is a common string and not a GUID\r\n\r\n"
+  extEventId:
+    type: string
+    x-stoplight:
+      id: qxdamslq1m73e
+    description: "id of the external event linked to the fixtureId. Note: It is a common string and not a GUID\r\n\r\n"

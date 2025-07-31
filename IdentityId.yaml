@@ -1,0 +1,6 @@
+title: IdentityId
+x-stoplight:
+  id: zsh3vptnt58sr
+type: string
+example: '42'
+description: Party unique identifier

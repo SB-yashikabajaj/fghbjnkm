@@ -1,0 +1,62 @@
+title: Version History
+x-stoplight:
+  id: ld2jk2xlujymm
+type: object
+description: |-
+  -----------------------------------------------
+  Version 2.0.1
+  --
+
+
+  **Change**
+
+  *ECPLiveEvent*
+
+  *SleMetadataMsg*
+
+  *WorkOrderData*
+
+  ------------------------------------------------
+  Add the following fields to be populated by EMS:
+
+  **New values to be added on distribution streams:**
+
+  - videoQuality
+
+  - videoQualityResolution
+
+  - colorSpace
+
+  - videopid
+
+  - framerate 
+
+  - subtitles 
+
+  - closedCaptions
+
+  **Change audioTracks from string to array and added the following**
+
+  - audioTracks[0].locale
+
+  - audioTracks[0].audioType
+
+  - audioTracks[0].pid
+
+  - audioTracks[0].codec
+
+  - audioTracks[0].container
+
+  - audioTracks[0].transport
+
+  - audioTracks[0].dvs
+
+  **Removed the following fields**
+
+  - distributionStreams[].streams[].data.**srtEndpoint1**
+  - distributionStreams[].streams[].data.**srtEndpoint2**
+
+  -------------------------------------------------
+
+  BASE VERSION 2.0
+  --

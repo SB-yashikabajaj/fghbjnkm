@@ -1,0 +1,200 @@
+openapi: 3.1.0
+x-stoplight:
+  id: pmk8kbcpwip4w
+info:
+  title: Online API
+  version: v2
+servers:
+  - url: 'https://global-api-sandbox.afterpay.com'
+    description: Sandbox
+  - url: 'https://global-api.afterpay.com'
+    description: Production
+components:
+  securitySchemes:
+    sec0:
+      type: http
+      scheme: basic
+  schemas:
+    Merchant-limit:
+      title: Merchant limits
+      x-stoplight:
+        id: 89jkqwgo2700h
+      type: object
+      properties:
+        minimumAmount:
+          $ref: ../models/Money.yaml
+          x-stoplight:
+            id: 58k7p5kq892yb
+        maximumAmount:
+          $ref: ../models/Money.yaml
+          x-stoplight:
+            id: x4anizoleyps5
+      examples:
+        - minimumAmount:
+            amount: '10.00'
+            currency: USD
+          maximumAmount:
+            amount: '2000.00'
+            currency: USD
+    ConfigurationMappings:
+      title: Cash App Pay Configuration Mappings
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the brand to be shown in Cash App next to payments.
+          minLength: 1
+          maxLength: 255
+          example: Good Pour Coffee
+        externalBrandId:
+          type: string
+          description: The brand identifier for the Cash App Afterpay <> Cash App Pay merchant mapping.
+          example: BRAND_bmxk000ucdrvljq0000yhild
+      required:
+        - name
+        - externalBrandId
+      x-stoplight:
+        id: 0b5whgfctfiq9
+security:
+  - sec0: []
+paths:
+  /v2/configuration:
+    get:
+      summary: Get Configuration
+      description: |-
+        Use this endpoint to retrieve the merchant's applicable payment limits.
+
+        A request to [Create Checkout](Checkouts.v2.yaml/paths/~1v2~1checkouts/post) may be rejected if the order amount is not between the `minimumAmount` and `maximumAmount` (inclusive).
+
+        Cash App Afterpay merchant configuration does not change frequently. For this reason, the configuration response includes Cache-Control headers to minimise network round trips when using a modern HTTP client. You should call Get Configuration on a fixed schedule, preferably once per day.
+
+        **Connection Timeouts**
+        | Timeout | Time (Seconds) |
+        |---------|----------------|
+        | Open    | 10             |
+        | Read    | 20             |
+      operationId: get-configuration
+      parameters:
+        - name: User-Agent
+          in: header
+          required: true
+          schema:
+            type: string
+            example: 'MyCashAppAfterpayModule/1.0.0 (E-Commerce Platform Name/1.0.0; PHP/7.0.0; Merchant/60032000) https://merchant.example.com'
+          description: 'View our [UserAgent Header](https://developers.cash.app/docs/merchant/api-development/api-calls-payment-flows/user-agent-header) page for the formatting details.'
+        - name: Accept
+          in: header
+          schema:
+            type: string
+            default: application/json
+      deprecated: false
+      responses:
+        '200':
+          description: |
+            Returns a [configuration](../reference/Configuration.v2.yaml/components/schemas/Merchant-limit) object containing the following attributes.
+            | Attribute | Type           | Description |
+            |-----------|----------------| ----------- |
+            | `minimumAmount`    | Money    | Minimum order amount. Note: This attribute may not be included if the Merchant account has no minimum order amount.
+            | `maximumAmount`    | Money    | Maximum order amount.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Merchant-limit'
+              examples: {}
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorCode:
+                    type: string
+                  errorId:
+                    type: string
+                  message:
+                    type: string
+                  httpStatusCode:
+                    type: integer
+                x-examples:
+                  Example 1:
+                    errorCode: unauthorized
+                    errorId: 6024ab212498442
+                    message: Credentials are required to access this resource.
+                    httpStatusCode: 401
+              examples:
+                Unauthorized:
+                  value:
+                    errorCode: unauthorized
+                    errorId: 6024ab212498442
+                    message: Credentials are required to access this resource.
+                    httpStatusCode: 401
+      x-stoplight:
+        id: 6qiez80lz8uc7
+  /v2/configuration/mappings:
+    get:
+      summary: Get Configuration Mappings
+      description: 'To set-up Cash App Pay on file, use this endpoint to retrieve your Cash App Pay brand ID.'
+      operationId: get-configuration-mappings
+      parameters:
+        - name: User-Agent
+          in: header
+          required: true
+          schema:
+            type: string
+            example: 'MyCashAppAfterpayModule/1.0.0 (E-Commerce Platform Name/1.0.0; PHP/7.0.0; Merchant/60032000) https://merchant.example.com'
+          description: 'View our [User Agent Header](https://developers.cash.app/docs/merchant/api-development/api-calls-payment-flows/user-agent-header) page for formatting details'
+        - name: Accept
+          in: header
+          description: Accept
+          schema:
+            type: string
+            default: application/json
+      deprecated: false
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigurationMappings'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorCode:
+                    type: string
+                    example: unauthenticated
+                  errorId:
+                    type: string
+                    example: 6024ab212498442
+                  message:
+                    type: string
+                    example: Invalid Merchant API credentials were passed in the Authorization header.
+                  httpStatusCode:
+                    type: integer
+                    example: 401
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorCode:
+                    type: string
+                    example: unauthorized
+                  errorId:
+                    type: string
+                    example: 6024ab212498442
+                  message:
+                    type: string
+                    example: The request was forbidden
+                  httpStatusCode:
+                    type: integer
+                    example: 403
+      x-stoplight:
+        id: 3sl6irnrtwcg0

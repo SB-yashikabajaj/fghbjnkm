@@ -1,0 +1,882 @@
+openapi: 3.0.1
+x-stoplight:
+  id: vp684zlr9ga7e
+info:
+  version: '1.0'
+  title: Reports API
+  description: |-
+    Gain valuable insights into your financial data with our Reports API category. Explore the versatile capabilities of this category, designed to provide you with granular transaction reports:
+
+    * **Report Generation:** Access detailed transaction reports containing a wealth of information related to each financial transaction. These reports offer granular insights into your data.
+    * **Multiple Formats:** Choose the format that suits your needs - our reports can be provided in either JSON or CSV. Select the format that best integrates with your systems and workflows.
+    The Reports API category equips you with the tools needed to extract, customize, and analyse your financial transaction data. Whether you require transaction reports in JSON or CSV format, these APIs offer the flexibility and granularity required for insightful financial analysis.
+  contact:
+    name: API Support
+    url: 'https://support.validis.com/'
+    email: support@validis.com
+  license:
+    url: 'https://www.apache.org/licenses/LICENSE-2.0.html'
+    name: Apache 2.0
+  termsOfService: 'https://www.validis.com/privacy-policy/'
+servers:
+  - url: 'https://api.sandbox.validis.com'
+    description: Sandbox Server
+paths:
+  '/v1/clients/{clientId}/engagements/{engagementId}/report/compliance':
+    get:
+      tags:
+        - Compliance
+      description: Allow the retrieval of the compliance report for an engagement of a client.
+      summary: Report compliance
+      operationId: report-compliance
+      parameters:
+        - $ref: '#/components/parameters/clientId'
+        - $ref: '#/components/parameters/engagementId'
+        - schema:
+            type: string
+            default: EXCEL
+            enum:
+              - EXCEL
+              - CSV
+            example: EXCEL
+          in: query
+          name: format
+          description: Format of the report to be generated.
+      responses:
+        '200':
+          description: ''
+          content:
+            text/csv:
+              schema:
+                type: string
+              examples:
+                Example 1:
+                  value: |-
+                    Client Name,Client Number,Debtor Name,Client Debtor Reference Number,Debtor Country Code,Currency,Sales Ledger Balance,Period 1,Period 2,Period 3,Period 4,Older,Unreconciled Credit items,Date of last upload 
+                    TestSage50UkUpload,,ABC COMPANY LIMITED,ABC001,GBR,GBP,30726.12000,7537.98000,7633.40000,7730.03000,7824.71000,0,0.00000,2023-09-15
+                    TestSage50UkUpload,,ABS Garages Ltd,ABS001,GBR,GBP,55913.17000,14129.23000,14308.08000,12809.20000,14666.66000,0,1680.00000,2023-09-15
+            application/vnd.ms-excel:
+              schema:
+                type: object
+                properties: {}
+        '400':
+          $ref: '#/components/responses/400-BadRequest'
+        '401':
+          $ref: '#/components/responses/401-Unauthorized'
+        '403':
+          $ref: '#/components/responses/403-Forbidden'
+        '404':
+          $ref: '#/components/responses/404-NotFound'
+        '406':
+          $ref: '#/components/responses/406-NotAcceptableResponse'
+        '415':
+          $ref: '#/components/responses/415-UnsupportedMediaType'
+        '429':
+          $ref: '#/components/responses/429-TooManyRequests'
+        '500':
+          $ref: '#/components/responses/500-UnknownInternalServerError'
+      security:
+        - Authorization: []
+          ApiKey: []
+      x-stoplight:
+        id: elkd5092k6k6e
+  '/v1/clients/{clientId}/report/compliance':
+    get:
+      tags:
+        - Compliance
+      description: Allow retrieval of client's compliance report.
+      summary: Client compliance reports
+      operationId: report-compliance-per-client
+      parameters:
+        - $ref: '#/components/parameters/clientId'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/vnd.api+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Get-Compliance-Report-Response'
+              examples:
+                Example 1:
+                  $ref: '#/components/examples/Get-Compliance-Report-Response'
+        '400':
+          $ref: '#/components/responses/400-BadRequest'
+        '401':
+          $ref: '#/components/responses/401-Unauthorized'
+        '403':
+          $ref: '#/components/responses/403-Forbidden'
+        '404':
+          $ref: '#/components/responses/404-NotFound'
+        '406':
+          $ref: '#/components/responses/406-NotAcceptableResponse'
+        '429':
+          $ref: '#/components/responses/429-TooManyRequests'
+        '500':
+          $ref: '#/components/responses/500-UnknownInternalServerError'
+      security:
+        - Authorization: []
+          ApiKey: []
+      x-stoplight:
+        id: 25pcoaffafjxz
+  '/v2/extracts/accounts-payable/engagements/{engagementId}':
+    get:
+      tags:
+        - Accounts
+      summary: Generate accounts payable
+      description: Generate Accounts Payable
+      operationId: generate-accounts-payable
+      parameters:
+        - $ref: '#/components/parameters/engagementId'
+        - $ref: '#/components/parameters/includeFutureYears'
+        - $ref: '#/components/parameters/format'
+      responses:
+        '200':
+          description: Successfully retrieved accounts payable.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Extract'
+              examples:
+                Example 1:
+                  $ref: '#/components/examples/Extract'
+        '202':
+          $ref: '#/components/responses/202-Accepted'
+        '400':
+          $ref: '#/components/responses/400-BadRequest'
+        '401':
+          $ref: '#/components/responses/401-Unauthorized'
+        '403':
+          $ref: '#/components/responses/403-Forbidden'
+        '404':
+          $ref: '#/components/responses/404-NotFound'
+        '406':
+          $ref: '#/components/responses/406-NotAcceptableResponse'
+        '429':
+          $ref: '#/components/responses/429-TooManyRequests'
+        '500':
+          $ref: '#/components/responses/500-UnknownInternalServerError'
+      security:
+        - Authorization: []
+          ApiKey: []
+      x-stoplight:
+        id: pd4eysbrxfldg
+  '/v2/extracts/accounts-receivable/engagements/{engagementId}':
+    get:
+      tags:
+        - Accounts
+      summary: Generate accounts receivable
+      description: Generate Accounts Receivable
+      operationId: generate-accounts-receivable
+      parameters:
+        - $ref: '#/components/parameters/engagementId'
+        - $ref: '#/components/parameters/includeFutureYears'
+        - $ref: '#/components/parameters/format'
+      responses:
+        '200':
+          description: Successfully received accounts receivable.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Extract'
+              examples:
+                Example 1:
+                  $ref: '#/components/examples/Extract'
+        '202':
+          $ref: '#/components/responses/202-Accepted'
+        '400':
+          $ref: '#/components/responses/400-BadRequest'
+        '401':
+          $ref: '#/components/responses/401-Unauthorized'
+        '403':
+          $ref: '#/components/responses/403-Forbidden'
+        '404':
+          $ref: '#/components/responses/404-NotFound'
+        '406':
+          $ref: '#/components/responses/406-NotAcceptableResponse'
+        '429':
+          $ref: '#/components/responses/429-TooManyRequests'
+        '500':
+          $ref: '#/components/responses/500-UnknownInternalServerError'
+      security:
+        - Authorization: []
+          ApiKey: []
+      x-stoplight:
+        id: zesb3c8e33u6r
+  '/v2/extracts/general-ledger/engagements/{engagementId}':
+    get:
+      tags:
+        - Ledger
+      summary: Generate general ledger
+      description: Generate General Ledger
+      operationId: generate-general-ledger
+      parameters:
+        - $ref: '#/components/parameters/engagementId'
+        - $ref: '#/components/parameters/includeFutureYears'
+        - $ref: '#/components/parameters/format'
+      responses:
+        '200':
+          description: Successfully received general ledger.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Extract'
+              examples:
+                Example 1:
+                  $ref: '#/components/examples/Extract'
+        '202':
+          $ref: '#/components/responses/202-Accepted'
+        '400':
+          $ref: '#/components/responses/400-BadRequest'
+        '401':
+          $ref: '#/components/responses/401-Unauthorized'
+        '403':
+          $ref: '#/components/responses/403-Forbidden'
+        '404':
+          $ref: '#/components/responses/404-NotFound'
+        '406':
+          $ref: '#/components/responses/406-NotAcceptableResponse'
+        '429':
+          $ref: '#/components/responses/429-TooManyRequests'
+        '500':
+          $ref: '#/components/responses/500-UnknownInternalServerError'
+      security:
+        - Authorization: []
+          ApiKey: []
+      x-stoplight:
+        id: fg6ozhmr2vic4
+  '/v2/extracts/passthrough/engagements/{engagementId}':
+    get:
+      tags:
+        - Passthrough Data
+      summary: Generate passthrough
+      description: Generate Passthrough
+      operationId: generate-passthrough
+      parameters:
+        - $ref: '#/components/parameters/engagementId'
+        - $ref: '#/components/parameters/includeFutureYears'
+        - $ref: '#/components/parameters/format'
+      responses:
+        '200':
+          description: Successfully received passthrough.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Extract'
+              examples:
+                Example 1:
+                  $ref: '#/components/examples/Extract'
+        '202':
+          $ref: '#/components/responses/202-Accepted'
+        '400':
+          $ref: '#/components/responses/400-BadRequest'
+        '401':
+          $ref: '#/components/responses/401-Unauthorized'
+        '403':
+          $ref: '#/components/responses/403-Forbidden'
+        '404':
+          $ref: '#/components/responses/404-NotFound'
+        '406':
+          $ref: '#/components/responses/406-NotAcceptableResponse'
+        '429':
+          $ref: '#/components/responses/429-TooManyRequests'
+        '500':
+          $ref: '#/components/responses/500-UnknownInternalServerError'
+      security:
+        - Authorization: []
+          ApiKey: []
+      x-stoplight:
+        id: 14p0q5xpz1qu7
+  '/v1/clients/{clientId}/engagements/{engagementId}/bank-transactions':
+    post:
+      tags:
+        - Bank Transactions
+      summary: Bank transactions
+      description: Allow the creation of bank transactions.
+      operationId: bank-transactions
+      parameters:
+        - $ref: '#/components/parameters/clientId'
+        - $ref: '#/components/parameters/engagementId'
+      responses:
+        '200':
+          description: Successfully created a bank transaction.
+        '400':
+          $ref: '#/components/responses/400-BadRequest'
+        '401':
+          $ref: '#/components/responses/401-Unauthorized'
+        '403':
+          $ref: '#/components/responses/403-Forbidden'
+        '404':
+          $ref: '#/components/responses/404-NotFound'
+        '406':
+          $ref: '#/components/responses/406-NotAcceptableResponse'
+        '415':
+          $ref: '#/components/responses/415-UnsupportedMediaType'
+        '429':
+          $ref: '#/components/responses/429-TooManyRequests'
+        '500':
+          $ref: '#/components/responses/500-UnknownInternalServerError'
+      security:
+        - Authorization: []
+          ApiKey: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ValidisFile'
+            examples:
+              Example 1:
+                $ref: '#/components/examples/ValidisFile'
+      x-stoplight:
+        id: 12v1kolbxlwqg
+  '/v2/extracts/additional/engagements/{engagementId}':
+    get:
+      tags:
+        - Additional Data
+      summary: Generate additional data
+      description: Generate additional data
+      operationId: generate-additional-data
+      parameters:
+        - $ref: '#/components/parameters/engagementId'
+      responses:
+        '200':
+          description: Successfully received additional data.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Extract'
+              examples:
+                Example 1:
+                  $ref: '#/components/examples/Extract'
+        '400':
+          $ref: '#/components/responses/400-BadRequest'
+        '401':
+          $ref: '#/components/responses/401-Unauthorized'
+        '403':
+          $ref: '#/components/responses/403-Forbidden'
+        '404':
+          $ref: '#/components/responses/404-NotFound'
+        '406':
+          $ref: '#/components/responses/406-NotAcceptableResponse'
+        '429':
+          $ref: '#/components/responses/429-TooManyRequests'
+        '500':
+          $ref: '#/components/responses/500-UnknownInternalServerError'
+      security:
+        - Authorization: []
+          ApiKey: []
+      x-stoplight:
+        id: up6ujevdx5cd8
+  '/v2/extracts/bank-statement/engagements/{engagementId}':
+    get:
+      x-internal: true
+      tags:
+        - Bank Statements
+      summary: Bank statements
+      description: Allows you to fetch the bank statements related to the engagement.
+      operationId: bank-statements
+      parameters:
+        - $ref: '#/components/parameters/engagementId'
+        - name: format
+          in: query
+          description: Format of the generated report file.
+          schema:
+            type: string
+            enum:
+              - JSON
+              - CSV
+            default: JSON
+      responses:
+        '200':
+          description: Successfully retrieved bank statements.
+          content:
+            application/vnd.api+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Extract'
+              examples:
+                Example 1:
+                  $ref: '#/components/examples/Extract-Array'
+        '400':
+          $ref: '#/components/responses/400-BadRequest'
+        '401':
+          $ref: '#/components/responses/401-Unauthorized'
+        '403':
+          $ref: '#/components/responses/403-Forbidden'
+        '404':
+          $ref: '#/components/responses/404-NotFound'
+        '406':
+          $ref: '#/components/responses/406-NotAcceptableResponse'
+        '429':
+          $ref: '#/components/responses/429-TooManyRequests'
+        '500':
+          $ref: '#/components/responses/500-UnknownInternalServerError'
+      security:
+        - Authorization: []
+          ApiKey: []
+      x-stoplight:
+        id: z2oxyiqur5o1y
+  '/v2/extracts/bank-statement/engagements/{engagementId}/data':
+    get:
+      x-internal: true
+      tags:
+        - Bank Statements
+      summary: Bank statements data
+      description: Allows you to fetch the file with the bank statements related to the engagement.
+      operationId: bank-statements-data
+      parameters:
+        - $ref: '#/components/parameters/engagementId'
+        - name: fileName
+          in: query
+          required: true
+          description: Name of the file that user wants to download.
+          schema:
+            type: string
+            example: bank-statements-data.json
+      responses:
+        '200':
+          description: Successfully retrieved bank statements data.
+          content:
+            application/octet-stream:
+              examples:
+                Example1:
+                  externalValue: 'https://validis.com/blob-storage/bank-statements-data.json'
+        '400':
+          $ref: '#/components/responses/400-BadRequest'
+        '401':
+          $ref: '#/components/responses/401-Unauthorized'
+        '403':
+          $ref: '#/components/responses/403-Forbidden'
+        '404':
+          $ref: '#/components/responses/404-NotFound'
+        '406':
+          $ref: '#/components/responses/406-NotAcceptableResponse'
+        '429':
+          $ref: '#/components/responses/429-TooManyRequests'
+        '500':
+          $ref: '#/components/responses/500-UnknownInternalServerError'
+      security:
+        - Authorization: []
+          ApiKey: []
+      x-stoplight:
+        id: r3u4ofexer3f8
+tags:
+  - name: Accounts
+    description: Account reports operations.
+  - name: Additional Data
+    description: Additional data operations.
+  - name: Bank Statements
+    description: Bank statements.
+  - name: Bank Transactions
+    description: Bank transactions.
+  - name: Compliance
+    description: Compliance reports operations.
+  - name: Ledger
+    description: Ledger reports operations.
+  - name: Passthrough Data
+    description: Passthrough reports operations.
+components:
+  parameters:
+    clientId:
+      name: clientId
+      in: path
+      description: 'The unique identifier(UUID) of your Validis system, as provided by the Authentication endpoint.'
+      required: true
+      schema:
+        type: string
+        format: uuid
+        example: 46c5fa5b-6880-4fdb-8d5b-e60b40c48690
+    engagementId:
+      name: engagementId
+      in: path
+      description: The unique identifier for the Engagement.
+      required: true
+      schema:
+        type: integer
+        example: 10141
+    includeFutureYears:
+      name: includeFutureYears
+      in: query
+      description: Whether to include future years or not.
+      required: false
+      schema:
+        type: boolean
+        default: true
+    format:
+      name: format
+      in: query
+      description: Defines format of data inside the file
+      required: false
+      schema:
+        type: string
+        enum:
+          - CSV
+          - JSON
+        default: CSV
+  securitySchemes:
+    ApiKey:
+      type: apiKey
+      description: |
+        API Key fetched from Validis Admin. Example:- 0bcbf42ef97c41234515921fec79ab9
+      name: Ocp-Apim-Subscription-Key
+      in: header
+    Authorization:
+      type: http
+      description: |
+        OAuth2 JWT access token to authorise requests. Example:- 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNT'
+      scheme: bearer
+      bearerFormat: JWT
+  responses:
+    400-BadRequest:
+      description: Bad or malformed request.
+      content:
+        application/vnd.api+json:
+          schema:
+            type: object
+            properties:
+              timestamp:
+                type: string
+                format: date-time
+                description: The timestamp when the request was processed.
+              status:
+                type: integer
+                description: The HTTP status code.
+              exception:
+                type: string
+                description: Detailed exception that had been thrown.
+              path:
+                type: string
+                description: URI to which the request was sent.
+              message:
+                oneOf:
+                  - type: string
+                  - type: object
+                    additionalProperties: true
+                description: Detailed error message.
+          examples:
+            Example 1:
+              value:
+                timestamp: '2024-01-02T15:45:49.221+0000'
+                status: 400
+                exception: BindException
+                path: /v1/clients/18f64483-a971-472b-be5e-3339de288db1/engagements
+                message: |-
+                  org.springframework.validation.BeanPropertyBindingResult: 1 errors
+                  Field error in object 'engagementFilter' on field 'contactId': rejected value [abc]; codes [typeMismatch.engagementFilter.contactId,typeMismatch.contactId,typeMismatch.java.lang.Long,typeMismatch]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [engagementFilter.contactId,contactId]; arguments []; default message [contactId]]; default message [Failed to convert property value of type 'java.lang.String' to required type 'java.lang.Long' for property 'contactId'; nested exception is java.lang.NumberFormatException: For input string: "abc"]
+            Example 2:
+              value:
+                timestamp: '2024-01-02T15:45:49.221+0000'
+                status: 400
+                exception: BindException
+                path: /v1/clients/18f64483-a971-472b-be5e-3339de288db1/engagements
+                message:
+                  page: cannot be negative
+    401-Unauthorized:
+      description: Error code for a missing or invalid authentication token.
+      content:
+        text/plain:
+          schema:
+            type: string
+            example: Unauthorized. Access token is missing or invalid.
+          examples:
+            Example 1:
+              value: Unauthorized. Access token is missing or invalid.
+    403-Forbidden:
+      description: Forbidden or insufficient permissions to access the resource.
+      content:
+        application/vnd.api+json:
+          schema:
+            type: object
+            properties:
+              timestamp:
+                type: string
+                description: The timestamp when the request was processed.
+              status:
+                type: integer
+                description: The HTTP status code.
+              exception:
+                type: string
+                description: Detailed exception that had been thrown.
+              path:
+                type: string
+                description: URI to which the request was sent.
+              message:
+                type: string
+                description: Detailed error message.
+          examples:
+            Example 1:
+              value:
+                timestamp: '2023-09-26T08:18:31.963+0000'
+                status: 403
+                exception: AccessDeniedException
+                path: /v1/extracts/accounts-receivable/engagements/10141
+                message: Access is denied
+    404-NotFound:
+      description: The targeted resource is missing or nonexistent.
+      content:
+        application/vnd.api+json:
+          schema:
+            type: object
+            properties:
+              timestamp:
+                type: integer
+                description: The timestamp when the request was processes.
+              status:
+                type: integer
+                description: The HTTP status code.
+              exception:
+                type: string
+                description: Detailed exception that had been thrown.
+              path:
+                type: string
+                description: URI to which the request was sent.
+              message:
+                type: string
+                description: Detailed error message.
+          examples:
+            Example 1:
+              value:
+                timestamp: 1691582960984
+                status: 404
+                exception: NotFoundException
+                path: /v1/path
+                message: 'No Client Id found 4,374,242'
+    406-NotAcceptableResponse:
+      description: Error code provided when an HTTP Accept header can’t be satisfied.
+    415-UnsupportedMediaType:
+      description: Unsupported media type response.
+      content:
+        application/vnd.api+json:
+          schema:
+            type: object
+            properties:
+              timestamp:
+                type: integer
+                description: The timestamp when the request was processes.
+              status:
+                type: integer
+                description: The HTTP status code.
+              exception:
+                type: string
+                description: Detailed exception that had been thrown.
+              path:
+                type: string
+                description: URI to witch the request was sent.
+              message:
+                type: string
+                description: Detailed error message.
+          examples:
+            Example 1:
+              value:
+                timestamp: 1692361385684
+                status: 415
+                exception: ''
+                path: /v1/path
+                message: Content type 'application/javascript;charset=UTF-8' not supported
+    429-TooManyRequests:
+      description: Too many request were made.
+      content:
+        application/vnd.api+json:
+          schema:
+            type: object
+            properties:
+              statusCode:
+                type: integer
+                description: The status code of the response.
+              message:
+                type: string
+                description: The detailed message of the error. Must contain the remaining waiting period.
+          examples:
+            Example 1:
+              value:
+                statusCode: 429
+                message: Rate limit is exceeded. Try again in 46 seconds.
+    202-Accepted:
+      description: Report generation request has been accepted.
+      content:
+        text/plain:
+          schema:
+            type: string
+            example: A CSV generation process has started. Please try again later to get the extraction URL.
+          examples:
+            Example 1:
+              value: A CSV generation process has started. Please try again later to get the extraction URL.
+      headers:
+        Retry-After:
+          $ref: '#/components/headers/Retry-After'
+        X-RateLimit-Reset:
+          $ref: '#/components/headers/X-RateLimit-Reset'
+        X-RateLimit-Limit:
+          $ref: '#/components/headers/X-RateLimit-Limit'
+        X-RateLimit-Remaining:
+          $ref: '#/components/headers/X-RateLimit-Remaining'
+    500-UnknownInternalServerError:
+      description: Unknown internal server error has occurred.
+      content:
+        application/vnd.api+json:
+          schema:
+            type: object
+            properties:
+              exception:
+                type: string
+                description: Detailed exception that had been thrown.
+              message:
+                type: string
+                description: Detailed error message.
+              path:
+                type: string
+                description: URI to which the request was sent.
+              status:
+                type: integer
+                description: The status code of the response.
+              timestamp:
+                type: string
+                description: The timestamp when the request was processes.
+                format: date-time
+          examples:
+            Example 1:
+              value:
+                timestamp: '2023-06-06T13:13:13.009+0000'
+                status: 500
+                exception: UndeclaredThrowableException
+                path: /v1/path
+                message: A unexpected error occurred while processing the request
+  headers:
+    X-RateLimit-Limit:
+      schema:
+        type: integer
+        minimum: 60
+        maximum: 5000
+        default: 60
+      description: The maximum number of requests that are permitted before exhausting the rate limit.
+    X-RateLimit-Remaining:
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 5000
+      description: Remaining number of requests until reset.
+      required: false
+    Retry-After:
+      schema:
+        type: integer
+        minimum: 60
+        maximum: 86400
+        default: 60
+      description: Indicates how long the user agent should wait (in seconds) before making further requests.
+      required: false
+    X-RateLimit-Reset:
+      schema:
+        type: integer
+        minimum: 0
+        maximum: 86400
+      description: 'Indicates when the rate limit will be reset, in UNIX timestamp format.'
+      required: false
+  examples:
+    Extract:
+      value:
+        fileUrl: 'https://validis.com/38ff8c84c818p.zip'
+        sasToken: sig=kOV1aYG&se=2023-09-30T07%3A51%3A19Z&sv=2019-02-02&sp=rdl&sr=b
+        fileAccessUrl: 'https://validis.com/f7320e03.zip?sig=kOV1aYG&se=2023-09-30T07%3A51%3A19Z&sv=2019-02-02&sp=rdl&sr=b'
+        filename: null
+    Extract-Array:
+      value:
+        - fileUrl: 'https://validis.com/file1.zip'
+          sasToken: sig=kOV1aYG&se=2023-09-30T07%3A51%3A19Z&sv=2019-02-02&sp=rdl&sr=b
+          fileAccessUrl: 'https://validis.com/file1.zip?sig=kOV1aYG&se=2023-09-30T07%3A51%3A19Z&sv=2019-02-02&sp=rdl&sr=b'
+          filename: null
+        - fileUrl: 'https://validis.com/file2.zip'
+          sasToken: sig=kOV1aYG&se=2023-09-30T07%3A51%3A19Z&sv=2019-02-02&sp=rdl&sr=b
+          fileAccessUrl: 'https://validis.com/file2.zip?sig=kOV1aYG&se=2023-09-30T07%3A51%3A19Z&sv=2019-02-02&sp=rdl&sr=b'
+          filename: null
+    Get-Compliance-Report-Response:
+      value:
+        - id: 3215
+          name: Compliance Report
+          generationTime: '2023-10-01T19:00:25.180'
+          clientId: 1502f8e4-cf6d-497c-8086-67e74e01b956
+          url: 'https://validis.com/Compliance+Report.xlsx'
+          type: COMPLIANCE_PER_CLIENT
+        - id: 3216
+          name: Compliance Report
+          generationTime: '2023-10-01T19:00:27.306'
+          clientId: 1502f8e4-cf6d-497c-8086-67e74e01b956
+          url: 'https://validis.com/Compliance+Report.csv'
+          type: COMPLIANCE_PER_CLIENT
+    ValidisFile:
+      value:
+        filename: bank-transaction-file.csv
+        downloadUrl: 'https://validis.com/files/bank-transaction-file.csv'
+  schemas:
+    Extract:
+      type: object
+      title: Ledger
+      properties:
+        fileUrl:
+          type: string
+          description: Generated File URL
+        sasToken:
+          type: string
+          description: SAS Token to access the report (valid for 24h).
+        fileAccessUrl:
+          type: string
+          description: URL to download the report.
+        fileName:
+          type: string
+          description: Filename of the generated report.
+          nullable: true
+      example:
+        fileUrl: 'https://validis.com/38ff8c84c818p.zip'
+        sasToken: sig=kOV1aYG&se=2023-09-30T07%3A51%3A19Z&sv=2019-02-02&sp=rdl&sr=b
+        fileAccessUrl: 'https://validis.com/f7320e03.zip?sig=kOV1aYG&se=2023-09-30T07%3A51%3A19Z&sv=2019-02-02&sp=rdl&sr=b'
+        filename: null
+      x-stoplight:
+        id: xrlz44yfgcm13
+    Get-Compliance-Report-Response:
+      title: Compliance report
+      description: The schema of a compliance report instance.
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 3216
+          description: Unique Id for the compliance report.
+        name:
+          type: string
+          example: Compliance Report
+          description: Compliance report name.
+        generationTime:
+          type: string
+          example: '2023-10-01T19:00:25.180'
+          description: Time the compliance report was generated.
+        clientId:
+          type: string
+          example: 1502f8e4-cf6d-497c-8086-67e74e01b956
+          description: Client Id tied to the compliance report.
+        url:
+          type: string
+          example: 'https://validis.com/Compliance+Report.xlsx'
+          description: Url link to download compliance report.
+        type:
+          type: string
+          enum:
+            - REPORT AUDIT
+            - CROSS_LEDGER
+            - COMPLIANCE_PER_CLIENT
+          example: COMPLIANCE_PER_CLIENT
+          description: Compliance report type.
+      x-stoplight:
+        id: ici5ob2gcb1hp
+    ValidisFile:
+      title: File download
+      type: object
+      properties:
+        filename:
+          type: string
+          description: 'Name of the file with extension. Supported extensions are csv,xlsx,xls.'
+        downloadUrl:
+          type: string
+          description: Url of the file to be downloaded from.
+      x-stoplight:
+        id: qfq5ika0oh6qc

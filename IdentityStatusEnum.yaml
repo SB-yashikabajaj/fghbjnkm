@@ -1,0 +1,11 @@
+title: IdentityStatusEnum
+x-stoplight:
+  id: yt5yuyc5umx9t
+type: string
+enum:
+  - INITIATED
+  - PENDING
+  - OPENED
+  - BLOCKED
+  - CLOSED
+  - INIBLOCKED

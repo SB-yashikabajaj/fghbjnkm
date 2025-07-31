@@ -1,0 +1,12 @@
+title: Territory
+x-stoplight:
+  id: oeipmman5enr6
+type: string
+enum:
+  - GB
+  - IT
+  - DE
+  - IE
+  - AT
+  - CH
+x-internal: false

@@ -1,0 +1,12 @@
+title: SleTypeTactical
+x-stoplight:
+  id: sg4rhanpykhab
+description: |-
+  Single Live Event Type.
+
+  Planned Placeholder if the confirmed event has no data attached.
+  Planned Fixture if the confirmed event has real data attached to it.
+enum:
+  - Planned Fixture
+  - Planned Placeholder
+x-internal: false

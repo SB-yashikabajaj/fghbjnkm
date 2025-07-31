@@ -1,0 +1,10 @@
+{
+  "title": "DataProvider",
+  "x-stoplight": {
+    "id": "n5zkv949zb93n"
+  },
+  "enum": [
+    "Sky"
+  ],
+  "x-internal": false
+}

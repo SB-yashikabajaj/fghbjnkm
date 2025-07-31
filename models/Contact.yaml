@@ -1,0 +1,106 @@
+title: Contact
+x-stoplight:
+  id: wpl1udmkezbiv
+type: object
+examples:
+  - name: Joe Consumer
+    line1: Level 5
+    line2: 390 Collins Street
+    area1: Melbourne
+    region: VIC
+    postcode: '3000'
+    countryCode: AU
+    phoneNumber: 0400 000 000
+description: |
+  This data model is used for storing an individual's contact information. Mandatory fields such as **name**, **line1**, **area1**, **region**, **postcode**, and **countryCode** help in capturing vital information about a user's location. 
+
+  The `line2` and `area2` fields provide additional space for extended addresses, while `phoneNumber` can be used to store the user's contact number.
+
+  <!--theme: warning -->
+
+  > ### Important Note
+  >
+  >  The `area1`, `area2` and `region` properties feature localized terminology based on country. Refer to the property descriptions for insights on each country's specific usage 
+x-tags:
+  - request-object
+properties:
+  name:
+    type: string
+    x-stoplight:
+      id: k8llme0jg2w2t
+    maxLength: 255
+    example: Joe Consumer
+  line1:
+    type: string
+    x-stoplight:
+      id: pn5fktuba5rka
+    maxLength: 128
+    example: Level 8
+    description: First line of the address
+  line2:
+    type: string
+    x-stoplight:
+      id: ohelwk7qu8lxd
+    description: 'Second line of the address '
+    maxLength: 128
+    example: 390 Collins Street
+  area1:
+    type: string
+    x-stoplight:
+      id: hvud7skpmnlwy
+    maxLength: 128
+    example: Melbourne
+    description: |-
+      - AU: Suburb
+      - NZ: Town or City
+      - UK: Postal Town
+      - US: City
+      - Canada: City
+  area2:
+    type: string
+    x-stoplight:
+      id: k7yx46cp9dyqe
+    maxLength: 128
+    description: |-
+      - NZ: suburb
+      - UK: village or local area.
+  region:
+    type: string
+    x-stoplight:
+      id: a7ircbed30jgm
+    description: |-
+      - AU: State 
+      - NZ: Region
+      - UK: County
+      - US: State
+      - CA: Province or Territory
+    maxLength: 128
+    example: VIC
+  postcode:
+    type: string
+    x-stoplight:
+      id: j5usjrllymu97
+    maxLength: 128
+    example: '3000'
+  countryCode:
+    x-stoplight:
+      id: 301jktsiafnal
+    enum:
+      - AU
+      - NZ
+      - US
+      - CA
+      - GB
+  phoneNumber:
+    type: string
+    x-stoplight:
+      id: 3uebjp50u4bdu
+    example: 0400 000 000
+    description: 'The phone number, in [E.123](https://en.wikipedia.org/wiki/E.123) format.'
+required:
+  - name
+  - line1
+  - area1
+  - region
+  - postcode
+  - countryCode

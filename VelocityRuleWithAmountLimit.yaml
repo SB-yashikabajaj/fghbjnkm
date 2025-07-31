@@ -1,0 +1,25 @@
+title: VelocityRuleWithAmountLimit
+x-stoplight:
+  id: qrzno8keilwkt
+allOf:
+  - $ref: ./VelocityRuleBase.yaml
+    x-stoplight:
+      id: yhwunefczcuwt
+  - type: object
+    properties:
+      limitValue:
+        type: integer
+        description: Maximum amount configured for the rule
+        example: 100
+        x-stoplight:
+          id: 7ge44l5fwt4ih
+      currency:
+        description: Alpha iso code of associated currency (3 characters)
+        type: string
+        minLength: 3
+        maxLength: 3
+        example: EUR
+        x-stoplight:
+          id: 6ga5dimh260sd
+    x-stoplight:
+      id: 6p21fsv2v384h

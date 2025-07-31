@@ -1,0 +1,90 @@
+title: Item
+x-stoplight:
+  id: q20eh2n62p77g
+type: object
+examples:
+  - name: Pre-order Item
+    quantity: 1
+    price:
+      amount: '29.95'
+      currency: AUD
+    sku: SKU-PREORDER-123456789
+    preorder: true
+  - name: Pre-order Item
+    quantity: 1
+    price:
+      amount: '29.95'
+      currency: AUD
+    sku: SKU-PREORDER-123456789
+    preorder: false
+description: |
+  This data model is used for storing crucial product details. The `name` field denotes the name of the product, while `sku` holds the Stock Keeping Unit identifier. The `quantity` key indicates the number of units of the item.
+
+
+
+  > If you anticipate that this item won't be fulfilled immediately and needs to be flagged as a preorder during checkout, make sure to enable the "preorder" option by setting `preorder` to true
+  >
+x-internal: true
+properties:
+  name:
+    type: string
+    x-stoplight:
+      id: d97xliyc0ecqr
+    maxLength: 255
+    example: Blue Carabiner
+  sku:
+    type: string
+    x-stoplight:
+      id: p725pwzu2vduy
+  pageUrl:
+    type: string
+    x-stoplight:
+      id: e94tnlkcuzjw2
+    example: 'https://merchant.example.com/carabiner-354193.html'
+    maxLength: 2048
+  imageUrl:
+    type: string
+    x-stoplight:
+      id: 36m39mjrbnkbo
+    example: 'https://merchant.example.com/carabiner-7378-391453-1.jpg'
+    maxLength: 2048
+  quantity:
+    type: integer
+    x-stoplight:
+      id: u0hra2th4ouji
+    format: int32
+    example: 1
+  price:
+    $ref: ./Money.yaml
+    x-stoplight:
+      id: 42qndm19915j1
+  categories:
+    type: array
+    x-stoplight:
+      id: 3aktzobhftwrm
+    items:
+      x-stoplight:
+        id: wtg5gxrmvtnwh
+      type: array
+      items:
+        x-stoplight:
+          id: 9rng1c7kqe3u2
+        type: string
+        example: '[     [       "Sporting Goods",       "Climbing Equipment",       "Climbing",       "Climbing Carabiners"     ], ["Sale", "Climbing"]]'
+  estimatedShipmentDate:
+    type: string
+    x-stoplight:
+      id: 3mu2xdo4ajy53
+    format: date
+    example: '2023-08-01'
+  preorder:
+    type: boolean
+    x-stoplight:
+      id: t99gca0rvkl91
+required:
+  - name
+  - quantity
+  - price
+  - preorder
+x-tags:
+  - request-object

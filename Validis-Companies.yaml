@@ -1,0 +1,3651 @@
+openapi: 3.0.1
+x-stoplight:
+  id: jqu89r8eu41hg
+info:
+  version: '1.0'
+  title: Companies API
+  description: |-
+    The Companies category of our APIs empowers you to seamlessly manage and interact with engagement and client data while providing access to vital financial information. Explore the comprehensive capabilities of this category:
+
+    * **Engagement Management (CRUD):** Create, Read, Update, and Delete engagement and client profiles effortlessly. Streamline the management of your client base with intuitive APIs designed to meet your administrative needs.
+
+    * **Financial Data Access:** Gain direct access to a treasure trove of financial data associated with engagements and clients.
+    The Companies category provides a robust set of tools for managing your client/engagement portfolio. Whether you need to create new client profiles, or update existing data, these APIs are designed to simplify your workflow and unlock the potential of your applications.
+  contact:
+    name: API Support
+    url: 'https://support.validis.com/'
+    email: support@validis.com
+  license:
+    url: 'https://www.apache.org/licenses/LICENSE-2.0.html'
+    name: Apache 2.0
+  termsOfService: 'https://www.validis.com/privacy-policy/'
+servers:
+  - url: 'https://api.sandbox.validis.com'
+    description: Sandbox Server
+paths:
+  '/v1/clients/{clientId}/engagements':
+    post:
+      tags:
+        - Engagements
+      summary: Create engagement
+      description: Allows you to create an engagement for a client. When creating an engagement via API you will have the default system user added as the Engagement Owner and Engagement Agent.
+      operationId: create-engagement
+      parameters:
+        - name: withEmailValidation
+          in: query
+          description: TRUE will send an invitation to the SME contact in order for him to sign in and upload using Validis portal.
+          schema:
+            type: boolean
+            default: true
+        - name: duplicateAllowed
+          in: query
+          description: TRUE will allow to add duplicate SME names.
+          schema:
+            type: boolean
+            default: true
+        - name: usePortal
+          in: query
+          description: TRUE will enforce the presence of at least one SME contact to be present.
+          schema:
+            type: boolean
+            default: false
+        - $ref: '#/components/parameters/clientId'
+      requestBody:
+        description: Engagement details for the new engagement.
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/Create-Engagement-Request'
+            examples:
+              Example 1:
+                $ref: '#/components/examples/Create-Engagement-Request'
+      responses:
+        '200':
+          description: The request was successful.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Create-Engagement-Response'
+              examples:
+                Example 1:
+                  $ref: '#/components/examples/Create-Engagement-Response'
+        '400':
+          $ref: '#/components/responses/400-BadRequest'
+        '401':
+          $ref: '#/components/responses/401-Unauthorized'
+        '403':
+          $ref: '#/components/responses/403-Forbidden'
+        '404':
+          $ref: '#/components/responses/404-NotFound'
+        '406':
+          $ref: '#/components/responses/406-NotAcceptableResponse'
+        '415':
+          $ref: '#/components/responses/415-UnsupportedMediaType'
+        '429':
+          $ref: '#/components/responses/429-TooManyRequests'
+        '500':
+          $ref: '#/components/responses/500-UnknownInternalServerError'
+      security:
+        - Authorization: []
+          ApiKey: []
+      x-stoplight:
+        id: 3lst5l2soea40
+    get:
+      tags:
+        - Engagements
+      summary: List all engagements
+      description: Retrieve all engagements for the given client.
+      operationId: engagements
+      parameters:
+        - name: externalEngagementId
+          in: query
+          description: Filter by non-validis identifier (must be exact match).
+          schema:
+            type: string
+            example: extId123456
+        - name: page
+          in: query
+          description: 'Requested page number (starting by 0, default is 0).'
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          description: Number of elements by page.
+          schema:
+            type: integer
+            default: 20
+        - name: agents
+          in: query
+          description: List of agents for the client.
+          schema:
+            type: array
+            items:
+              type: integer
+            example:
+              - 900
+              - 901
+        - name: backupOwners
+          in: query
+          description: List of backup owners for the client.
+          schema:
+            type: array
+            items:
+              type: integer
+            example:
+              - 902
+              - 903
+        - name: connectorIds
+          in: query
+          description: A collection of unique identifiers for the connectors used by the engagement.
+          schema:
+            type: array
+            items:
+              type: integer
+            example:
+              - 500
+              - 501
+        - name: contactId
+          in: query
+          description: The unique identifier of the contact representing the engagement.
+          schema:
+            type: integer
+            example: 904
+        - name: criteria
+          in: query
+          description: Set criteria for the engagements to be retrieved.
+          schema:
+            type: string
+            example: John
+        - name: dataRefreshEnabled
+          in: query
+          description: If engagagements to be retrieved has data refresh enabled.
+          schema:
+            type: boolean
+            example: false
+        - name: engagementIds
+          in: query
+          description: List of engagement ids for which their details should be returned.
+          schema:
+            type: array
+            items:
+              type: integer
+            example:
+              - 600
+              - 601
+        - name: fromLastUploadDate
+          in: query
+          description: Start date for the last upload.
+          schema:
+            type: string
+            format: date
+          example: '2020-10-31'
+        - name: hasUpload
+          in: query
+          description: If engagement to be retrieved should have existing uploads.
+          schema:
+            type: boolean
+            example: false
+        - name: managers
+          in: query
+          description: List of managers for the client for which the engagements should be retrieved.
+          schema:
+            type: array
+            items:
+              type: integer
+            example:
+              - 905
+              - 906
+        - name: owners
+          in: query
+          description: List of engagement owners.
+          schema:
+            type: array
+            items:
+              type: integer
+            example:
+              - 907
+              - 908
+        - name: reconciliationEnabled
+          in: query
+          description: If engagement to be retrieved has reconciliation enabled.
+          schema:
+            type: boolean
+            example: true
+        - name: showParticipants
+          in: query
+          description: If engagement to be retrieved should show participants.
+          schema:
+            type: boolean
+            default: true
+        - name: smeContact
+          in: query
+          description: SME contact for which the engagement should be fetched.
+          schema:
+            type: boolean
+            default: false
+        - name: sort
+          in: query
+          description: 'Sorting criteria in the format: property(,asc|desc). Default sort order is ascending. Multiple sort criteria are supported.'
+          schema:
+            type: array
+            items:
+              type: string
+            example:
+              - 'externalEngagementId,DESC'
+              - clientId
+        - name: status
+          in: query
+          description: Engagement status. 0 - enabled; 1 - disabled; 2 - deleted. Will be ignored if 'withAllStatuses' query parameter is set to 'true'.
+          schema:
+            enum:
+              - 0
+              - 1
+              - 2
+            default: 0
+        - name: tag
+          in: query
+          description: Retrieve engagement with specific tags.
+          schema:
+            type: string
+            example: tag1
+        - name: toLastUploadDate
+          in: query
+          description: End date for the last upload.
+          schema:
+            type: string
+            format: date
+            example: '2022-10-31'
+        - name: withAllStatuses
+          in: query
+          description: Whether to look for engagements with all statuses or only with status specified in 'status' query parameter.
+          schema:
+            type: boolean
+            default: false
+        - name: withCompanyDetails
+          in: query
+          description: Whether to fetch engagement with company details.
+          schema:
+            type: boolean
+            default: false
+        - $ref: '#/components/parameters/clientId'
+      responses:
+        '200':
+          description: Successfully retrieved the engagements.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Get-Engagements-Response'
+              examples:
+                Example 1:
+                  $ref: '#/components/examples/Get-Engagements-Response'
+        '400':
+          $ref: '#/components/responses/400-BadRequest'
+        '401':
+          $ref: '#/components/responses/401-Unauthorized'
+        '403':
+          $ref: '#/components/responses/403-Forbidden'
+        '404':
+          $ref: '#/components/responses/404-NotFound'
+        '406':
+          $ref: '#/components/responses/406-NotAcceptableResponse'
+        '429':
+          $ref: '#/components/responses/429-TooManyRequests'
+        '500':
+          $ref: '#/components/responses/500-UnknownInternalServerError'
+      security:
+        - Authorization: []
+          ApiKey: []
+      x-stoplight:
+        id: jh73u2nmtlg7u
+  '/v2/clients/{clientId}/engagements/bulk':
+    parameters:
+      - $ref: '#/components/parameters/clientId'
+    post:
+      summary: '[BETA] Create multiple engagements'
+      description: "This endpoint is used to create one or more engagements for a Validis customer. An engagement is a Validis customer's company/SME that will be uploading its accounting package on Validis. \r\nOnly existing Validis SME contact Ids can be used when creating an engagement with SME contacts. By default, the system user is assigned as the Engagement Owner for the endpoint."
+      operationId: create-multiple-engagement
+      x-beta: true
+      tags:
+        - Engagements
+      parameters:
+        - name: duplicateAllowed
+          in: query
+          description: Set to TRUE to allow the creation of engagements with duplicate SME names.
+          schema:
+            type: boolean
+            default: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Create-Bulk-Engagement-Request'
+            examples:
+              Example 1:
+                $ref: '#/components/examples/Create-Bulk-Engagement-Request'
+      responses:
+        '207':
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Create-Bulk-Engagement-Response'
+              examples:
+                Example 1:
+                  $ref: '#/components/examples/Create-Bulk-Engagement-Response'
+        '400':
+          $ref: '#/components/responses/400-BadRequest'
+        '401':
+          $ref: '#/components/responses/401-Unauthorized'
+        '403':
+          $ref: '#/components/responses/403-Forbidden'
+        '406':
+          $ref: '#/components/responses/406-NotAcceptableResponse'
+        '415':
+          $ref: '#/components/responses/415-UnsupportedMediaType'
+        '429':
+          $ref: '#/components/responses/429-TooManyRequests'
+        '500':
+          $ref: '#/components/responses/500-UnknownInternalServerError'
+      x-stoplight:
+        id: rc9ey24wgvd8o
+      security:
+        - Authorization: []
+          ApiKey: []
+    delete:
+      summary: '[BETA] Delete multiple engagements'
+      description: This endpoint is used to delete one or more engagements for a Validis customer. An engagement is a Validis customer's company/SME that will be uploading its accounting package on Validis.
+      operationId: delete-multiple-engagement
+      x-beta: true
+      tags:
+        - Engagements
+      parameters:
+        - name: engagementIds
+          required: true
+          in: query
+          description: The unique identifier of the engagements to be deleted. To be passed in comma separated format.
+          example: '10141, 30721'
+          schema:
+            type: string
+            format: comma-separated
+          style: form
+          explode: false
+        - name: fullRemoving
+          in: query
+          description: 'Set to "true" to delete engagements along with their related artifacts. Set to "false" to delete all accounting package tokens and uploads, the last upload date, and financial data of the engagements but the status will remain as "ENABLED". This applies to all engagements passed in the engagementId query parameter.'
+          schema:
+            type: boolean
+            default: true
+      responses:
+        '207':
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Delete-Bulk-Engagement-Response'
+              examples:
+                Example 1:
+                  $ref: '#/components/examples/Delete-Bulk-Engagement-Response'
+        '400':
+          $ref: '#/components/responses/400-BadRequest'
+        '401':
+          $ref: '#/components/responses/401-Unauthorized'
+        '403':
+          $ref: '#/components/responses/403-Forbidden'
+        '406':
+          $ref: '#/components/responses/406-NotAcceptableResponse'
+        '415':
+          $ref: '#/components/responses/415-UnsupportedMediaType'
+        '429':
+          $ref: '#/components/responses/429-TooManyRequests'
+        '500':
+          $ref: '#/components/responses/500-UnknownInternalServerError'
+      security:
+        - Authorization: []
+          ApiKey: []
+      x-stoplight:
+        id: v24aezjaliukn
+  '/v1/engagements/{engagementId}':
+    get:
+      tags:
+        - Engagements
+      summary: Retrieve engagement details
+      description: Retrieve the engagement for the given engagement id.
+      operationId: engagement-detail
+      parameters:
+        - $ref: '#/components/parameters/engagementId'
+      responses:
+        '200':
+          description: Successfully retrieved the engagement.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Get-Engagement-Response'
+              examples:
+                Example 1:
+                  $ref: '#/components/examples/Get-Engagement-Response'
+        '400':
+          $ref: '#/components/responses/400-BadRequest'
+        '401':
+          $ref: '#/components/responses/401-Unauthorized'
+        '403':
+          $ref: '#/components/responses/403-Forbidden'
+        '404':
+          $ref: '#/components/responses/404-NotFound'
+        '406':
+          $ref: '#/components/responses/406-NotAcceptableResponse'
+        '429':
+          $ref: '#/components/responses/429-TooManyRequests'
+        '500':
+          $ref: '#/components/responses/500-UnknownInternalServerError'
+      security:
+        - Authorization: []
+          ApiKey: []
+      x-stoplight:
+        id: d329g5wk0xhlr
+  '/v1/clients/{clientId}/engagements/{engagementId}':
+    put:
+      tags:
+        - Engagements
+      summary: Update engagement
+      description: Allow the user to update an engagement.
+      operationId: edit-engagement
+      parameters:
+        - $ref: '#/components/parameters/clientId'
+        - $ref: '#/components/parameters/engagementId'
+      requestBody:
+        description: Engagement update details.
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/Update-Engagement-Request'
+            examples:
+              Example 1:
+                $ref: '#/components/examples/Update-Engagement-Request'
+      responses:
+        '200':
+          description: Engagement updated successfully.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Update-Engagement-Response'
+              examples:
+                Example 1:
+                  $ref: '#/components/examples/Update-Engagement-Response'
+        '400':
+          $ref: '#/components/responses/400-BadRequest'
+        '401':
+          $ref: '#/components/responses/401-Unauthorized'
+        '403':
+          $ref: '#/components/responses/403-Forbidden'
+        '404':
+          $ref: '#/components/responses/404-NotFound'
+        '406':
+          $ref: '#/components/responses/406-NotAcceptableResponse'
+        '415':
+          $ref: '#/components/responses/415-UnsupportedMediaType'
+        '429':
+          $ref: '#/components/responses/429-TooManyRequests'
+        '500':
+          $ref: '#/components/responses/500-UnknownInternalServerError'
+      security:
+        - Authorization: []
+          ApiKey: []
+      x-stoplight:
+        id: dt000o7naa86c
+    delete:
+      tags:
+        - Engagements
+      summary: Delete engagement
+      description: Calling this endpoint with the appropriate template parameters will update an Engagement's status to DELETED.
+      operationId: delete-engagement
+      parameters:
+        - $ref: '#/components/parameters/clientId'
+        - $ref: '#/components/parameters/engagementId'
+        - name: fullRemoving
+          in: query
+          description: 'Set to "true" to delete the engagement along with its related artifacts. Set to "false" to delete all accounting package tokens and uploads, the last upload date, and financial data of the engagement while the status will remain as "ENABLED".'
+          schema:
+            type: boolean
+            default: true
+      responses:
+        '200':
+          description: Engagement successfully deleted.
+        '400':
+          $ref: '#/components/responses/400-BadRequest'
+        '401':
+          $ref: '#/components/responses/401-Unauthorized'
+        '403':
+          $ref: '#/components/responses/403-Forbidden'
+        '404':
+          $ref: '#/components/responses/404-NotFound'
+        '406':
+          $ref: '#/components/responses/406-NotAcceptableResponse'
+        '429':
+          $ref: '#/components/responses/429-TooManyRequests'
+        '500':
+          $ref: '#/components/responses/500-UnknownInternalServerError'
+      security:
+        - Authorization: []
+          ApiKey: []
+      x-stoplight:
+        id: dknmsuo356utw
+  '/v1/clients/{clientId}/engagements/{engagementId}/schedule':
+    put:
+      tags:
+        - Upload Schedule
+      summary: Set schedule
+      description: Allows modification of the upload schedule for data refresh enabled engagements.
+      operationId: modify-data-refresh-schedule
+      parameters:
+        - $ref: '#/components/parameters/clientId'
+        - $ref: '#/components/parameters/engagementId'
+      requestBody:
+        description: |-
+          'Schedule request payload. 
+          Options for scheduleFrequency: 
+            0 - NOT_SCHEDULED
+            1 - ANNUALLY
+            2 - MONTHLY
+            3 - WEEKLY
+            4 - DAILY
+            5- QUARTERLY'
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/Update-Schedule-Request'
+            examples:
+              Example 1:
+                $ref: '#/components/examples/Update-Schedule-Request'
+      responses:
+        '200':
+          description: Successfully updated data refresh schedule.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Update-Engagement-Response'
+              examples:
+                Example 1:
+                  $ref: '#/components/examples/Update-Engagement-Response'
+        '400':
+          $ref: '#/components/responses/400-BadRequest'
+        '401':
+          $ref: '#/components/responses/401-Unauthorized'
+        '403':
+          $ref: '#/components/responses/403-Forbidden'
+        '404':
+          $ref: '#/components/responses/404-NotFound'
+        '406':
+          $ref: '#/components/responses/406-NotAcceptableResponse'
+        '415':
+          $ref: '#/components/responses/415-UnsupportedMediaType'
+        '429':
+          $ref: '#/components/responses/429-TooManyRequests'
+        '500':
+          $ref: '#/components/responses/500-UnknownInternalServerError'
+      security:
+        - Authorization: []
+          ApiKey: []
+      x-stoplight:
+        id: y1kiue9659w9s
+  '/v1/engagements/{engagementId}/companyDetails':
+    get:
+      tags:
+        - Company Details
+      summary: Get company details
+      description: List engagement's associated company details.
+      operationId: company-details
+      parameters:
+        - $ref: '#/components/parameters/engagementId'
+      responses:
+        '200':
+          description: Successfully retrieved engagement's associated company details.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Get-Company-Details-Response'
+              examples:
+                Example 1:
+                  $ref: '#/components/examples/Get-Company-Details-Response'
+        '400':
+          $ref: '#/components/responses/400-BadRequest'
+        '401':
+          $ref: '#/components/responses/401-Unauthorized'
+        '403':
+          $ref: '#/components/responses/403-Forbidden'
+        '404':
+          $ref: '#/components/responses/404-NotFound'
+        '406':
+          $ref: '#/components/responses/406-NotAcceptableResponse'
+        '429':
+          $ref: '#/components/responses/429-TooManyRequests'
+        '500':
+          $ref: '#/components/responses/500-UnknownInternalServerError'
+      security:
+        - Authorization: []
+          ApiKey: []
+      x-stoplight:
+        id: yigjkqup9c7xs
+  '/v1/clients/{clientId}/engagements/{engagementId}/extraction/years':
+    get:
+      tags:
+        - Manage Financial Years
+      summary: Retrieve connector financial years
+      description: Get engagement's years to extract value.
+      operationId: sdp-get
+      parameters:
+        - $ref: '#/components/parameters/clientId'
+        - $ref: '#/components/parameters/engagementId'
+      responses:
+        '200':
+          description: Successfully retrieved connectors financial years.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Years-To-Extract-Response'
+              examples:
+                Example 1:
+                  $ref: '#/components/examples/Years-To-Extract-Response'
+        '400':
+          $ref: '#/components/responses/400-BadRequest'
+        '401':
+          $ref: '#/components/responses/401-Unauthorized'
+        '403':
+          $ref: '#/components/responses/403-Forbidden'
+        '404':
+          $ref: '#/components/responses/404-NotFound'
+        '406':
+          $ref: '#/components/responses/406-NotAcceptableResponse'
+        '429':
+          $ref: '#/components/responses/429-TooManyRequests'
+        '500':
+          $ref: '#/components/responses/500-UnknownInternalServerError'
+      security:
+        - Authorization: []
+          ApiKey: []
+      x-stoplight:
+        id: nry77rumv9ekb
+    put:
+      tags:
+        - Manage Financial Years
+      summary: Setup connector financial years
+      description: Update engagement years to extract value.
+      operationId: sdp-put
+      parameters:
+        - $ref: '#/components/parameters/clientId'
+        - $ref: '#/components/parameters/engagementId'
+      requestBody:
+        description: Update engagement years to extract value.
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/Put-Years-To-Extract-Request'
+            examples:
+              Example 1:
+                $ref: '#/components/examples/Put-Years-To-Extract-Request'
+      responses:
+        '200':
+          description: Successfully updated the connectors' financial years.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Years-To-Extract-Response'
+              examples:
+                Example 1:
+                  $ref: '#/components/examples/Years-To-Extract-Response'
+        '400':
+          $ref: '#/components/responses/400-BadRequest'
+        '401':
+          $ref: '#/components/responses/401-Unauthorized'
+        '403':
+          $ref: '#/components/responses/403-Forbidden'
+        '404':
+          $ref: '#/components/responses/404-NotFound'
+        '406':
+          $ref: '#/components/responses/406-NotAcceptableResponse'
+        '415':
+          $ref: '#/components/responses/415-UnsupportedMediaType'
+        '429':
+          $ref: '#/components/responses/429-TooManyRequests'
+        '500':
+          $ref: '#/components/responses/500-UnknownInternalServerError'
+      security:
+        - Authorization: []
+          ApiKey: []
+      x-stoplight:
+        id: h2suvyg56llsr
+tags:
+  - name: Company Details
+    description: Retrieve engagement's associated company details.
+  - name: Engagements
+    description: Allows you to Create/Update/List/Delete engagements.
+  - name: Manage Financial Years
+    description: Setup or Get Connection Financial Years.
+  - name: Multiple Engagements
+    description: Enables you to Create/Update/Delete one or more engagements for a Validis customer.
+  - name: Upload Schedule
+    description: Allows modification of the upload schedule for data refresh enabled engagements.
+components:
+  parameters:
+    clientId:
+      name: clientId
+      in: path
+      description: 'The unique identifier(UUID) of your Validis system, as provided by the Authentication endpoint.'
+      required: true
+      schema:
+        type: string
+        format: uuid
+        example: 46c5fa5b-6880-4fdb-8d5b-e60b40c48690
+    engagementId:
+      name: engagementId
+      in: path
+      description: The unique identifier for the engagement.
+      required: true
+      schema:
+        type: integer
+        example: 10141
+  securitySchemes:
+    ApiKey:
+      type: apiKey
+      description: |
+        API Key fetched from Validis Admin. Example:- 0bcbf42ef97c41234515921fec79ab9
+      name: Ocp-Apim-Subscription-Key
+      in: header
+    Authorization:
+      type: http
+      description: |
+        OAuth2 JWT access token to authorise requests. Example:- 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNT'
+      scheme: bearer
+      bearerFormat: JWT
+  responses:
+    400-BadRequest:
+      description: Bad or malformed request.
+      content:
+        application/vnd.api+json:
+          schema:
+            type: object
+            properties:
+              timestamp:
+                oneOf:
+                  - type: string
+                    format: date-time
+                  - type: integer
+                description: The timestamp when the request was processed.
+              status:
+                type: integer
+                description: The HTTP status code.
+              exception:
+                type: string
+                description: Detailed exception that had been thrown.
+              path:
+                type: string
+                description: URI to which the request was sent.
+              message:
+                oneOf:
+                  - type: string
+                  - type: object
+                    additionalProperties: true
+                description: Detailed error message.
+          examples:
+            Example 1:
+              value:
+                timestamp: 1692167331027
+                status: 400
+                exception: BindException
+                path: /v1/clients/18f64483-a971-472b-be5e-3339de288db1/engagements
+                message: |-
+                  org.springframework.validation.BeanPropertyBindingResult: 1 errors
+                  Field error in object 'engagementFilter' on field 'contactId': rejected value [abc]; codes [typeMismatch.engagementFilter.contactId,typeMismatch.contactId,typeMismatch.java.lang.Long,typeMismatch]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [engagementFilter.contactId,contactId]; arguments []; default message [contactId]]; default message [Failed to convert property value of type 'java.lang.String' to required type 'java.lang.Long' for property 'contactId'; nested exception is java.lang.NumberFormatException: For input string: "abc"]
+            Example 2:
+              value:
+                timestamp: '2024-01-02T15:45:49.221+0000'
+                status: 400
+                exception: BindException
+                path: /v1/clients/18f64483-a971-472b-be5e-3339de288db1/engagements
+                message:
+                  page: cannot be negative
+    401-Unauthorized:
+      description: Error code for a missing or invalid authentication token.
+      content:
+        text/plain:
+          schema:
+            type: string
+            example: Unauthorized. Access token is missing or invalid.
+          examples:
+            Example 1:
+              value: Unauthorized. Access token is missing or invalid.
+    403-Forbidden:
+      description: Forbidden or insufficient permissions to access the resource.
+      content:
+        application/vnd.api+json:
+          schema:
+            type: object
+            properties:
+              timestamp:
+                type: string
+                description: The timestamp when the request was processed.
+              status:
+                type: integer
+                description: The HTTP status code.
+              exception:
+                type: string
+                description: Detailed exception that had been thrown.
+              path:
+                type: string
+                description: URI to which the request was sent.
+              message:
+                type: string
+                description: Detailed error message.
+          examples:
+            Example 1:
+              value:
+                timestamp: '2023-09-26T08:18:31.963+0000'
+                status: 403
+                exception: AccessDeniedException
+                path: /v1/engagements/10141/companyDetails
+                message: Access is denied
+    404-NotFound:
+      description: The targeted resource is missing or nonexistent.
+      content:
+        application/vnd.api+json:
+          schema:
+            type: object
+            properties:
+              timestamp:
+                type: integer
+              status:
+                type: integer
+              exception:
+                type: string
+              path:
+                type: string
+                example: /
+              message:
+                type: string
+          examples:
+            Example 1:
+              value:
+                timestamp: 1691582960984
+                status: 404
+                exception: NotFoundException
+                path: /clients/ef49cb3b-7716-4ede-97e3-420d67a98da4/engagements/4374242
+                message: No engagement found 4374242
+    406-NotAcceptableResponse:
+      description: Error code provided when an HTTP Accept header can’t be satisfied.
+    415-UnsupportedMediaType:
+      description: Unsupported media type response.
+      content:
+        application/vnd.api+json:
+          schema:
+            type: object
+            properties:
+              timestamp:
+                type: integer
+                description: The timestamp when the request was processes.
+              status:
+                type: integer
+                description: The HTTP status code.
+              exception:
+                type: string
+                description: Detailed exception that had been thrown.
+              path:
+                type: string
+                description: URI to witch the request was sent.
+              message:
+                type: string
+                description: Detailed error message.
+          examples:
+            Example 1:
+              value:
+                timestamp: 1692361385684
+                status: 415
+                exception: HttpMediaTypeNotSupportedException
+                path: /v1/clients/18f64483-a971-472b-be5e-3339de288db1/engagements
+                message: Content type 'application/javascript;charset=UTF-8' not supported
+    429-TooManyRequests:
+      description: Too many request were made.
+      content:
+        application/vnd.api+json:
+          schema:
+            type: object
+            properties:
+              statusCode:
+                type: integer
+                description: The status code of the response.
+              message:
+                type: string
+                description: The detailed message of the error. Must contain the remaining waiting period.
+                example: Rate limit is exceeded. Try again in 46 seconds.
+          examples:
+            Example 1:
+              value:
+                statusCode: 429
+                message: Rate limit is exceeded. Try again in 46 seconds.
+      headers:
+        Retry-After:
+          $ref: '#/components/headers/Retry-After'
+        X-RateLimit-Reset:
+          $ref: '#/components/headers/X-RateLimit-Reset'
+        X-RateLimit-Limit:
+          $ref: '#/components/headers/X-RateLimit-Limit'
+        X-RateLimit-Remaining:
+          $ref: '#/components/headers/X-RateLimit-Remaining'
+    500-UnknownInternalServerError:
+      description: Unknown internal server error has occurred.
+      content:
+        application/vnd.api+json:
+          schema:
+            type: object
+            properties:
+              exception:
+                type: string
+                example: UndeclaredThrowableException
+              message:
+                type: string
+                example: A unexpected error occurred while processing the request
+              path:
+                type: string
+                example: /clients/ef49cb3b-7716-4ede-97e3-420d67a98da4/engagements/4342
+              status:
+                type: integer
+              timestamp:
+                type: string
+                format: date-time
+          examples:
+            Example 1:
+              value:
+                timestamp: '2023-06-06T13:13:13.009+0000'
+                status: 500
+                exception: UndeclaredThrowableException
+                path: /clients/ef49cb3b-7716-4ede-97e3-420d67a98da4/engagements/4342
+                message: A unexpected error occurred while processing the request
+  headers:
+    X-RateLimit-Limit:
+      schema:
+        type: integer
+        minimum: 60
+        maximum: 5000
+        default: 60
+      description: The maximum number of requests that are permitted before exhausting the rate limit.
+    X-RateLimit-Remaining:
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 5000
+      description: Remaining number of requests until reset.
+      required: false
+    Retry-After:
+      schema:
+        type: integer
+        minimum: 60
+        maximum: 86400
+        default: 60
+      description: Indicates how long the user agent should wait (in seconds) before making further requests.
+      required: false
+    X-RateLimit-Reset:
+      schema:
+        type: integer
+        minimum: 0
+        maximum: 86400
+      description: 'Indicates when the rate limit will be reset, in UNIX timestamp format.'
+      required: false
+  examples:
+    Create-Engagement-Request:
+      value:
+        relationshipManager: 10691
+        owner: 6096
+        backupOwners:
+          - 10691
+        agents:
+          - 6096
+        tag: alex21022k23
+        sme:
+          smeId: 0
+          type: AUDIT
+          name: John Cooper Ltd
+          contacts:
+            - asSmeUser: true
+              firstName: John
+              lastName: Doe
+              email: john.doe@mail.com
+              phone: '0094038953'
+              title: Mr.
+              ssoId: john.doe@mail.com
+          externalSmeId: smeId12345
+          locale: en_GB
+        connectorId: 0
+        scheduleFrequency: 0
+        scheduleStartDate: '2030-08-09T07:25:33.393Z'
+        externalEngagementId: extId123456
+        reconciliationEnabled: true
+        uploadReminderFrequency: 0
+        uploadReminderEnteredDate: '2023-08-09T07:25:33.393Z'
+        companyRegistrationNumber: SC343243
+        usePassthrough: true
+        ucType: NONE
+    Create-Engagement-Response:
+      value:
+        id: 4263
+        externalEngagementId: extId123456
+        clientId: ef49cb3b-7716-4ede-97e3-356d67a98da4
+        relationshipManager:
+          id: 3072
+          firstName: John
+          lastName: Doe
+          email: john.doe@mail.com
+          phone: '079205420'
+          title: Mr.
+          createdBy: 1
+        owner:
+          id: 3080
+          firstName: Client
+          lastName: Manager
+          email: john.doe@mail.com
+          phone: '079111213'
+          title: Ms.
+          createdBy: 3072
+        backupOwners:
+          - id: 10690
+            firstName: John
+            lastName: Smith
+            email: j.smith@mail.com
+            phone: '079623192'
+            title: Mr.
+            createdBy: 6096
+          - id: 10691
+            firstName: Alex
+            lastName: Doe
+            email: a.doe@mail.com
+            phone: '0536223165'
+            title: Mr.
+            createdBy: 6096
+        agents:
+          - id: 10690
+            firstName: John
+            lastName: Smith
+            email: j.smith@mail.com
+            phone: '1231231'
+            title: Mr.
+            createdBy: 6096
+        connectorId: 1
+        connector:
+          name: sage50
+          title: Sage 50 UK & Ireland
+        status: 0
+        tag: alex21022k23
+        sme:
+          id: 4265
+          name: John Cooper Ltd
+          contacts:
+            - id: 3081
+              firstName: John
+              lastName: Doe
+              email: john.doe@mail.com
+              phone: '079897953468'
+              title: Mr.
+              createdBy: null
+          externalSmeId: smeId12345
+          type: AUDIT
+          locale: en_GB
+        createdAt: 1694781177448
+        createdBy:
+          id: 3080
+          firstName: Client
+          lastName: Manager
+          email: john.doe@mail.com
+          phone: '079111213'
+          title: Ms.
+          createdBy: 3072
+        scheduleFrequency: 0
+        uploadScope: Full
+        usePassthrough: false
+        ucType: UC1
+        reconciliationEnabled: false
+        dataRefreshEnabled: false
+    Create-Bulk-Engagement-Request:
+      value:
+        engagements:
+          - relationshipManager: 10690
+            owner: 10690
+            backupOwners:
+              - 6096
+            agents:
+              - 10691
+            sme:
+              name: John Cooper Ltd
+              contacts:
+                - 3070
+                - 3071
+              externalSmeId: smeId12345
+            scheduleFrequency: 0
+            scheduleStartDate: '2030-08-09T07:25:33.393Z'
+            externalEngagementId: extId123456
+            reconciliationEnabled: true
+            uploadReminderFrequency: 0
+            uploadReminderEnteredDate: '2023-08-09T07:25:33.393Z'
+            companyRegistrationNumber: AB123456
+            usePassthrough: true
+            ucType: NONE
+          - relationshipManager: 10690
+            owner: 10690
+            backupOwners:
+              - 6096
+            agents:
+              - 10691
+            sme:
+              name: John Lee Ltd
+              contacts:
+                - 3072
+                - 3073
+              externalSmeId: smeId12345
+            scheduleFrequency: 0
+            scheduleStartDate: '2030-08-09T07:25:33.393Z'
+            externalEngagementId: extId123456
+            reconciliationEnabled: true
+            uploadReminderFrequency: 0
+            uploadReminderEnteredDate: '2023-08-09T07:25:33.393Z'
+            companyRegistrationNumber: AB654321
+            usePassthrough: true
+            ucType: NONE
+    Create-Bulk-Engagement-Response:
+      value:
+        result:
+          totalCount: 2
+          totalSuccess: 1
+          totalFailure: 1
+        responses:
+          - engagementId: 1
+            engagementName: John Cooper Ltd
+            statusCode: 201
+          - engagementId: null
+            engagementName: John Lee Ltd
+            statusCode: 400
+            errors:
+              - code: 400
+                message: Contact id 3072 does not exist
+    Delete-Bulk-Engagement-Response:
+      value:
+        result:
+          totalCount: 2
+          totalSuccess: 1
+          totalFailure: 1
+        responses:
+          - engagementId: 10141
+            statusCode: 200
+          - engagementId: 30721
+            statusCode: 404
+            errors:
+              - code: 404
+                message: Engagement id 30721 does not exist
+    Get-Engagements-Response:
+      value:
+        content:
+          - id: 4263
+            externalEngagementId: extId123456
+            clientId: ef49cb3b-7716-4ede-97e3-356d67a98da4
+            relationshipManager:
+              id: 3072
+              firstName: John
+              lastName: Doe
+              email: john.doe@mail.com
+              phone: '079205420'
+              title: Mr.
+              createdBy: 1
+            owner:
+              id: 3080
+              firstName: Client
+              lastName: Manager
+              email: john.doe@mail.com
+              phone: '079111213'
+              title: Ms.
+              createdBy: 3072
+            backupOwners:
+              - id: 10690
+                firstName: John
+                lastName: Smith
+                email: j.smith@mail.com
+                phone: '079623192'
+                title: Mr.
+                createdBy: 6096
+              - id: 10691
+                firstName: Alex
+                lastName: Doe
+                email: a.doe@mail.com
+                phone: '0536223165'
+                title: Mr.
+                createdBy: 6096
+            agents:
+              - id: 10690
+                firstName: John
+                lastName: Smith
+                email: j.smith@mail.com
+                phone: '1231231'
+                title: Mr.
+                createdBy: 6096
+            connectorId: 1
+            connector:
+              name: sage50
+              title: Sage 50 UK & Ireland
+            status: 0
+            tag: alex21022k23
+            sme:
+              id: 4265
+              name: John Cooper Ltd
+              contacts:
+                - id: 3081
+                  firstName: John
+                  lastName: Doe
+                  email: john.doe@mail.com
+                  phone: '079897953468'
+                  title: Mr.
+              externalSmeId: smeId12345
+              type: AUDIT
+              locale: en_GB
+            createdAt: 1681396684510
+            createdBy:
+              id: 3080
+              firstName: Client
+              lastName: Manager
+              email: john.doe@mail.com
+              phone: '079111213'
+              title: Ms.
+              createdBy: 3072
+            scheduleFrequency: 0
+            uploadScope: Full
+            usePassthrough: false
+            ucType: UC1
+            reconciliationEnabled: false
+            dataRefreshEnabled: false
+          - id: 4264
+            externalEngagementId: extId123454
+            clientId: 8eca43e8-ed1b-4338-991d-a08d31a23859
+            relationshipManager:
+              id: 3073
+              firstName: Adam
+              lastName: Shoemaker
+              email: a.shoe@mail.com
+              phone: '079205420'
+              title: Mr.
+              createdBy: 1
+            owner:
+              id: 3080
+              firstName: Client
+              lastName: Manager
+              email: john.doe@mail.com
+              phone: '079111213'
+              title: Ms.
+              createdBy: 3072
+            backupOwners:
+              - id: 10690
+                firstName: John
+                lastName: Smith
+                email: j.smith@mail.com
+                phone: '079623192'
+                title: Mr.
+                createdBy: 6096
+              - id: 10691
+                firstName: Alex
+                lastName: Doe
+                email: a.doe@mail.com
+                phone: '0536223165'
+                title: Mr.
+                createdBy: 6096
+            agents:
+              - id: 10690
+                firstName: John
+                lastName: Smith
+                email: j.smith@mail.com
+                phone: '1231231'
+                title: Mr.
+                createdBy: 6096
+            connectorId: 1
+            connector:
+              name: sage50
+              title: Sage 50 UK & Ireland
+            status: 0
+            tag: alex21022k23
+            sme:
+              id: 4265
+              name: Blessed Farmers Ltd
+              contacts:
+                - id: 3081
+                  firstName: Danny
+                  lastName: Archer
+                  email: archer@mail.com
+                  phone: '079897953468'
+                  title: Mr.
+              externalSmeId: smeId12345
+              type: AUDIT
+              locale: en_GB
+            createdAt: 1681396684510
+            createdBy:
+              id: 3080
+              firstName: Client
+              lastName: Manager
+              email: john.doe@mail.com
+              phone: '079111213'
+              title: Ms.
+              createdBy: 3072
+            scheduleFrequency: 0
+            uploadScope: Full
+            usePassthrough: false
+            ucType: UC1
+            reconciliationEnabled: false
+            dataRefreshEnabled: false
+        totalPages: 1
+        last: true
+        totalElements: 2
+        numberOfElements: 2
+        first: true
+        sort:
+          direction: DESC
+          property: completionDate
+          ignoreCase: false
+          nullHandling: NATIVE
+          ascending: false
+          descending: true
+        size: 1
+        number: 0
+    Update-Engagement-Request:
+      value:
+        scheduleFrequency: 0
+        relationshipManager: 10690
+        owner: 10690
+        backupOwners:
+          - 6096
+        agents:
+          - 10691
+        tag: string
+        sme:
+          type: AUDIT
+          name: NewTestonDemo1
+          contacts:
+            - 3081
+          externalSmeId: smeId12345
+          locale: en_GB
+        connectorId: 1
+        scheduleStartDate: '2030-08-09T05:25:12.736Z'
+        scheduleDueDate: '2023-08-09T05:25:12.736Z'
+        reconciliationEnabled: true
+        uploadReminderFrequency: 0
+        uploadReminderEnteredDate: '2023-08-09T05:25:12.736Z'
+        usePassthrough: false
+        ucType: UC1
+    Update-Engagement-Response:
+      value:
+        backupOwners:
+          - id: 10690
+            firstName: John
+            lastName: Smith
+            email: j.smith@mail.com
+            phone: '079623192'
+            title: Mr.
+            createdBy: 6096
+          - id: 10691
+            firstName: Alex
+            lastName: Doe
+            email: a.doe@mail.com
+            phone: '0536223165'
+            title: Mr.
+            createdBy: 6096
+        agents:
+          - id: 10690
+            firstName: John
+            lastName: Smith
+            email: j.smith@mail.com
+            phone: '1231231'
+            title: Mr.
+            createdBy: 6096
+        clientId: 1502f8e4-cf6d-497c-8086-67e74e01b956
+        connector:
+          name: sage50
+          title: Sage 50 UK & Ireland
+        connectorId: 1
+        createdAt: 1695887988729
+        createdBy:
+          createdBy: 6096
+          email: jdoe@validistesting.com
+          firstName: John
+          id: 10690
+          lastName: Doe
+          phone: '1231231'
+          title: Mr.
+        dataRefreshEnabled: false
+        externalEngagementId: extId123456
+        id: 110159
+        owner:
+          createdBy: 6096
+          email: jdoe@validistesting.com
+          firstName: John
+          id: 10690
+          lastName: Doe
+          phone: '1231231'
+          title: Mr.
+        reconciliationEnabled: true
+        relationshipManager:
+          createdBy: 6096
+          email: jdoe@validistesting.com
+          firstName: John
+          id: 10690
+          lastName: Doe
+          phone: '1231231'
+          title: Mr.
+        scheduleFrequency: 0
+        sme:
+          contacts:
+            - id: 3081
+              firstName: John
+              lastName: Doe
+              email: john.doe@mail.com
+              phone: '079897953468'
+              title: Mr.
+          externalSmeId: smeId12345
+          id: 110124
+          locale: en_GB
+          name: NewTestonDemo1
+          type: AUDIT
+        status: 0
+        tag: string
+        ucType: UC1
+        usePassthrough: false
+    Update-Schedule-Request:
+      value:
+        scheduleFrequency: 1
+        scheduleStartDate: '2030-08-09T08:27:44.460Z'
+    Get-Company-Details-Response:
+      value:
+        name: Company Ltd
+        registrationNumber: 2LE2343
+        salesTaxNumber: '999999999'
+        payrollTaxNumber: '39898289'
+        address1: Unit 2
+        address2: Windsor Buildings
+        address3: Ferry Road
+        postZipCode: CF11 0JL
+        stateCounty: South Glamorgan
+        townCity: Cardiff
+        countryCode: CA
+        countryName: Canada
+        telephone1: 0123552233008D58
+        fax1: '0674123311'
+        email1: company@mail.com
+        url: 'https://company.com'
+        currencyIso: USD
+    Get-Engagement-Response:
+      value:
+        id: 108481
+        externalEngagementId: extId123456
+        clientId: 1502f8e4-cf6d-497c-8086-67e74e01b956
+        relationshipManager:
+          id: 10690
+          firstName: John
+          lastName: Doe
+          email: jdoe@validistesting.com
+          phone: '1231231'
+          title: Mr.
+          createdBy: 6096
+        owner:
+          id: 10690
+          firstName: John
+          lastName: Doe
+          email: jdoe@validistesting.com
+          phone: '1231231'
+          title: Mr.
+          createdBy: 6096
+        backupOwners:
+          - id: 10690
+            firstName: John
+            lastName: Smith
+            email: j.smith@mail.com
+            phone: '079623192'
+            title: Mr.
+            createdBy: 6096
+          - id: 10691
+            firstName: Alex
+            lastName: Doe
+            email: a.doe@mail.com
+            phone: '0536223165'
+            title: Mr.
+            createdBy: 6096
+        agents:
+          - id: 10690
+            firstName: John
+            lastName: Smith
+            email: j.smith@mail.com
+            phone: '1231231'
+            title: Mr.
+            createdBy: 6096
+        connectorId: 1
+        connector:
+          name: sage50
+          title: Sage 50 UK & Ireland
+        status: 0
+        tag: TestSage50UkUpload
+        sme:
+          id: 108446
+          name: Blessed Farmers Ltd
+          contacts:
+            - id: 12452
+              firstName: Adam
+              lastName: Shoemaker
+              email: sageuser1@validistesting.com
+              phone: '123123'
+              title: Mr.
+              createdBy: 10690
+          externalSmeId: smeId12345
+          type: AUDIT
+          locale: en_GB
+        createdAt: 1694781177448
+        createdBy:
+          id: 10690
+          firstName: John
+          lastName: Doe
+          email: jdoe@validistesting.com
+          phone: '1231231'
+          title: Mr.
+          createdBy: 6096
+        scheduleFrequency: 0
+        lastUploadDate: 1694781715692
+        uploadScope: Full
+        usePassthrough: false
+        ucType: UC2
+        reconciliationEnabled: true
+        dataRefreshEnabled: false
+    Years-To-Extract-Response:
+      value:
+        yearsToExtract: 1
+        maxYearsToExtract: 5
+    Put-Years-To-Extract-Request:
+      value:
+        yearsToExtract: 1
+  schemas:
+    Create-Bulk-Engagement-Request:
+      type: object
+      x-stoplight:
+        id: kyax56fwd39la
+      title: Multiple engagement request
+      required:
+        - engagements
+      properties:
+        engagements:
+          type: array
+          x-stoplight:
+            id: lbvnqk6g30vtb
+          items:
+            type: object
+            required:
+              - sme
+            properties:
+              relationshipManager:
+                type: integer
+                description: 'The relationship manager assigned to the client. If the engagement owner is an API User, this can be a Validis user or external user. However, if the engagement owner is not an API User, relationship manager must be an existing Validis user with one of the following profiles: Client Admin, Client Manager, Full Engagement Manager, Relationship Manager, Engagement Agent, Full Engagement Manager (Covenant Monitoring), Relationship Manager (Covenant Monitoring).'
+              owner:
+                type: integer
+                description: 'User id of the engagement owner. Must be an existing Validis user id with one of the following profiles: Client Admin, Client Manager, Full Engagement Manager, API User, Relationship Manager, Full Engagement Manager (Covenant Monitoring), Relationship Manager (Covenant Monitoring).'
+              backupOwners:
+                type: array
+                maxItems: 1000
+                description: 'A list of backup owners for the engagement. If the engagement owner is an API User, this can be a Validis user or external user, however, if the engagement owner is not an API User, this must be an existing Validis user with one of the following profiles: Client Admin, Client Manager, Full Engagement Manager, Relationship Manager, Full Engagement Manager (Covenant Monitoring), Relationship Manager (Covenant Monitoring).'
+                items:
+                  type: integer
+              agents:
+                type: array
+                maxItems: 1000
+                description: 'A list of agents for the engagement. If the engagement owner is an API User, this can be a Validis user or external user, however, if the engagement owner is not an API User, this must be an existing Validis user with one of the following profiles: Client Admin, Client Manager, Full Engagement Manager, Relationship Manager, Engagement Agent, Full Engagement Manager (Covenant Monitoring), Relationship Manager (Covenant Monitoring).'
+                items:
+                  type: integer
+              sme:
+                type: object
+                description: |
+                  The SME details
+                required:
+                  - name
+                properties:
+                  name:
+                    type: string
+                    description: The SME name for the new engagement.
+                  contacts:
+                    type: array
+                    description: Ids of the SME contacts to be linked to the engagement. Must be an Id of an existing Validis user with SME Contact profile or can be the engagement creator.
+                    items:
+                      type: integer
+                  externalSmeId:
+                    type: string
+                    description: Id for the external SME of the engagement. Required for clients with External Engagement Id customisation.
+              scheduleFrequency:
+                enum:
+                  - 0
+                  - 1
+                  - 2
+                  - 3
+                  - 4
+                  - 5
+                description: "The frequency at which uploads are scheduled. Required for clients with Scheduling and DataRefresh customisation. \r\n0 = NOT_SCHEDULED, \r\n1 = ANNUALLY, \r\n2 = MONTHLY, \r\n3 = WEEKLY, \r\n4 = DAILY, \r\n5 = QUARTERLY."
+              scheduleStartDate:
+                type: string
+                format: date-time
+                description: Date to schedule an upload. Required when a scheduleFrequency is specified and should be a date in the future from the date when the API request is made.
+              externalEngagementId:
+                type: string
+                description: 'External identifier of the engagement that can be used for integration with other systems. Required for clients with External Engagement Id customisation. If not present, the value for sme.externalSmeId will be used.'
+              reconciliationEnabled:
+                type: boolean
+                description: Indicator to show if reconciliation module can be used.
+              uploadReminderFrequency:
+                enum:
+                  - 0
+                  - 1
+                  - 2
+                  - 3
+                description: "The frequency at which upload reminders are scheduled.  \r\n0 = NOT_SCHEDULED, \r\n1 = MONTHLY, \r\n2 = QUARTERLY, \r\n3 = ANNUALLY."
+              uploadReminderEnteredDate:
+                type: string
+                description: Date when the upload reminder would be triggered. UploadReminderEnteredDate is required when uploadReminderFrequency is specified in the request.
+                format: date-time
+              companyRegistrationNumber:
+                type: string
+                description: 'The company''s registration number of the engagement. Client must have the Validis Audited Account product enabled and the value must match the following format: [a-zA-Z]{2}\d{6} or \d{8}'
+              usePassthrough:
+                type: boolean
+                description: To specify if the engagement can make a passthrough upload. Only clients with Passthrough product enabled can pass value as "true".
+              ucType:
+                enum:
+                  - NONE
+                  - UC1
+                  - UC2
+                description: Clients should have the corresponding product enabled when the value is set to UC1 or UC2.
+    Create-Engagement-Request:
+      type: object
+      required:
+        - sme
+      title: Engagement request
+      example:
+        relationshipManager: 10690
+        owner: 10690
+        backupOwners:
+          - 6096
+        agents:
+          - 10691
+        tag: alex21022k23
+        sme:
+          smeId: 0
+          type: AUDIT
+          name: John Cooper Ltd
+          contacts:
+            - asSmeUser: true
+              firstName: John
+              lastName: Doe
+              email: john.doe@mail.com
+              phone: '0094038953'
+              title: Mr.
+              ssoId: john.doe@mail.com
+          externalSmeId: smeId12345
+          locale: en_GB
+        connectorId: 0
+        scheduleFrequency: 0
+        scheduleStartDate: '2030-08-09T07:25:33.393Z'
+        externalEngagementId: extId123456
+        reconciliationEnabled: true
+        uploadReminderFrequency: 0
+        uploadReminderEnteredDate: '2023-08-09T07:25:33.393Z'
+        companyRegistrationNumber: null
+        usePassthrough: true
+        ucType: NONE
+      properties:
+        relationshipManager:
+          type: integer
+          description: The relationship manager assign to the client.
+        owner:
+          type: integer
+          description: The unit identifier of the engagement owner.
+        backupOwners:
+          type: array
+          description: An array of unique identifiers of backup owners.
+          maxItems: 1000
+          items:
+            type: integer
+        agents:
+          type: array
+          description: Agents associated with SME Contact.
+          maxItems: 1000
+          items:
+            type: integer
+        tag:
+          type: string
+        sme:
+          type: object
+          required:
+            - name
+          description: |
+            The SME details
+          properties:
+            type:
+              type: string
+              description: The SME type.
+              default: AUDIT
+              enum:
+                - AUDIT
+                - AUDIT_NPE
+                - REVIEW
+            smeId:
+              type: integer
+              description: The unique identifier of your SME within the Validis system.
+            name:
+              type: string
+              description: The SME name for the new engagement.
+              maxItems: 255
+            contacts:
+              type: array
+              description: The list of SME contacts.
+              items:
+                type: object
+                properties:
+                  asSmeUser:
+                    type: boolean
+                  firstName:
+                    type: string
+                    description: Contact's first name.
+                  lastName:
+                    type: string
+                    description: Contact's last name.
+                  email:
+                    type: string
+                    description: Contact's email address.
+                  phone:
+                    type: string
+                    description: Contact's phone number.
+                  title:
+                    type: string
+                    description: Contact's title.
+                  ssoId:
+                    type: string
+                    description: Contact's unique single sign on identifier.
+                    nullable: true
+                  id:
+                    type: integer
+                    description: Contact's unique identifier.
+            externalSmeId:
+              type: string
+              description: External system SME identifier.
+              nullable: true
+            locale:
+              type: string
+              default: en_GB
+              description: ISO code for the language used by the engagement.
+        connectorId:
+          type: integer
+          description: The unique ID for the connector used by the engagement.
+        scheduleFrequency:
+          enum:
+            - 0
+            - 1
+            - 2
+            - 3
+            - 4
+            - 5
+          description: ' The frequency at which uploads are scheduled.'
+        scheduleStartDate:
+          type: string
+          description: The stated or defined date of the scheduling for the upload.
+          format: date-time
+        externalEngagementId:
+          type: string
+          description: 'An external identifier for the engagement, which may be used for integration with other systems.'
+          nullable: true
+        reconciliationEnabled:
+          type: boolean
+          description: Indicator to show if they are able to use the reconciliation module.
+        uploadReminderFrequency:
+          enum:
+            - 0
+            - 1
+            - 2
+            - 3
+          description: 'A textual representation of the frequency of upload reminders, such as daily, weekly, etc.'
+        uploadReminderEnteredDate:
+          type: string
+          description: A date-time string indicating when an upload reminder was entered into the system.
+          format: date-time
+        companyRegistrationNumber:
+          type: string
+          description: 'The company''s registration number of the engagement. If passed, client must have the Validis audited account product enabled and the value must match the following format: [a-zA-Z]{2}\d{6} or \d{8}'
+          nullable: true
+        usePassthrough:
+          type: boolean
+          description: Whether the upload was a pass through upload.
+        ucType:
+          enum:
+            - NONE
+            - UC1
+            - UC2
+          description: The universal connector type.
+      x-stoplight:
+        id: 0j57ht4nqyl3a
+    Bulk-Engagement-Result:
+      type: object
+      description: Summary of the response attribute.
+      required:
+        - totalCount
+        - totalSuccess
+        - totalFailure
+      properties:
+        totalCount:
+          type: number
+          description: The total number of engagement Ids passed in the request.
+        totalSuccess:
+          type: number
+          description: The total number of engagements successfully processed from the request.
+        totalFailure:
+          type: number
+          description: The total number of engagements failed from the request.
+      x-stoplight:
+        id: ml3x7ab4nmkmd
+    Bulk-Engagement-Errors:
+      type: array
+      x-stoplight:
+        id: h1300lhhlppua
+      description: List of error messages.
+      items:
+        type: object
+        properties:
+          code:
+            type: integer
+            description: Error code to be returned when an engagement is not processed.
+          message:
+            type: string
+            description: Error message describing why an engagement is not processed.
+      title: Multiple engagement errors
+    Create-Bulk-Engagement-Response:
+      type: object
+      x-stoplight:
+        id: w5bzlrg8hxq0h
+      title: Multiple engagement response
+      required:
+        - result
+        - responses
+      properties:
+        result:
+          $ref: '#/components/schemas/Bulk-Engagement-Result'
+        responses:
+          type: array
+          items:
+            type: object
+            required:
+              - engagementName
+              - statusCode
+            properties:
+              engagementId:
+                type: integer
+                description: The unique identifier of the engagement created.
+                x-stoplight:
+                  id: 5d3kvtgjlmd2y
+                nullable: true
+              engagementName:
+                type: string
+                description: The SME name for the new engagement.
+              statusCode:
+                type: integer
+                description: HTTP Status code of the individual engagement.
+                x-stoplight:
+                  id: s5atb0q32fzg3
+              errors:
+                $ref: '#/components/schemas/Bulk-Engagement-Errors'
+    Delete-Bulk-Engagement-Response:
+      type: object
+      title: Delete engagements response
+      required:
+        - result
+        - responses
+      properties:
+        result:
+          $ref: '#/components/schemas/Bulk-Engagement-Result'
+        responses:
+          type: array
+          items:
+            type: object
+            required:
+              - engagementId
+              - statusCode
+            properties:
+              engagementId:
+                type: integer
+                description: The unique identifier of the engagement deleted.
+                nullable: true
+              statusCode:
+                type: integer
+                description: HTTP Status code of the individual engagement.
+              errors:
+                $ref: '#/components/schemas/Bulk-Engagement-Errors'
+      x-stoplight:
+        id: 4k1erzyt5mfwd
+    Create-Engagement-Response:
+      type: object
+      title: Engagement response
+      properties:
+        agents:
+          type: array
+          items:
+            type: object
+            properties:
+              email:
+                type: string
+                description: The email address associated with the sme contact.
+                format: email
+              firstName:
+                type: string
+                description: The first name of the sme contact.
+              id:
+                type: integer
+                description: An unique integer identifier for the sme contact.
+              lastName:
+                type: string
+                description: The last name of the sme contact.
+              phone:
+                type: string
+                description: The phone number associated with the sme contact.
+              title:
+                type: string
+                description: The title or position of the sme contact.
+        backupOwners:
+          type: array
+          items:
+            type: object
+            properties:
+              email:
+                type: string
+                description: The email for the engagement owner.
+                format: email
+              firstName:
+                type: string
+                description: The first name for the engagement owner.
+              id:
+                type: integer
+                description: The unique identifier for the engagement owner.
+              lastName:
+                type: string
+                description: The last name for the engagement owner.
+              phone:
+                type: string
+                description: The phone number for the engagement owner.
+              title:
+                type: string
+                description: The title for the engagement owner.
+        clientId:
+          type: string
+          description: 'The unique identifier of your Validis system, as provided by the Authentication endpoint'
+          format: uuid
+        company:
+          type: object
+          properties:
+            name:
+              type: string
+              description: Company name.
+            uploadId:
+              type: string
+              description: The Id of the upload.
+              format: uuid
+        companyRegistrationNumber:
+          type: string
+          description: Registration number as exported from the accounting package.
+        connector:
+          type: object
+          properties:
+            name:
+              type: string
+              description: The name of the accounting package the upload was extracted from.
+            title:
+              type: string
+              description: The title or name of the connector.
+        connectorId:
+          type: integer
+          description: The unique ID for the connector used by the engagement.
+        createdAt:
+          type: integer
+          description: The date the engagement was created.
+        createdBy:
+          type: object
+          properties:
+            email:
+              type: string
+              description: The email address of the staff user who created the entry.
+              format: email
+            firstName:
+              type: string
+              description: The first name of the staff user who created the entry.
+            id:
+              type: integer
+              description: An unique integer identifier for the staff user who created the entry.
+            lastName:
+              type: string
+              description: The last name of the staff user who created the entry.
+            phone:
+              type: string
+              description: The phone number of the staff user who created the entry.
+            title:
+              type: string
+              description: The title or position of the staff user who created the entry.
+        dataRefreshEnabled:
+          type: boolean
+          description: Indicator to show whether Data Refresh is activated on the engagement.
+        externalEngagementId:
+          type: string
+          nullable: true
+          description: 'An external identifier for the engagement, which may be used for integration with other systems.'
+        id:
+          type: integer
+          description: The unique identifier for the engagement.
+        lastUploadDate:
+          type: string
+          description: The date when the last upload was performed.
+        owner:
+          type: object
+          properties:
+            email:
+              type: string
+              description: The email for the engagement owner.
+              format: email
+            firstName:
+              type: string
+              description: The first name for the engagement owner.
+            id:
+              type: integer
+              description: The unique identifier for the engagement owner.
+            lastName:
+              type: string
+              description: The last name for the engagement owner.
+            phone:
+              type: string
+              description: The phone number for the engagement owner.
+            title:
+              type: string
+              description: The title for the engagement owner.
+        reconciliationEnabled:
+          type: boolean
+          description: Indicator to show if they are able to use the reconciliation module.
+        relationshipManager:
+          type: object
+          description: The relationship manager assign to the client.
+          properties:
+            email:
+              type: string
+              description: The email for the relationship manager.
+              format: email
+            firstName:
+              type: string
+              description: The last name for the relationship manager.
+            id:
+              type: integer
+              description: The first name for the relationship manager.
+            lastName:
+              type: string
+              description: The first name for the relationship manager.
+            phone:
+              type: string
+              description: The phone number for the relationship manager.
+            title:
+              type: string
+              description: The title for the relationship manager.
+        scheduleDueDate:
+          type: string
+          description: Upload due date.
+          format: date-time
+        scheduleFrequency:
+          type: integer
+          description: 'Frequency of a scheduled upload. Scheduling can be set at daily, weekly, monthly and yearly and will trigger a direct extraction from the native online accounting package of the SME.'
+        scheduleStartDate:
+          type: string
+          description: The start date of the scheduling period for the upload.
+          format: date-time
+        scheduleStatedDate:
+          type: string
+          description: The stated or defined date of the scheduling for the upload.
+          format: date-time
+        sme:
+          type: object
+          properties:
+            contacts:
+              type: array
+              description: The contact details or the SME.
+              items:
+                type: object
+                properties:
+                  email:
+                    type: string
+                    description: The email of the SME.
+                    format: email
+                  firstName:
+                    type: string
+                    description: The first name of the SME.
+                  id:
+                    type: integer
+                    description: The unique identifier of the SME contact details.
+                  lastName:
+                    type: string
+                    description: The last name for the SME.
+                  phone:
+                    type: string
+                    description: The phone number of the SME.
+                  title:
+                    type: string
+                    description: The title of the SME.
+            externalSmeId:
+              type: string
+              nullable: true
+              description: External system SME identifier.
+            id:
+              type: integer
+              description: The Id of the SME that has completed the upload.
+            locale:
+              type: string
+              description: ISO code for the language used as a default for the SME.
+            name:
+              type: string
+              description: The name of the SME that has completed the upload.
+            type:
+              type: string
+        status:
+          enum:
+            - 0
+            - 1
+            - 2
+          description: 'The status of the engagement. 0 - ENABLED, 1 - DISABLED, 2 - DELETED.'
+        tag:
+          type: string
+          description: A descriptive tag or label associated with the entry.
+        ucType:
+          enum:
+            - NONE
+            - UC1
+            - UC2
+          description: The universal connector type.
+        uploadReminderEnteredDate:
+          type: string
+          description: The date when the upload reminder was entered.
+        uploadReminderFrequency:
+          type: integer
+          description: 'Frequency of a scheduled upload. Scheduling can be set at daily, weekly, monthly and yearly and will trigger a reminder email to the SME.'
+        uploadScope:
+          type: string
+          description: 'The scope of the upload is either a full upload extracting AR, AP and GL data or a collateral upload extracting AR and AP data only.'
+        usePassthrough:
+          type: boolean
+          description: Whether the upload was a pass through upload.
+      example:
+        backupOwners:
+          - id: 10690
+            firstName: John
+            lastName: Smith
+            email: j.smith@mail.com
+            phone: '079623192'
+            title: Mr.
+            createdBy: 6096
+          - id: 10691
+            firstName: Alex
+            lastName: Doe
+            email: a.doe@mail.com
+            phone: '0536223165'
+            title: Mr.
+            createdBy: 6096
+        agents:
+          - id: 10690
+            firstName: John
+            lastName: Smith
+            email: j.smith@mail.com
+            phone: '1231231'
+            title: Mr.
+            createdBy: 6096
+        clientId: 1502f8e4-cf6d-497c-8086-67e74e01b956
+        connector:
+          name: sage50
+          title: Sage 50 UK & Ireland
+        connectorId: 1
+        createdAt: 1695887988729
+        createdBy:
+          createdBy: 6096
+          email: j.doe@mail.com
+          firstName: John
+          id: 10690
+          lastName: Doe
+          phone: '1231231'
+          title: Mr.
+        dataRefreshEnabled: false
+        externalEngagementId: extId123456
+        id: 110159
+        owner:
+          createdBy: 6096
+          email: j.doe@mail.com
+          firstName: John
+          id: 10690
+          lastName: Doe
+          phone: '1231231'
+          title: Mr.
+        reconciliationEnabled: true
+        relationshipManager:
+          createdBy: 6096
+          email: j.doe@mail.com
+          firstName: John
+          id: 10690
+          lastName: Doe
+          phone: '1231231'
+          title: Mr.
+        scheduleDueDate: '2023-08-14T12:15:18.421Z'
+        scheduleStartDate: '2023-08-14T12:15:18.421Z'
+        scheduleStatedDate: '2023-08-14T12:15:18.421Z'
+        scheduleFrequency: 0
+        sme:
+          contacts:
+            - ssoId: john.doe@mail.com
+              email: john.doe@mail.com
+              firstName: John
+              id: 3081
+              lastName: Doe
+              phone: '079897953468'
+              title: Mr.
+              asSmeUser: false
+          externalSmeId: smeId12345
+          id: 110124
+          locale: en_GB
+          name: John Cooper Ltd
+          type: AUDIT
+        status: 0
+        tag: NewTestonDemo1
+        ucType: UC1
+        uploadScope: Full
+        usePassthrough: false
+      x-stoplight:
+        id: 6ujxhf2rt15yi
+    Get-Engagements-Response:
+      type: object
+      title: Client's engagements
+      properties:
+        content:
+          type: array
+          items:
+            type: object
+            properties:
+              agents:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                      description: The email address associated with the sme contact.
+                      format: email
+                    firstName:
+                      type: string
+                      description: The first name of the sme contact.
+                    id:
+                      type: integer
+                      description: An unique integer identifier for the sme contact.
+                    lastName:
+                      type: string
+                      description: The last name of the sme contact.
+                    phone:
+                      type: string
+                      description: The phone number associated with the sme contact.
+                    title:
+                      type: string
+                      description: The title or position of the sme contact.
+              backupOwners:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                      description: The email for the engagement owner.
+                      format: email
+                    firstName:
+                      type: string
+                      description: The first name for the engagement owner.
+                    id:
+                      type: integer
+                      description: The unique identifier for the engagement owner.
+                    lastName:
+                      type: string
+                      description: The last name for the engagement owner.
+                    phone:
+                      type: string
+                      description: The phone number for the engagement owner.
+                    title:
+                      type: string
+                      description: The title for the engagement owner.
+              clientId:
+                type: string
+                description: 'The unique identifier of your Validis system, as provided by the Authentication endpoint.'
+                format: uuid
+              company:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    description: Company name.
+                  uploadId:
+                    type: string
+                    description: The Id of the upload.
+                    format: uuid
+              companyRegistrationNumber:
+                type: string
+                description: Registration number as exported from the accounting package.
+              connector:
+                type: object
+                nullable: true
+                properties:
+                  name:
+                    type: string
+                    description: The name of the accounting package the upload was extracted from.
+                  title:
+                    type: string
+                    description: The title or name of the connector.
+              connectorId:
+                type: integer
+                nullable: true
+                description: The unique ID for the connector used by the engagement.
+              createdAt:
+                type: integer
+                description: The date the engagement was created.
+              createdBy:
+                type: object
+                properties:
+                  email:
+                    type: string
+                    description: The email address of the staff user who created the entry.
+                    format: email
+                  firstName:
+                    type: string
+                    description: The first name of the staff user who created the entry.
+                  id:
+                    type: integer
+                    description: An unique integer identifier for the staff user who created the entry.
+                  lastName:
+                    type: string
+                    description: The last name of the staff user who created the entry.
+                  phone:
+                    type: string
+                    description: The phone number of the staff user who created the entry.
+                  title:
+                    type: string
+                    description: The title or position of the staff user who created the entry.
+              dataRefreshEnabled:
+                type: boolean
+                description: Indicator to show whether Data Refresh is activated on the engagement.
+              externalEngagementId:
+                type: string
+                nullable: true
+                description: 'An external identifier for the engagement, which may be used for integration with other systems.'
+              id:
+                type: integer
+                description: The unique identifier for the engagement.
+              lastUploadDate:
+                type: integer
+                description: The date when the last upload was performed.
+              owner:
+                type: object
+                properties:
+                  email:
+                    type: string
+                    description: The email for the engagement owner.
+                    format: email
+                  firstName:
+                    type: string
+                    description: The first name for the engagement owner.
+                  id:
+                    type: integer
+                    description: The unique identifier for the engagement owner.
+                  lastName:
+                    type: string
+                    description: The last name for the engagement owner.
+                  phone:
+                    type: string
+                    description: The phone number for the engagement owner.
+                  title:
+                    type: string
+                    description: The title for the engagement owner.
+              reconciliationEnabled:
+                type: boolean
+                description: Indicator to show if they are able to use the reconciliation module.
+              relationshipManager:
+                type: object
+                description: The relationship manager assign to the client.
+                properties:
+                  email:
+                    type: string
+                    description: The email for the relationship manager.
+                    format: email
+                  firstName:
+                    type: string
+                    description: The last name for the relationship manager.
+                  id:
+                    type: integer
+                    description: The first name for the relationship manager.
+                  lastName:
+                    type: string
+                    description: The first name for the relationship manager.
+                  phone:
+                    type: string
+                    description: The phone number for the relationship manager.
+                  title:
+                    type: string
+                    description: The title for the relationship manager.
+              scheduleDueDate:
+                type: string
+                description: Upload due date.
+                format: date-time
+              scheduleFrequency:
+                type: integer
+                description: 'Frequency of a scheduled upload. Scheduling can be set at daily, weekly, monthly and yearly and will trigger a direct extraction from the native online accounting package of the SME.'
+              scheduleStartDate:
+                type: string
+                description: The start date of the scheduling period for the upload.
+                format: date-time
+              scheduleStatedDate:
+                type: string
+                description: The stated or defined date of the scheduling for the upload.
+                format: date-time
+              sme:
+                type: object
+                properties:
+                  contacts:
+                    type: array
+                    description: The contact details or the SME.
+                    items:
+                      type: object
+                      properties:
+                        email:
+                          type: string
+                          description: The email of the SME.
+                          format: email
+                        firstName:
+                          type: string
+                          description: The first name of the SME.
+                        id:
+                          type: integer
+                          description: The unique identifier of the SME contact details.
+                        lastName:
+                          type: string
+                          description: The last name for the SME.
+                        phone:
+                          type: string
+                          description: The phone number of the SME.
+                        title:
+                          type: string
+                          description: The title of the SME.
+                  externalSmeId:
+                    type: string
+                    nullable: true
+                    description: External system SME identifier.
+                  id:
+                    type: integer
+                    description: The Id of the SME that has completed the upload.
+                  locale:
+                    type: string
+                    description: ISO code for the language used as a default for the SME.
+                  name:
+                    type: string
+                    description: The name of the SME that has completed the upload.
+                  type:
+                    type: string
+              status:
+                type: integer
+                description: 'The status of the engagement. Allowed values 0 - ENABLED, 1 - DISABLED, 2 - DELETED.'
+              tag:
+                type: string
+                description: A descriptive tag or label associated with the entry.
+              ucType:
+                enum:
+                  - NONE
+                  - UC1
+                  - UC2
+                description: The universal connector type.
+              uploadReminderEnteredDate:
+                type: string
+                description: The date when the upload reminder was entered.
+              uploadReminderFrequency:
+                type: integer
+                description: 'Frequency of a scheduled upload. Scheduling can be set at daily, weekly, monthly and yearly and will trigger a reminder email to the SME.'
+              uploadScope:
+                type: string
+                description: 'The scope of the upload is either a full upload extracting AR, AP and GL data or a collateral upload extracting AR and AP data only.'
+              usePassthrough:
+                type: boolean
+                description: Whether the upload was a pass through upload.
+        first:
+          type: boolean
+          description: Whether the current page is the first page.
+        last:
+          type: boolean
+          description: Whether the current page is the last page.
+        number:
+          type: integer
+          description: The index of the current page.
+        numberOfElements:
+          type: integer
+          description: The number of elements on the current page.
+        size:
+          type: integer
+          description: The amount of elements per page.
+        sort:
+          type: object
+          nullable: true
+          description: Page sorting details.
+          properties:
+            direction:
+              type: string
+              description: The sorting order.
+              enum:
+                - ASC
+                - DESC
+            property:
+              type: string
+              description: The sorting property.
+            ignoreCase:
+              type: boolean
+              description: Whether to allow the property to match if written in upper or lower case.
+              default: false
+            ascending:
+              type: boolean
+              description: Whether the result is sorted ascending.
+              default: true
+            descending:
+              type: boolean
+              description: Whether the result is sorted descending.
+              default: false
+        totalElements:
+          type: integer
+          description: The amount of total number of elements.
+        totalPages:
+          type: integer
+          description: The amount of total number of pages.
+      example:
+        content:
+          - clientId: 1502f8e4-cf6d-497c-8086-67e74e01b956
+            backupOwners:
+              - id: 10690
+                firstName: John
+                lastName: Smith
+                email: j.smith@mail.com
+                phone: '079623192'
+                title: Mr.
+                createdBy: 6096
+              - id: 10691
+                firstName: Alex
+                lastName: Doe
+                email: a.doe@mail.com
+                phone: '0536223165'
+                title: Mr.
+                createdBy: 6096
+            agents:
+              - id: 10690
+                firstName: John
+                lastName: Smith
+                email: j.smith@mail.com
+                phone: '1231231'
+                title: Mr.
+                createdBy: 6096
+            connector:
+              name: sage50
+              title: Sage 50 UK & Ireland
+            connectorId: 1
+            createdAt: 1680705716089
+            createdBy:
+              createdBy: 6096
+              email: jdoe@validistesting.com
+              firstName: John
+              id: 10690
+              lastName: Doe
+              phone: '1231231'
+              title: Mr.
+            dataRefreshEnabled: false
+            externalEngagementId: extId123456
+            id: 36628
+            lastUploadDate: 1680706454488
+            owner:
+              createdBy: 6096
+              email: jdoe@validistesting.com
+              firstName: John
+              id: 10690
+              lastName: Doe
+              phone: '1231231'
+              title: Mr.
+            reconciliationEnabled: true
+            relationshipManager:
+              createdBy: 6096
+              email: jdoe@validistesting.com
+              firstName: John
+              id: 10690
+              lastName: Doe
+              phone: '1231231'
+              title: Mr.
+            scheduleFrequency: 0
+            sme:
+              contacts:
+                - createdBy: null
+                  email: newtestus@validistesting.com
+                  firstName: newtestus
+                  id: 10691
+                  lastName: newtestus
+                  phone: '123'
+                  title: Mr.
+              externalSmeId: smeExtId123456
+              id: 36583
+              locale: en_GB
+              name: NewTestonDemo1
+              type: AUDIT
+            status: 0
+            tag: NewTestonDemo1
+            ucType: UC1
+            uploadScope: Full
+            usePassthrough: false
+          - clientId: 1502f8e4-cf6d-497c-8086-67e74e01b956
+            backupOwners:
+              - id: 10690
+                firstName: John
+                lastName: Smith
+                email: j.smith@mail.com
+                phone: '079623192'
+                title: Mr.
+                createdBy: 6096
+              - id: 10691
+                firstName: Alex
+                lastName: Doe
+                email: a.doe@mail.com
+                phone: '0536223165'
+                title: Mr.
+                createdBy: 6096
+            agents:
+              - id: 10690
+                firstName: John
+                lastName: Smith
+                email: j.smith@mail.com
+                phone: '1231231'
+                title: Mr.
+                createdBy: 6096
+            connector:
+              name: sage50
+              title: Sage 50 UK & Ireland
+            connectorId: 1
+            createdAt: 1681396684510
+            createdBy:
+              createdBy: 6096
+              email: jdoe@validistesting.com
+              firstName: John
+              id: 10690
+              lastName: Doe
+              phone: '1231231'
+              title: Mr.
+            dataRefreshEnabled: false
+            externalEngagementId: extId123456
+            id: 39495
+            owner:
+              createdBy: 6096
+              email: jdoe@validistesting.com
+              firstName: John
+              id: 10690
+              lastName: Doe
+              phone: '1231231'
+              title: Mr.
+            reconciliationEnabled: true
+            relationshipManager:
+              createdBy: 6096
+              email: jdoe@validistesting.com
+              firstName: John
+              id: 10690
+              lastName: Doe
+              phone: '1231231'
+              title: Mr.
+            scheduleFrequency: 0
+            sme:
+              contacts:
+                - createdBy: null
+                  email: test2@validistesting.com
+                  firstName: Newenvtest
+                  id: 10794
+                  lastName: alsottest
+                  phone: '1234'
+                  title: Mr.
+              externalSmeId: smeExtId123456
+              id: 39450
+              locale: en_GB
+              name: newtest13apr
+              type: AUDIT
+            status: 0
+            tag: newtest13apr
+            ucType: UC2
+            usePassthrough: false
+        first: true
+        last: false
+        number: 0
+        numberOfElements: 2
+        size: 2
+        sort:
+          direction: DESC
+          property: completionDate
+          ignoreCase: false
+          nullHandling: NATIVE
+          ascending: false
+          descending: true
+        totalElements: 21
+        totalPages: 11
+      x-stoplight:
+        id: bk12wj6lg44b5
+    Get-Engagement-Response:
+      type: object
+      title: Engagement response
+      properties:
+        agents:
+          type: array
+          items:
+            type: object
+            properties:
+              email:
+                type: string
+                description: The email address associated with the sme contact.
+                format: email
+              firstName:
+                type: string
+                description: The first name of the sme contact.
+              id:
+                type: integer
+                description: An unique integer identifier for the sme contact.
+              lastName:
+                type: string
+                description: The last name of the sme contact.
+              phone:
+                type: string
+                description: The phone number associated with the sme contact.
+              title:
+                type: string
+                description: The title or position of the sme contact.
+        backupOwners:
+          type: array
+          items:
+            type: object
+            properties:
+              email:
+                type: string
+                description: The email for the engagement owner.
+                format: email
+              firstName:
+                type: string
+                description: The first name for the engagement owner.
+              id:
+                type: integer
+                description: The unique identifier for the engagement owner.
+              lastName:
+                type: string
+                description: The last name for the engagement owner.
+              phone:
+                type: string
+                description: The phone number for the engagement owner.
+              title:
+                type: string
+                description: The title for the engagement owner.
+        clientId:
+          type: string
+          description: 'The unique identifier of your Validis system, as provided by the Authentication endpoint.'
+          format: uuid
+        company:
+          type: object
+          properties:
+            name:
+              type: string
+              description: Company name.
+            uploadId:
+              type: string
+              description: The Id of the upload.
+              format: uuid
+        companyRegistrationNumber:
+          type: string
+          description: Registration number as exported from the accounting package.
+        connector:
+          type: object
+          nullable: true
+          properties:
+            name:
+              type: string
+              description: The name of the accounting package the upload was extracted from.
+            title:
+              type: string
+              description: The title or name of the connector.
+        connectorId:
+          type: integer
+          description: The unique ID for the connector used by the engagement.
+        createdAt:
+          type: integer
+          description: The date the engagement was created.
+        createdBy:
+          type: object
+          properties:
+            email:
+              type: string
+              description: The email address of the staff user who created the entry.
+              format: email
+            firstName:
+              type: string
+              description: The first name of the staff user who created the entry.
+            id:
+              type: integer
+              description: An unique integer identifier for the staff user who created the entry.
+            lastName:
+              type: string
+              description: The last name of the staff user who created the entry.
+            phone:
+              type: string
+              description: The phone number of the staff user who created the entry.
+            title:
+              type: string
+              description: The title or position of the staff user who created the entry.
+        dataRefreshEnabled:
+          type: boolean
+          description: Indicator to show whether Data Refresh is activated on the engagement.
+        externalEngagementId:
+          type: string
+          nullable: true
+          description: 'An external identifier for the engagement, which may be used for integration with other systems.'
+        id:
+          type: integer
+          description: The unique identifier for the engagement.
+        lastUploadDate:
+          type: integer
+          description: The date when the last upload was performed.
+        owner:
+          type: object
+          properties:
+            email:
+              type: string
+              description: The email for the engagement owner.
+              format: email
+            firstName:
+              type: string
+              description: The first name for the engagement owner.
+            id:
+              type: integer
+              description: The unique identifier for the engagement owner.
+            lastName:
+              type: string
+              description: The last name for the engagement owner.
+            phone:
+              type: string
+              description: The phone number for the engagement owner.
+            title:
+              type: string
+              description: The title for the engagement owner.
+        reconciliationEnabled:
+          type: boolean
+          description: Indicator to show if they are able to use the reconciliation module.
+        relationshipManager:
+          type: object
+          description: The relationship manager assign to the client.
+          properties:
+            email:
+              type: string
+              description: The email for the relationship manager.
+              format: email
+            firstName:
+              type: string
+              description: The last name for the relationship manager.
+            id:
+              type: integer
+              description: The first name for the relationship manager.
+            lastName:
+              type: string
+              description: The first name for the relationship manager.
+            phone:
+              type: string
+              description: The phone number for the relationship manager.
+            title:
+              type: string
+              description: The title for the relationship manager.
+        scheduleDueDate:
+          type: string
+          description: Upload due date.
+          format: date-time
+        scheduleFrequency:
+          type: integer
+          description: 'Frequency of a scheduled upload. Scheduling can be set at daily, weekly, monthly and yearly and will trigger a direct extraction from the native online accounting package of the SME.'
+        scheduleStartDate:
+          type: string
+          description: The start date of the scheduling period for the upload.
+          format: date-time
+        scheduleStatedDate:
+          type: string
+          description: The stated or defined date of the scheduling for the upload.
+          format: date-time
+        sme:
+          type: object
+          properties:
+            contacts:
+              type: array
+              description: The contact details or the SME.
+              items:
+                type: object
+                properties:
+                  email:
+                    type: string
+                    description: The email of the SME.
+                    format: email
+                  firstName:
+                    type: string
+                    description: The first name of the SME.
+                  id:
+                    type: integer
+                    description: The unique identifier of the SME contact details.
+                  lastName:
+                    type: string
+                    description: The last name for the SME.
+                  phone:
+                    type: string
+                    description: The phone number of the SME.
+                  title:
+                    type: string
+                    description: The title of the SME.
+            externalSmeId:
+              type: string
+              nullable: true
+              description: External system SME identifier.
+            id:
+              type: integer
+              description: The Id of the SME that has completed the upload.
+            locale:
+              type: string
+              description: ISO code for the language used as a default for the SME.
+            name:
+              type: string
+              description: The name of the SME that has completed the upload.
+            type:
+              type: string
+        status:
+          type: integer
+          description: 'The status of the engagement. Allowed values 0 - ENABLED, 1 - DISABLED, 2 - DELETED.'
+        tag:
+          type: string
+          description: A descriptive tag or label associated with the entry.
+        ucType:
+          enum:
+            - NONE
+            - UC1
+            - UC2
+          description: The universal connector type.
+        uploadReminderEnteredDate:
+          type: string
+          description: The date when the upload reminder was entered.
+        uploadReminderFrequency:
+          type: integer
+          description: 'Frequency of a scheduled upload. Scheduling can be set at daily, weekly, monthly and yearly and will trigger a reminder email to the SME.'
+        uploadScope:
+          type: string
+          description: 'The scope of the upload is either a full upload extracting AR, AP and GL data or a collateral upload extracting AR and AP data only.'
+        usePassthrough:
+          type: boolean
+          description: Whether the upload was a pass through upload.
+      example:
+        id: 108481
+        externalEngagementId: extId123456
+        clientId: 1502f8e4-cf6d-497c-8086-67e74e01b956
+        relationshipManager:
+          id: 10690
+          firstName: John
+          lastName: Doe
+          email: jdoe@validistesting.com
+          phone: '1231231'
+          title: Mr.
+          createdBy: 6096
+        owner:
+          id: 10690
+          firstName: John
+          lastName: Doe
+          email: jdoe@validistesting.com
+          phone: '1231231'
+          title: Mr.
+          createdBy: 6096
+        backupOwners:
+          - id: 10690
+            firstName: John
+            lastName: Smith
+            email: j.smith@mail.com
+            phone: '079623192'
+            title: Mr.
+            createdBy: 6096
+          - id: 10691
+            firstName: Alex
+            lastName: Doe
+            email: a.doe@mail.com
+            phone: '0536223165'
+            title: Mr.
+            createdBy: 6096
+        agents:
+          - id: 10690
+            firstName: John
+            lastName: Smith
+            email: j.smith@mail.com
+            phone: '1231231'
+            title: Mr.
+            createdBy: 6096
+        connectorId: 1
+        connector:
+          name: sage50
+          title: Sage 50 UK & Ireland
+        status: 0
+        tag: TestSage50UkUpload
+        sme:
+          id: 108446
+          name: TestSage50UkUpload
+          contacts:
+            - id: 12452
+              firstName: sage
+              lastName: user
+              email: sageuser1@validistesting.com
+              phone: '123123'
+              title: Mr.
+              createdBy: 10690
+          externalSmeId: smeExtId123456
+          type: AUDIT
+          locale: en_GB
+        createdAt: 1694781177448
+        createdBy:
+          id: 10690
+          firstName: John
+          lastName: Doe
+          email: jdoe@validistesting.com
+          phone: '1231231'
+          title: Mr.
+          createdBy: 6096
+        scheduleFrequency: 0
+        lastUploadDate: 1694781715692
+        uploadScope: Full
+        usePassthrough: false
+        ucType: UC2
+        reconciliationEnabled: true
+        dataRefreshEnabled: false
+      x-stoplight:
+        id: dnih0nn1qzscw
+    Update-Engagement-Request:
+      type: object
+      title: Engagement update request
+      required:
+        - sme
+        - uploadReminderFrequency
+      properties:
+        scheduleFrequency:
+          type: integer
+          description: |-
+            The frequency at which uploads are scheduled.  Available options:
+              0 - NOT_SCHEDULED
+              1 - ANNUALLY
+              2 - MONTHLY
+              3 - WEEKLY
+              4 - DAILY
+              5 - QUARTERLY
+          minimum: 0
+          maximum: 5
+        relationshipManager:
+          type: integer
+          description: The relationship manager assigned to the client.
+        owner:
+          type: integer
+          description: The unique identifier of the owner of this engagement.
+        backupOwners:
+          type: array
+          description: An array of unique identifiers of the backup owners for this engagement.
+          items:
+            type: integer
+        agents:
+          type: array
+          description: Agents associated with SME Contact.
+          items:
+            type: integer
+        tag:
+          type: string
+        sme:
+          required:
+            - name
+            - contacts
+          type: object
+          properties:
+            type:
+              type: string
+              description: The type of the SME.
+              default: AUDIT
+              enum:
+                - AUDIT
+                - AUDIT_NPE
+                - REVIEW
+            name:
+              type: string
+              description: The name of the SME.
+              maxItems: 255
+            contacts:
+              type: array
+              description: Associated contact unique identifiers of the SME.
+              items:
+                type: integer
+            externalSmeId:
+              type: string
+              nullable: true
+              description: External system SME identifier.
+            locale:
+              type: string
+              nullable: true
+              description: ISO code for the language used by the engagement.
+              default: en_GB
+        connectorId:
+          type: integer
+          description: The unique ID for the connector used by the engagement.
+        scheduleStartDate:
+          type: string
+          description: The stated or defined date of the scheduling for the upload.
+          format: date-time
+        scheduleDueDate:
+          type: string
+          description: A date-time string indicating the due date and time associated with a schedule.
+          format: date-time
+        uploadReminderEnteredDate:
+          type: string
+          description: A date-time string indicating when an upload reminder was entered into the system.
+          format: date-time
+        reconciliationEnabled:
+          type: boolean
+          description: Indicator to show if they are able to use the reconciliation module.
+        uploadReminderFrequency:
+          enum:
+            - 0
+            - 1
+            - 2
+            - 3
+          description: |-
+            'A numerical representation of the frequency of upload reminders, such as daily, weekly, etc.
+            0 - NOT_SCHEDULED
+            1 - MONTHLY
+            2 - QUARTERLY
+            3 - ANNUALLY'
+          type: integer
+        usePassthrough:
+          type: boolean
+          description: Whether the upload was a pass through upload.
+        ucType:
+          enum:
+            - NONE
+            - UC1
+            - UC2
+          description: The universal connector type.
+      example:
+        createdAt: 1695887988729
+        id: 110159
+        scheduleFrequency: 0
+        status: 0
+        relationshipManager: 10690
+        owner: 10690
+        backupOwners:
+          - 6096
+        agents:
+          - 10691
+        tag: string
+        sme:
+          id: 110124
+          type: AUDIT
+          name: NewTestonDemo1
+          contacts:
+            - 3081
+          externalSmeId: smeExtId123456
+        connectorId: 1
+        scheduleStartDate: '2030-08-09T05:25:12.736Z'
+        scheduleDueDate: '2023-08-09T05:25:12.736Z'
+        reconciliationEnabled: true
+        uploadReminderFrequency: 0
+        uploadReminderEnteredDate: '2023-08-09T05:25:12.736Z'
+        usePassthrough: false
+        ucType: UC1
+      x-stoplight:
+        id: f7vefc1omx8g8
+    Update-Engagement-Response:
+      type: object
+      title: Engagement update response
+      properties:
+        agents:
+          type: array
+          items:
+            type: object
+            properties:
+              email:
+                type: string
+                description: The email address associated with the sme contact.
+                format: email
+              firstName:
+                type: string
+                description: The first name of the sme contact.
+              id:
+                type: integer
+                description: An unique integer identifier for the sme contact.
+              lastName:
+                type: string
+                description: The last name of the sme contact.
+              phone:
+                type: string
+                description: The phone number associated with the sme contact.
+              title:
+                type: string
+                description: The title or position of the sme contact.
+        backupOwners:
+          type: array
+          items:
+            type: object
+            properties:
+              email:
+                type: string
+                description: The email for the engagement owner.
+                format: email
+              firstName:
+                type: string
+                description: The first name for the engagement owner.
+              id:
+                type: integer
+                description: The unique identifier for the engagement owner.
+              lastName:
+                type: string
+                description: The last name for the engagement owner.
+              phone:
+                type: string
+                description: The phone number for the engagement owner.
+              title:
+                type: string
+                description: The title for the engagement owner.
+        clientId:
+          type: string
+          description: 'The unique identifier of your Validis system, as provided by the Authentication endpoint.'
+          format: uuid
+        company:
+          type: object
+          properties:
+            name:
+              type: string
+              description: Company name.
+            uploadId:
+              type: string
+              description: The Id of the upload.
+              format: uuid
+        companyRegistrationNumber:
+          type: string
+          description: Registration number as exported from the accounting package.
+        connector:
+          type: object
+          nullable: true
+          properties:
+            name:
+              type: string
+              description: The name of the accounting package the upload was extracted from.
+            title:
+              type: string
+              description: The title or name of the connector.
+        connectorId:
+          type: integer
+          description: The unique ID for the connector used by the engagement.
+        createdAt:
+          type: integer
+          description: The date the engagement was created.
+        createdBy:
+          type: object
+          properties:
+            email:
+              type: string
+              description: The email address of the staff user who created the entry.
+              format: email
+            firstName:
+              type: string
+              description: The first name of the staff user who created the entry.
+            id:
+              type: integer
+              description: An unique integer identifier for the staff user who created the entry.
+            lastName:
+              type: string
+              description: The last name of the staff user who created the entry.
+            phone:
+              type: string
+              description: The phone number of the staff user who created the entry.
+            title:
+              type: string
+              description: The title or position of the staff user who created the entry.
+        dataRefreshEnabled:
+          type: boolean
+          description: Indicator to show whether Data Refresh is activated on the engagement.
+        externalEngagementId:
+          type: string
+          nullable: true
+          description: 'An external identifier for the engagement, which may be used for integration with other systems.'
+        id:
+          type: integer
+          description: The unique identifier for the engagement.
+        lastUploadDate:
+          type: string
+          description: The date when the last upload was performed.
+        owner:
+          type: object
+          properties:
+            email:
+              type: string
+              description: The email for the engagement owner.
+              format: email
+            firstName:
+              type: string
+              description: The first name for the engagement owner.
+            id:
+              type: integer
+              description: The unique identifier for the engagement owner.
+            lastName:
+              type: string
+              description: The last name for the engagement owner.
+            phone:
+              type: string
+              description: The phone number for the engagement owner.
+            title:
+              type: string
+              description: The title for the engagement owner.
+        reconciliationEnabled:
+          type: boolean
+          description: Indicator to show if they are able to use the reconciliation module.
+        relationshipManager:
+          type: object
+          description: The relationship manager assign to the client.
+          properties:
+            email:
+              type: string
+              description: The email for the relationship manager.
+              format: email
+            firstName:
+              type: string
+              description: The last name for the relationship manager.
+            id:
+              type: integer
+              description: The first name for the relationship manager.
+            lastName:
+              type: string
+              description: The first name for the relationship manager.
+            phone:
+              type: string
+              description: The phone number for the relationship manager.
+            title:
+              type: string
+              description: The title for the relationship manager.
+        scheduleDueDate:
+          type: string
+          description: Upload due date.
+          format: date-time
+        scheduleFrequency:
+          type: integer
+          description: 'Frequency of a scheduled upload. Scheduling can be set at daily, weekly, monthly and yearly and will trigger a direct extraction from the native online accounting package of the SME.'
+        scheduleStartDate:
+          type: string
+          description: The start date of the scheduling period for the upload.
+          format: date-time
+        scheduleStatedDate:
+          type: string
+          description: The stated or defined date of the scheduling for the upload.
+          format: date-time
+        sme:
+          type: object
+          properties:
+            contacts:
+              type: array
+              description: The contact details or the SME.
+              items:
+                type: object
+                properties:
+                  email:
+                    type: string
+                    description: The email of the SME.
+                    format: email
+                  firstName:
+                    type: string
+                    description: The first name of the SME.
+                  id:
+                    type: integer
+                    description: The unique identifier of the SME contact details.
+                  lastName:
+                    type: string
+                    description: The last name for the SME.
+                  phone:
+                    type: string
+                    description: The phone number of the SME.
+                  title:
+                    type: string
+                    description: The title of the SME.
+            externalSmeId:
+              type: string
+              nullable: true
+              description: External system SME identifier.
+            id:
+              type: integer
+              description: The Id of the SME that has completed the upload.
+            locale:
+              type: string
+              description: ISO code for the language used as a default for the SME.
+            name:
+              type: string
+              description: The name of the SME that has completed the upload.
+            type:
+              type: string
+        status:
+          type: integer
+          description: |-
+            'The status of the engagement. Possible values 
+            0 - ENABLED
+            1 - DISABLED
+            2 - DELETED.'
+        tag:
+          type: string
+          description: A descriptive tag or label associated with the entry.
+        ucType:
+          enum:
+            - NONE
+            - UC1
+            - UC2
+          description: The universal connector type.
+        uploadReminderEnteredDate:
+          type: string
+          description: The date when the upload reminder was entered.
+        uploadReminderFrequency:
+          type: integer
+          description: 'Frequency of a scheduled upload. Scheduling can be set at daily, weekly, monthly and yearly and will trigger a reminder email to the SME.'
+        uploadScope:
+          type: string
+          description: 'The scope of the upload is either a full upload extracting AR, AP and GL data or a collateral upload extracting AR and AP data only.'
+        usePassthrough:
+          type: boolean
+          description: Whether the upload was a pass through upload.
+      example:
+        backupOwners:
+          - id: 10690
+            firstName: John
+            lastName: Smith
+            email: j.smith@mail.com
+            phone: '079623192'
+            title: Mr.
+            createdBy: 6096
+          - id: 10691
+            firstName: Alex
+            lastName: Doe
+            email: a.doe@mail.com
+            phone: '0536223165'
+            title: Mr.
+            createdBy: 6096
+        agents:
+          - id: 10690
+            firstName: John
+            lastName: Smith
+            email: j.smith@mail.com
+            phone: '1231231'
+            title: Mr.
+            createdBy: 6096
+        clientId: 1502f8e4-cf6d-497c-8086-67e74e01b956
+        connector:
+          name: sage50
+          title: Sage 50 UK & Ireland
+        connectorId: 1
+        createdAt: 1695887988729
+        createdBy:
+          createdBy: 6096
+          email: jdoe@validistesting.com
+          firstName: John
+          id: 10690
+          lastName: Doe
+          phone: '1231231'
+          title: Mr.
+        dataRefreshEnabled: false
+        externalEngagementId: extId123456
+        id: 110159
+        owner:
+          createdBy: 6096
+          email: jdoe@validistesting.com
+          firstName: John
+          id: 10690
+          lastName: Doe
+          phone: '1231231'
+          title: Mr.
+        reconciliationEnabled: true
+        relationshipManager:
+          createdBy: 6096
+          email: jdoe@validistesting.com
+          firstName: John
+          id: 10690
+          lastName: Doe
+          phone: '1231231'
+          title: Mr.
+        scheduleFrequency: 0
+        sme:
+          contacts:
+            - id: 12452
+              firstName: sage
+              lastName: user
+              email: sageuser1@validistesting.com
+              phone: '123123'
+              title: Mr.
+              createdBy: 10690
+          externalSmeId: smeExtId123456
+          id: 110124
+          locale: en_GB
+          name: NewTestonDemo1
+          type: AUDIT
+        status: 0
+        tag: string
+        ucType: UC1
+        usePassthrough: false
+      x-stoplight:
+        id: tk1npladzjhr5
+    Update-Schedule-Request:
+      type: object
+      title: Update data refresh schedule request
+      properties:
+        scheduleFrequency:
+          type: integer
+          description: 'The frequency set to schedule an extraction from the native accounting package. Scheduling can be set to daily, weekly, monthly and yearly. Available options: 0 - NOT_SCHEDULED, 1 - MONTHLY, 2 - QUARTERLY, 3 - ANNUALLY.'
+          minimum: 0
+          maximum: 3
+          default: 0
+        scheduleStartDate:
+          type: string
+          description: The start date of the scheduling period for extraction from the native accounting package.
+          format: date-time
+          example: '2023-08-14T12:15:18.421Z'
+      x-stoplight:
+        id: 0pvavm5beavhu
+    Get-Company-Details-Response:
+      type: object
+      title: Company details
+      properties:
+        name:
+          type: string
+          description: Company name.
+        registrationNumber:
+          type: string
+          description: Registration number as exported from the accounting package.
+        salesTaxNumber:
+          type: string
+          description: Sales tax number as exported from the accounting package.
+        payrollTaxNumber:
+          type: string
+          description: Payroll tax number as exported from the accounting package.
+        address1:
+          type: string
+          description: Address first line as exported from the accounting package.
+        address2:
+          type: string
+          description: Address second line as exported from the accounting package.
+        address3:
+          type: string
+          description: Address third line as exported from the accounting package.
+        townCity:
+          type: string
+          description: Town as exported from the accounting package.
+        stateCounty:
+          type: string
+          description: State/County as exported from the accounting package.
+        postZipCode:
+          type: string
+          description: Postcode/Zip code as exported from the accounting package.
+        countryCode:
+          type: string
+          description: Country ISO code (3 chars).
+        countryName:
+          type: string
+          description: Country name as exported from the accounting package.
+        telephone1:
+          type: string
+          description: Telephone number as exported from the accounting package.
+        fax1:
+          type: string
+          description: Fax number as exported from the accounting package.
+        email1:
+          type: string
+          description: Email address as exported from the accounting package.
+        url:
+          type: string
+          description: Url address as exported from the accounting package.
+        currencyIso:
+          type: string
+          description: Currency ISO code (3 chars) for Base currency.
+      example:
+        name: Company Ltd
+        registrationNumber: 2L342343
+        salesTaxNumber: '999999999'
+        payrollTaxNumber: '39898289'
+        address1: Unit 2
+        address2: Windsor Buildings
+        address3: Ferry Road
+        postZipCode: CF11 0JL
+        stateCounty: South Glamorgan
+        townCity: Cardiff
+        countryCode: CA
+        countryName: Canada
+        telephone1: '012355223300'
+        fax1: '0674123311'
+        email1: company@mail.com
+        url: 'https://company.com'
+        currencyIso: USD
+      x-stoplight:
+        id: bzigaf0uqqug2
+    Put-Years-To-Extract-Request:
+      type: object
+      title: Years to extract request
+      properties:
+        yearsToExtract:
+          type: integer
+          description: Amount of financial years to be extracted from a connector.
+      example:
+        yearsToExtract: 3
+      x-stoplight:
+        id: 4tgqn36kfv0ny
+    Years-To-Extract-Response:
+      type: object
+      title: Years to extract response
+      properties:
+        yearsToExtract:
+          type: integer
+          description: Amount of financial years to be extracted from a connector.
+        maxYearsToExtract:
+          type: integer
+          description: Max possible amount of financial years to be extracted from a connector.
+      example:
+        yearsToExtract: 1
+        maxYearsToExtract: 5
+      x-stoplight:
+        id: lrjed2mxnekwj
